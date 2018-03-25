@@ -10,6 +10,7 @@ script:
 
   # Check that Terraform config files are formatted correctly and that they validate.
   - ./terraform fmt -check
+  - ./terraform init
   - ./terraform validate
 
 notifications:
