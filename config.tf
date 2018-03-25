@@ -1,12 +1,16 @@
 /**
  * Provides general configuration for using Terraform, including resources used to manage the
- * Terraform configuration (such as Git respository and backends).
+ * Terraform configuration (such as backends).
+ *
+ * The git repo that holds this config is not controlled here, because the Terraform GitHub provider
+ * doesn't manage personal repos (https://www.terraform.io/docs/providers/github/r/repository.html).
  *
  * @author Tim Malone <tdmalone@gmail.com>
  */
 
 /**
- * Default AWS provider configuration, with version constraints.
+ * AWS provider configuration, with version constraints.
+ * Credentials are taken from environment variables.
  *
  * @see https://www.terraform.io/docs/providers/aws/index.html
  * @see https://www.terraform.io/docs/configuration/providers.html#provider-versions
@@ -14,16 +18,6 @@
 provider "aws" {
   region  = "ap-southeast-2"
   version = "~> 1.12"
-}
-
-/**
- * CodeCommit repository for holding all Terraform configuration.
- *
- * @see https://www.terraform.io/docs/providers/aws/r/code_commit_repository.html
- */
-resource "aws_codecommit_repository" "git-timfrastructure" {
-  repository_name = "timfrastructure"
-  description     = "Holds IaC data (mostly Terraform) for Tim's cloud infrastructure"
 }
 
 /**
