@@ -1,0 +1,22 @@
+
+language: generic
+
+install:
+
+  - curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
+  - unzip terraform.zip
+
+script:
+
+  # Check that Terraform config files are formatted correctly and that they validate.
+  - ./terraform fmt -check
+  - ./terraform validate
+
+notifications:
+  email: false
+  webhooks:
+    urls: https://api.tm.id.au/v2/travis/jobStatus
+  slack:
+    on_start: always
+    rooms:
+      - secure: IJtgZLdA6E0DPF33SvMHdXw5tl4P8mB5ZmJUHU2kAOQ7RH3dHjsLuzyVXpxk1y1P5g5GtM1+Jcycd9Jn3PC/D1zK/x/76VvK4BcJPYaJJU62zajBak9BMgV4dCWmaFFbnVx3HozOVmck8IpX7z6EAIpa7gOnrMHAQK3KmwxafpwqDjvVVOKrchSBQ1JAABUfSmVZDpFG8JZREXu47PznPsVaQ0wgo9v9Z8+YCSr6W2z5UwjjE+K5LktJWP2Ob55EVn3PChw5uKk0zrA8tkM9V7lRWLEloUYJ/wY/2VCdc1C2ganwDNkOEz5ph2R0kRx90SqxE61zPmRO5+dcxGtttvOnAonngOuCbVErDj62awxP4qPaZooV6/TgLvQAUb0IavvO24iejcM9OCMrfrVqNxk7ruKkVOBopvPM21YvibtONIiUFEZaz2jMhTSqrvl7jTugLUxlOtiYBQOD5fNVwLiW9g2NvwMI72pAZTX9Ufq7d8blI2nBa1/wSkA7beS+qtKY2Th7tAf+RER3OuvQnZfGriBeuCSaJNexmzql8Aci6F4CKDWB+L2o1pxc2gvsAWesOWmO2jm6igpQ2vRhR8jyS81SOppm9YRWmt79mcUpiJhDV64Hjlbri/rOfqwXgUY8b7HiAUTSXrdrGtb7E+iZhKceJceCet563sr1qx0=
