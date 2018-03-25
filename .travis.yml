@@ -1,7 +1,14 @@
 
 language: generic
 
-# TODO: Add global env vars for AWS credentials.
+env:
+  global:
+
+    - AWS_ACCESS_KEY_ID=AKIAJMVNAJPFFHMZRBTA
+    - AWS_DEFAULT_REGION=ap-southeast-2
+
+    # AWS_SECRET_ACCESS_KEY
+    - secure: U1+OFn7Lcz/4n0Dm1Suoh2goum7bmeJJzYDroFZEmzRF3/NfxLXl7hrC6QKinxSgCPGBhVN5feJLUZE3WD4QPi6f/s8OStYtFTsUEH5WwQgNOF/gtbicLlLOT6URnmj9uzFiEeQYhEUjGfq2qSkvOrA4OcJRpnOz56X2X+RqPNKkcg4MVHaBNgGHVomtMtbEzI/mGw5RWpa+ATewX/adHYTKe31h6IqxDMZom6HdfdzRYQIrBzbtmookn9riGJEc9FRqD2caWO+mAjtyqgOrPXXyRrRqLC2DKoujWe9roqyLuZ/Gq3tUHWxQDSlBQmKNr6/9spGe7ZpWKPlZWYMPel5eKVRI+vM90seeF5LlFcDPeYHhqO1zr1QrlbgMXcoPjGkbnsJax+RFMv2N44pLifjnUzompKB9FvWs3p9tfh7KZZ3KXHdfjkENY38ZLAfBAqnHNLxMb7PU3+HQDsdkYfoloYOHBqVE55J5db/5BFriqNpFgNnJ1ZE1Rj3eF/R7b7h1WxquE0afZ6MyiQF1XWbyWC5L5cBioGRGw32tfrpeugyzbKoxatLjMXYHebvUvKQOOuNmP7256WCeZxEDPQf33FiPUSPRvQ5r3ZdXikP6am5VcpH4REJPep45VL/VrRGhqBSBdK99wF3cCklNbPybL+tor/zZ51nGdpiKFN4=
 
 install:
 
