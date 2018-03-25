@@ -1,4 +1,3 @@
-
 /*
 resource "aws_instance" "jenkins" {
   ami           = "ami-beae57dc" # Jenkins-2.46.2 for Ubuntu 16.04.
@@ -9,3 +8,4 @@ resource "aws_instance" "jenkins" {
   }
 }
 */
+

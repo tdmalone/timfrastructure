@@ -12,8 +12,8 @@
  * @see https://www.terraform.io/docs/configuration/providers.html#provider-versions
  */
 provider "aws" {
-  region     = "ap-southeast-2"
-  version    = "~> 1.12"
+  region  = "ap-southeast-2"
+  version = "~> 1.12"
 }
 
 /**
@@ -35,12 +35,13 @@ resource "aws_codecommit_repository" "git-timfrastructure" {
  */
 terraform {
   backend "s3" {
-    bucket         = "${aws_s3_bucket.s3-timfrastructure.bucket}"
+    bucket         = "timfrastructure"
     key            = "timfrastructure-tfstate"
     encrypt        = true
-    dynamodb_table = "${aws_dynamodb_table.dynamodb-timfrastructure.name}"
+    dynamodb_table = "timfrastructure"
   }
 }
+
 resource "aws_s3_bucket" "s3-timfrastructure" {
   bucket = "timfrastructure"
   acl    = "private"
@@ -52,11 +53,12 @@ resource "aws_s3_bucket" "s3-timfrastructure" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        sse_algorithm     = "aws:kms"
+        sse_algorithm = "aws:kms"
       }
     }
   }
 }
+
 resource "aws_dynamodb_table" "dynamodb-timfrastructure" {
   name           = "timfrastructure"
   hash_key       = "LockID"
