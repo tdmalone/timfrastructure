@@ -1,0 +1,33 @@
+
+language: generic
+
+env:
+  global:
+
+    - AWS_ACCESS_KEY_ID=AKIAJMVNAJPFFHMZRBTA
+    - AWS_DEFAULT_REGION=ap-southeast-2
+
+    # AWS_SECRET_ACCESS_KEY
+    - secure: U1+OFn7Lcz/4n0Dm1Suoh2goum7bmeJJzYDroFZEmzRF3/NfxLXl7hrC6QKinxSgCPGBhVN5feJLUZE3WD4QPi6f/s8OStYtFTsUEH5WwQgNOF/gtbicLlLOT6URnmj9uzFiEeQYhEUjGfq2qSkvOrA4OcJRpnOz56X2X+RqPNKkcg4MVHaBNgGHVomtMtbEzI/mGw5RWpa+ATewX/adHYTKe31h6IqxDMZom6HdfdzRYQIrBzbtmookn9riGJEc9FRqD2caWO+mAjtyqgOrPXXyRrRqLC2DKoujWe9roqyLuZ/Gq3tUHWxQDSlBQmKNr6/9spGe7ZpWKPlZWYMPel5eKVRI+vM90seeF5LlFcDPeYHhqO1zr1QrlbgMXcoPjGkbnsJax+RFMv2N44pLifjnUzompKB9FvWs3p9tfh7KZZ3KXHdfjkENY38ZLAfBAqnHNLxMb7PU3+HQDsdkYfoloYOHBqVE55J5db/5BFriqNpFgNnJ1ZE1Rj3eF/R7b7h1WxquE0afZ6MyiQF1XWbyWC5L5cBioGRGw32tfrpeugyzbKoxatLjMXYHebvUvKQOOuNmP7256WCeZxEDPQf33FiPUSPRvQ5r3ZdXikP6am5VcpH4REJPep45VL/VrRGhqBSBdK99wF3cCklNbPybL+tor/zZ51nGdpiKFN4=
+
+install:
+
+  # Install Terraform.
+  - curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
+  - unzip terraform.zip
+
+script:
+
+  # Check that Terraform config files are formatted correctly and that they validate.
+  - ./terraform fmt -check
+  - ./terraform init
+  - ./terraform validate
+
+notifications:
+  email: false
+  webhooks:
+    urls: https://api.tm.id.au/v2/travis/jobStatus
+  slack:
+    on_start: always
+    rooms:
+      - secure: IJtgZLdA6E0DPF33SvMHdXw5tl4P8mB5ZmJUHU2kAOQ7RH3dHjsLuzyVXpxk1y1P5g5GtM1+Jcycd9Jn3PC/D1zK/x/76VvK4BcJPYaJJU62zajBak9BMgV4dCWmaFFbnVx3HozOVmck8IpX7z6EAIpa7gOnrMHAQK3KmwxafpwqDjvVVOKrchSBQ1JAABUfSmVZDpFG8JZREXu47PznPsVaQ0wgo9v9Z8+YCSr6W2z5UwjjE+K5LktJWP2Ob55EVn3PChw5uKk0zrA8tkM9V7lRWLEloUYJ/wY/2VCdc1C2ganwDNkOEz5ph2R0kRx90SqxE61zPmRO5+dcxGtttvOnAonngOuCbVErDj62awxP4qPaZooV6/TgLvQAUb0IavvO24iejcM9OCMrfrVqNxk7ruKkVOBopvPM21YvibtONIiUFEZaz2jMhTSqrvl7jTugLUxlOtiYBQOD5fNVwLiW9g2NvwMI72pAZTX9Ufq7d8blI2nBa1/wSkA7beS+qtKY2Th7tAf+RER3OuvQnZfGriBeuCSaJNexmzql8Aci6F4CKDWB+L2o1pxc2gvsAWesOWmO2jm6igpQ2vRhR8jyS81SOppm9YRWmt79mcUpiJhDV64Hjlbri/rOfqwXgUY8b7HiAUTSXrdrGtb7E+iZhKceJceCet563sr1qx0=
