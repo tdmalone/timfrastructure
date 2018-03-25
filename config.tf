@@ -29,6 +29,11 @@ resource "aws_codecommit_repository" "git-timfrastructure" {
 /**
  * S3 + DynamoDB backend for managing and locking Terraform remote state.
  *
+ * Because these resources are managed by Terraform, they need to be created before the remote
+ * backend is utilised. Therefore, when running `terraform plan` for the first time, you'll want
+ * to comment out the `terraform` object below and allow the default, local backend to be used at
+ * first.
+ *
  * @see https://www.terraform.io/docs/backends/types/s3.html
  * @see https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
  * @see https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
@@ -67,6 +72,6 @@ resource "aws_dynamodb_table" "dynamodb-timfrastructure" {
 
   attribute {
     name = "LockID"
-    type = "N"
+    type = "S"
   }
 }
