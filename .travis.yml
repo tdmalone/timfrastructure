@@ -23,6 +23,11 @@ script:
   - ./terraform init
   - ./terraform validate
 
+  # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
+  # We only care about the exit code here, and don't want to expose any potentially sensitive data,
+  # so we also redirect the output to a file.
+  - ./terraform plan -detailed-exitcode > .plan
+
 notifications:
   email: false
   webhooks:
