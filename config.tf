@@ -10,7 +10,7 @@
 
 /**
  * AWS provider configuration, with version constraints.
- * Credentials are taken from environment variables.
+ * Credentials are taken from the usual AWS environment variables.
  *
  * @see https://www.terraform.io/docs/providers/aws/index.html
  * @see https://www.terraform.io/docs/configuration/providers.html#provider-versions
@@ -18,6 +18,16 @@
 provider "aws" {
   region  = "ap-southeast-2"
   version = "~> 1.12"
+}
+
+/**
+ * Cloudflare provider.
+ * Credentials are taken from CLOUDFLARE_EMAIL and CLOUDFLARE_TOKEN env vars.
+ *
+ * @see https://www.terraform.io/docs/providers/cloudflare/index.html
+ */
+provider "cloudflare" {
+  version = "~> 0.1"
 }
 
 /**
