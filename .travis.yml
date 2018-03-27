@@ -22,6 +22,10 @@ install:
   - curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
   - unzip terraform.zip
 
+  # Install Packer
+  - curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
+  - unzip packer.zip
+
 script:
 
   # Check that Terraform config files are formatted correctly and that they validate.
@@ -32,7 +36,11 @@ script:
   # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
   # We only care about the exit code here, and don't want to expose any potentially sensitive data,
   # so we also redirect the output to a file.
-  - ./terraform plan -detailed-exitcode > .plan
+  - ./terraform plan -detailed-exitcode > /dev/null
+
+  # Check that all Packer config files validate & build.
+  - find *.packer.json -exec echo {} \; -exec ./packer validate {} \;
+  - find *.packer.json -exec echo {} \; -exec ./packer build {} \;
 
 notifications:
   email: false
