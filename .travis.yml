@@ -10,11 +10,21 @@ env:
     # AWS_SECRET_ACCESS_KEY
     - secure: U1+OFn7Lcz/4n0Dm1Suoh2goum7bmeJJzYDroFZEmzRF3/NfxLXl7hrC6QKinxSgCPGBhVN5feJLUZE3WD4QPi6f/s8OStYtFTsUEH5WwQgNOF/gtbicLlLOT6URnmj9uzFiEeQYhEUjGfq2qSkvOrA4OcJRpnOz56X2X+RqPNKkcg4MVHaBNgGHVomtMtbEzI/mGw5RWpa+ATewX/adHYTKe31h6IqxDMZom6HdfdzRYQIrBzbtmookn9riGJEc9FRqD2caWO+mAjtyqgOrPXXyRrRqLC2DKoujWe9roqyLuZ/Gq3tUHWxQDSlBQmKNr6/9spGe7ZpWKPlZWYMPel5eKVRI+vM90seeF5LlFcDPeYHhqO1zr1QrlbgMXcoPjGkbnsJax+RFMv2N44pLifjnUzompKB9FvWs3p9tfh7KZZ3KXHdfjkENY38ZLAfBAqnHNLxMb7PU3+HQDsdkYfoloYOHBqVE55J5db/5BFriqNpFgNnJ1ZE1Rj3eF/R7b7h1WxquE0afZ6MyiQF1XWbyWC5L5cBioGRGw32tfrpeugyzbKoxatLjMXYHebvUvKQOOuNmP7256WCeZxEDPQf33FiPUSPRvQ5r3ZdXikP6am5VcpH4REJPep45VL/VrRGhqBSBdK99wF3cCklNbPybL+tor/zZ51nGdpiKFN4=
 
+    # CLOUDFLARE_EMAIL
+    - secure: rPXtZGNvWU4Rey1jzkb5SGCJkfu1d1cwEoQpxBxL+HyTYiH/Yy7niXMrqPea1TGu4UvvCTTfjC/FAsN4OSgpDXN384GGGp3Oygaf5teqyzTBF8yygIuJGWHUChBlf1ap4hznXXHUesZY8bAIF+ScNK5q7D/GltnYOCEIGvnXrf47eUk09abjRHXZImEMVpoaBoHHm5shEVDaUqgKB8Tb6HFsZLbM3+/XwBhEeG54t4T7qoA6kDBHdiRlqsBxf8W6QByUDVxoqCQccVM2RSmrvrtZgMKY9syiM2ZHb43sJmjiYoBln6ZFvgkfx5IC+YY22R1UQ6hFg3g+cgVl4mspcqsdKPhabvPMrZDb7LzXARmZUqDkSI8rTEbd7rbVU3/gaTe7f5eL/w4ZsTBT+f++a9PvcpRh1sM9pbz9o5yEDGGcYlaa/uWCFBGSC38AmT8bT5dghBi3/aPq7rZWhU805YRFOpElsWpQ3XMyfo2X204/FqtGOz11V9f4YTbv/IA/O0NnzBgXcG4gusJFuN/kxgW2Hrj9HX4q8NtX8ol1LZaSsj6lYVC4RaErm4hF7Hq7E8yWZywbT8WIUDHsb0CL85Nvq7HRxfNlTU5ekQYFZEkIoLLM5pMYN+y2LBBySfzaggFnsZgNKm9d1ne5MQmlbaA/0Lx8rF6+jTOdnDM1Kqc=
+
+    # CLOUDFLARE_TOKEN
+    - secure: Z7pDH1tuBosDxpsMGp2Gk1gTIwQ6zfhgEFcaEos3/ui1I3V8uDPNXKyVs7iPyU5aRWnKhopgFxhpDm71AnhnyvwqIGNpsjmp0fQC0eQ/hY6T44OuWnulx2i9m7wXj2caeiGMYAl8NJqwWte8E9E9cVzrSmAxJrnojrjKrZhYRaW5MPAGa+ZRSAYockGk/evbIOJj8emOXc5ucdNFIqKir6U676dIkbTQ4rPGE0THT3F2YdWoJSluOtW2KtU8eO9RM0O+Sy3u9iHZXElyKKCRvlcLTCXQTwDrpn9Wt833vtouZC1zGnc/vesIHvRDYMRKx+PZ0NcUU/ZD+VbwGL1pSgvOIYzhoMX/ZUHb9E2iqGWezhS/MWCWCqgW4dEfQvbQEEycl6nBY3fecrrvnw/hnSDK2tkZVt1/OU+iEvjYdxR8Menc8smnNjK05fny7KYD8Ns4q+6YGD+riNMEQ7+HsnQDwMDYpkjgCcsgXFR60vcQciZeqkD+4vms325q3RRwI64datd1rX6M58VUjaUAXJis2qbDWfYsPiyNNXRw0w6Fip/0TU/qyX3pxRpaUJeH9ICmVcuFMrrkoKpxX+754RW1Oj2dP/ltsWUf7X5idMQ5mmNPNV8dIr6Z+joRLN5k4bsLLb13bIzTnrBg50t47lt1AyAHl24gv0vAPjIcu8A=
+
 install:
 
   # Install Terraform.
   - curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
   - unzip terraform.zip
+
+  # Install Packer
+  - curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
+  - unzip packer.zip
 
 script:
 
@@ -22,6 +32,15 @@ script:
   - ./terraform fmt -check
   - ./terraform init
   - ./terraform validate
+
+  # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
+  # We only care about the exit code here, and don't want to expose any potentially sensitive data,
+  # so we also redirect the output to a file.
+  - ./terraform plan -detailed-exitcode > /dev/null
+
+  # Check that all Packer config files validate & build.
+  - find *.packer.json -exec echo {} \; -exec ./packer validate {} \;
+  - find *.packer.json -exec echo {} \; -exec ./packer build {} \;
 
 notifications:
   email: false
