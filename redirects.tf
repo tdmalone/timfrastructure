@@ -11,7 +11,12 @@ variable "redirect_location" {
   default = "https://tm.id.au"
 }
 
-/** Domain 1. **/
+/**
+ * Domain 1. Redirect required for the www only.
+ *
+ * TODO: Enable this after sorting out the current set up, which needs to go via Cloudfront so that
+ *       HTTPS is available (because this domain is enabled for HSTS).
+ **/
 
 /*resource "aws_s3_bucket" "domain1-www" {
   bucket = "www.${var.domain1}"
@@ -22,7 +27,7 @@ variable "redirect_location" {
   }
 }*/
 
-/** Domain 2. **/
+/** Domain 2. Naked + www redirects. **/
 
 resource "aws_s3_bucket" "domain2-naked" {
   bucket = "${var.domain2}"
@@ -42,7 +47,7 @@ resource "aws_s3_bucket" "domain2-www" {
   }
 }
 
-/** Domain 3. **/
+/** Domain 3. Naked + www redirects. **/
 
 resource "aws_s3_bucket" "domain3-naked" {
   bucket = "${var.domain3}"
