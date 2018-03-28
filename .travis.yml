@@ -35,12 +35,13 @@ script:
 
   # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
   # We only care about the exit code here, and don't want to expose any potentially sensitive data,
-  # so we also redirect the output to a file.
+  # so we also redirect the output.
   - ./terraform plan -detailed-exitcode > /dev/null
 
-  # Check that all Packer config files validate & build.
-  - find *.packer.json -exec echo {} \; -exec ./packer validate {} \;
-  - find *.packer.json -exec echo {} \; -exec ./packer build {} \;
+  # Check that all Packer templates validate & build.
+  # TODO: Deregister these AMIs afterwards so that builds are idempotent.
+  - find **/*.packer.json | xargs -I % sh -c 'echo % && ./packer validate %'
+  - find **/*.packer.json | xargs -I % sh -c 'echo % && ./packer build %'
 
 notifications:
   email: false
