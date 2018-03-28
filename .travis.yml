@@ -40,8 +40,8 @@ script:
 
   # Check that all Packer templates validate & build.
   # TODO: Deregister these AMIs afterwards so that builds are idempotent.
-  - find **/*.packer.json | xargs -I % sh -c 'echo % && ./packer validate %'
-  - find **/*.packer.json | xargs -I % sh -c 'echo % && ./packer build %'
+  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer validate %'
+  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer build %'
 
 notifications:
   email: false
