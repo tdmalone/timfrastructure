@@ -31,6 +31,16 @@ provider "cloudflare" {
 }
 
 /**
+ * Datadog provider.
+ * Credentials are taken from DATADOG_API_KEY and DATADOG_APP_KEY env vars.
+ *
+ * @see https://www.terraform.io/docs/providers/datadog/index.html
+ */
+provider "datadog" {
+  version = "~> 0.1"
+}
+
+/**
  * S3 + DynamoDB backend for managing and locking Terraform remote state.
  *
  * Because these resources are managed by Terraform, they need to be created before the remote
