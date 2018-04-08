@@ -18,6 +18,10 @@ sudo apt-get upgrade --assume-yes
 
 # TODO: Install the Amazon Simple Systems Manager agent.
 
+# TODO: Install Datadog agent.
+
+# TODO: Copy across common Datadog configuration.
+
 # TODO: Clone tdmalone/dotfiles.
 
 # Install Node.js.
@@ -61,6 +65,18 @@ sudo mv terraform /usr/local/bin/terraform
 curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
 unzip packer.zip
 sudo mv packer /usr/local/bin/packer
+
+# TODO: Install gcloud CLI.
+
+# TODO: Install minikube/kubectl.
+
+# Install Azure CLI.
+# @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
+AZ_REPO=$(lsb_release -cs)
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893
+sudo apt-get install apt-transport-https
+sudo apt-get update && sudo apt-get install azure-cli
 
 # TODO: Install nginx & set up a vhost and php-fpm.
 
