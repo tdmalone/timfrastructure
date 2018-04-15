@@ -2,9 +2,10 @@
 
 set -euo pipefail
 
-# Update stuff.
+# Update stuff and install helpers.
 sudo apt-get update
 sudo apt-get upgrade --assume-yes
+sudo apt-get install apt-transport-https
 
 # TODO: Set up new hostname.
 
@@ -39,7 +40,20 @@ sudo apt-get update && sudo apt-get install yarn
 
 # TODO: Install MariaDB.
 
-# TODO: Install Travis, Heroku, LastPass, Papertrail and AWS cli's.
+# Install Travis CLI and enable autocomplete.
+# @see https://stackoverflow.com/a/44851034/1982136
+sudo gem install travis
+echo "y" | travis --version
+
+# Install Heroku CLI.
+# @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+# Install Papertrail CLI.
+# @see https://github.com/papertrail/papertrail-cli
+sudo gem install papertrail
+
+# TODO: Install LastPass, Papertrail and AWS cli's.
 
 # Install wp-cli.
 # @see https://wp-cli.org/#installing
@@ -66,17 +80,28 @@ curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_a
 unzip packer.zip
 sudo mv packer /usr/local/bin/packer
 
-# TODO: Install gcloud CLI.
+# Install gcloud CLI & kubectl.
+# @see https://cloud.google.com/sdk/docs/#deb
+export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update && sudo apt-get install google-cloud-sdk
+sudo apt-get install kubectl
 
-# TODO: Install minikube/kubectl.
+# TODO: Install minikube.
+# @see https://github.com/kubernetes/minikube/releases
 
 # Install Azure CLI.
 # @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
 AZ_REPO=$(lsb_release -cs)
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
 sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893
-sudo apt-get install apt-transport-https
 sudo apt-get update && sudo apt-get install azure-cli
+
+# Install IBM Cloud CLI.
+wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
+tar -zxvf linux64 && rm linux64
+Bluemix_CLI/install_bluemix_cli
 
 # TODO: Install nginx & set up a vhost and php-fpm.
 
