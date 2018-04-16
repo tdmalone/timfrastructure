@@ -28,9 +28,8 @@ resource "aws_subnet" "private-b" {
 
 # TODO:
 # aws_network_acl
-# aws_network_acl_rule
-# aws_network_interface
-# aws_network_interface_attachment
+# aws_network_interface?
+# aws_network_interface_attachment?
 # aws_route_table
 # aws_route_table_association
 
