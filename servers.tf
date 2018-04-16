@@ -40,7 +40,7 @@ resource "aws_instance" "aws-tm-id-au" {
   instance_type           = "${var.server_type}"
   disable_api_termination = true
   iam_instance_profile    = "EC2-SimpleSystemsManager"
-  monitoring              = true
+  monitoring              = false                      # Just for now, to keep costs down.
 
   vpc_security_group_ids = [
     "${aws_security_group.default.id}",
