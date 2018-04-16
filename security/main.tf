@@ -1,9 +1,26 @@
+# IAM - access keys, users, groups, policies and roles
+# CloudTrail
+# Config?
+# GuardDuty?
+# Inspector?
+
 /**
  * Defines EC2 security groups.
  *
  * @author Tim Malone <tdmalone@gmail.com>
  * @see https://www.terraform.io/docs/providers/aws/r/security_group.html
  */
+
+resource "aws_security_group" "default" {
+  description = "default VPC security group"
+
+  ingress {
+    protocol  = "-1"
+    from_port = 0
+    to_port   = 0
+    self      = true
+  }
+}
 
 resource "aws_security_group" "outbound" {
   description = "Unrestricted outbound"
@@ -45,6 +62,18 @@ resource "aws_security_group" "https" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["${var.ip_address_list_1}"]
+  }
+}
+
+resource "aws_security_group" "ssh" {
+  description = "Restricted inbound SSH"
+
+  ingress {
+    description = "SSH"
+    from_port   = "${var.ssh_port}"
+    to_port     = "${var.ssh_port}"
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ip_address_list_2}"]
   }
 }
 

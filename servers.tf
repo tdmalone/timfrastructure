@@ -103,3 +103,4 @@ resource "aws_launch_configuration" "default" {
   ebs_optimized     = false
 }
 */
+
