@@ -1,4 +1,3 @@
-
 variable "ssh_port" {}
 variable "rdp_port" {}
 

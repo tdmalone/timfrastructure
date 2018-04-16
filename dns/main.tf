@@ -39,14 +39,14 @@
 resource "cloudflare_record" "domain2-naked" {
   domain = "${var.domain2}"
   name   = "${var.domain2}"
-  value  = "${aws_s3_bucket.domain2-naked.website_endpoint}"
+  value  = "${data.terraform_remote_state.redirects.domain2_naked_endpoint}"
   type   = "CNAME"
 }
 
 resource "cloudflare_record" "domain2-www" {
   domain = "${var.domain2}"
   name   = "www"
-  value  = "${aws_s3_bucket.domain2-www.website_endpoint}"
+  value  = "${data.terraform_remote_state.redirects.domain2_www_endpoint}"
   type   = "CNAME"
 }
 
@@ -61,13 +61,13 @@ resource "cloudflare_record" "domain2-www" {
 resource "cloudflare_record" "domain3-naked" {
   domain = "${var.domain3}"
   name   = "${var.domain3}"
-  value  = "${aws_s3_bucket.domain3-naked.website_endpoint}"
+  value  = "${data.terraform_remote_state.redirects.domain3_naked_endpoint}"
   type   = "CNAME"
 }
 
 resource "cloudflare_record" "domain3-www" {
   domain = "${var.domain3}"
   name   = "www"
-  value  = "${aws_s3_bucket.domain3-www.website_endpoint}"
+  value  = "${data.terraform_remote_state.redirects.domain3_www_endpoint}"
   type   = "CNAME"
 }
