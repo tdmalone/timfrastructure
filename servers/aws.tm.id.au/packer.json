@@ -23,7 +23,7 @@
 
   "provisioners": [{
     "type": "shell",
-    "script": "./aws-tm-id-au.packer.sh"
+    "script": "./packer.sh"
   }]
 
 }

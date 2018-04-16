@@ -21,27 +21,36 @@ install:
   # Install Terraform.
   - curl --location https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip > terraform.zip
   - unzip terraform.zip
+  - terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
 
   # Install Packer
   - curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
   - unzip packer.zip
+  - packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
 
 script:
 
-  # Check that Terraform config files are formatted correctly and that they validate.
-  - ./terraform fmt -check
-  - ./terraform init -input=false -lock=false
-  - ./terraform validate
+  # Find all Terraform config directories and Packer templates.
+  - TERRAFORM_DIRS="$( find . -name "main.tf" | sort | xargs dirname )"
+  - PACKER_TEMPLATES="$( find . -name "packer.json" | sort )"
 
-  # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
-  # We only care about the exit code here, and don't want to expose any potentially sensitive data,
-  # so we also redirect the output.
-  - ./terraform plan -detailed-exitcode -lock=false > /dev/null
+  # Check that Terraform config files are formatted correctly and that they validate - whichever
+  # directory they may be in.
+  - terraform fmt -check
+  - echo $TERRAFORM_DIRS | xargs -I % sh -c 'echo "\n%" && ( cd % && terraform init -input=false -lock=false )'
+  - echo '\nValidating all Terraform files...'
+  - echo $TERRAFORM_DIRS | xargs -I % sh -c 'echo "%" && ( cd % && terraform validate )'
 
-  # Check that all Packer templates validate & build.
+  # Check that the state is up-to-date - i.e. that no changes have been pushed without being
+  # applied. We only care about the exit code here, and don't want to expose any potentially
+  # sensitive data, so we also redirect the output.
+  - echo '\nChecking there are no outstanding changes to be applied...'
+  - echo $TERRAFORM_DIRS | xargs -I % sh -c 'echo "%" && ( cd % && terraform plan -detailed-exitcode -lock=false > /dev/null )'
+
+  # Check that all Packer templates validate & build - whichever directory they may be in.
   # TODO: Deregister these AMIs afterwards so that builds are idempotent.
-  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer validate %'
-  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer build %'
+  - find . -name "packer.json" | xargs -I % sh -c 'echo % && ( cd $( dirname % ) && packer validate $( basename % ) )'
+  - find . -name "packer.json" | xargs -I % sh -c 'echo % && ( cd $( dirname % ) && packer build $( basename % ) )'
 
 notifications:
   email: false
