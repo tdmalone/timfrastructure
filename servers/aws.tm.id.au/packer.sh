@@ -6,6 +6,7 @@ set -euo pipefail
 sudo apt-get update
 sudo apt-get upgrade --assume-yes
 sudo apt-get install --assume-yes apt-transport-https
+sudo apt-get install --assume-yes unzip
 
 # TODO: Set up new hostname.
 
