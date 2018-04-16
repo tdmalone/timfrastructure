@@ -5,7 +5,7 @@ set -euo pipefail
 # Update stuff and install helpers.
 sudo apt-get update
 sudo apt-get upgrade --assume-yes
-sudo apt-get install apt-transport-https
+sudo apt-get install --assume-yes apt-transport-https
 
 # TODO: Set up new hostname.
 
@@ -34,16 +34,22 @@ sudo apt-get install --assume-yes nodejs
 # @see https://yarnpkg.com/en/docs/install
 curl https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add /dev/stdin
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install yarn
+sudo apt-get update
+sudo apt-get install --assume-yes yarn
 
 # TODO: Install PHP, Python & PIP, Ruby, and Go.
+
+# TODO: Install RubyGems if it wasn't installed with Ruby.
+# @see https://rubygems.org/pages/download
+# wget https://rubygems.org/rubygems/rubygems-2.7.6.tgz
 
 # TODO: Install MariaDB.
 
 # Install Travis CLI and enable autocomplete.
 # @see https://stackoverflow.com/a/44851034/1982136
-sudo gem install travis
-echo "y" | travis --version
+# TODO: Uncomment the below once Ruby/RubyGems setup is added.
+#sudo gem install travis
+#echo "y" | travis --version
 
 # Install Heroku CLI.
 # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
@@ -51,7 +57,8 @@ wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 # Install Papertrail CLI.
 # @see https://github.com/papertrail/papertrail-cli
-sudo gem install papertrail
+# TODO: Uncomment the below once Ruby/RubyGems setup is added.
+#sudo gem install papertrail
 
 # TODO: Install LastPass, Papertrail and AWS cli's.
 
@@ -82,11 +89,12 @@ sudo mv packer /usr/local/bin/packer
 
 # Install gcloud CLI & kubectl.
 # @see https://cloud.google.com/sdk/docs/#deb
-export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+echo "deb https://packages.cloud.google.com/apt ${CLOUD_SDK_REPO} main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo apt-get update && sudo apt-get install google-cloud-sdk
-sudo apt-get install kubectl
+sudo apt-get update
+sudo apt-get install --assume-yes google-cloud-sdk
+sudo apt-get install --assume-yes kubectl
 
 # TODO: Install minikube.
 # @see https://github.com/kubernetes/minikube/releases
@@ -96,7 +104,8 @@ sudo apt-get install kubectl
 AZ_REPO=$(lsb_release -cs)
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
 sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893
-sudo apt-get update && sudo apt-get install azure-cli
+sudo apt-get update
+sudo apt-get install --assume-yes azure-cli
 
 # Install IBM Cloud CLI.
 wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
