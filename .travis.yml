@@ -39,18 +39,19 @@ script:
   # Check that Terraform config files are formatted correctly and that they validate - whichever
   # directory they may be in.
   - terraform fmt -check
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo "%" && ( cd % && terraform init -input=false -lock=false )'
+  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && ( cd % && terraform init -input=false -lock=false )'
   - echo && echo 'Validating all Terraform files...'
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo "%" && ( cd % && terraform validate )'
+  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo % && ( cd % && terraform validate )'
 
   # Check that the state is up-to-date - i.e. that no changes have been pushed without being
   # applied. We only care about the exit code here, and don't want to expose any potentially
   # sensitive data, so we also redirect the output.
-  - echo && echo 'Checking there are no outstanding changes to be applied...'
+  - echo && echo 'Checking there are no outstanding changes to be applied (changes will be hidden for security reasons)...'
   - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo "%" && ( cd % && terraform plan -detailed-exitcode -lock=false > /dev/null )'
 
   # Shellcheck any shell scripts.
-  - shellcheck **/*.sh
+  - echo && echo 'Checking shell scripts...'
+  - find . -name "*.sh" | xargs -I % bash -c 'echo % && shellcheck %'
 
   # Check that all Packer templates validate & build - whichever directory they may be in.
   # TODO: Deregister these AMIs afterwards so that builds are idempotent.
