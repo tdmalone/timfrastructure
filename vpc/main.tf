@@ -26,9 +26,24 @@ resource "aws_subnet" "private-b" {
   cidr_block        = "10.0.2.0/24"
 }
 
+# TODO:
+# aws_network_acl
+# aws_network_acl_rule
+# aws_network_interface
+# aws_network_interface_attachment
+# aws_route_table
+# aws_route_table_association
+
 /**
  * Manage the default VPC that exists in each region of every AWS account!
  *
  * @see https://www.terraform.io/docs/providers/aws/r/default_vpc.html
  */
 resource "aws_default_vpc" "default" {}
+
+# TODO:
+# aws_default_network_acl
+# aws_default_route_table
+# aws_default_security_group
+# aws_default_subnet
+
