@@ -1,7 +1,7 @@
 
 # TODO: In progress converting the partially written ./packer.sh over to here.
 
-- hosts: aws.tm.id.au
+- hosts: default
   become: yes
   tasks:
 
