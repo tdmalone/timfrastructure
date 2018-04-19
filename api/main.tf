@@ -3,9 +3,7 @@
  *
  * @see https://www.terraform.io/docs/providers/aws/r/api_gateway_rest_api.html
  */
-resource "aws_api_gateway_rest_api" "api" {
-
-}
+#resource "aws_api_gateway_rest_api" "api" {}
 
 /**
  *

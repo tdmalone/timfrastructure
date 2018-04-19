@@ -30,6 +30,9 @@ install:
   - packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
   - export -f packer
 
+  # Install ansible-lint.
+  - pip2 install ansible-lint
+
 script:
 
   # Find all Terraform config directories and Packer templates.
@@ -44,7 +47,7 @@ script:
   - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo % && ( cd % && terraform validate )'
 
   # Additional checks using tflint.
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && docker run --rm -v $(pwd)/%:/data -t wata727/tflint --error-with-issues'
+  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && docker run --rm --tty --volume $(pwd)/%:/data wata727/tflint --error-with-issues'
 
   # Check that the state is up-to-date - i.e. that no changes have been pushed without being
   # applied. We only care about the exit code here, and don't want to expose any potentially
