@@ -31,7 +31,7 @@ install:
   - export -f packer
 
   # Install ansible-lint.
-  - pip2 install ansible-lint
+  - pip install ansible-lint
 
 script:
 
