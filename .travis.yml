@@ -33,7 +33,7 @@ install:
 script:
 
   # Find all Terraform config directories and Packer templates.
-  - TERRAFORM_DIRS="$( find . -name "main.tf" | sort | xargs dirname )"
+  - TERRAFORM_DIRS="$( find . -name "*.tf" | sort | xargs dirname | uniq )"
   - PACKER_TEMPLATES="$( find . -name "packer.json" | sort )"
 
   # Check that Terraform config files are formatted correctly and that they validate - whichever
@@ -42,6 +42,9 @@ script:
   - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && ( cd % && terraform init -input=false -lock=false )'
   - echo && echo 'Validating all Terraform files...'
   - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo % && ( cd % && terraform validate )'
+
+  # Additional checks using tflint.
+  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && docker run --rm -v $(pwd)/%:/data -t wata727/tflint --error-with-issues'
 
   # Check that the state is up-to-date - i.e. that no changes have been pushed without being
   # applied. We only care about the exit code here, and don't want to expose any potentially
@@ -52,6 +55,9 @@ script:
   # Shellcheck any shell scripts.
   - echo && echo 'Checking shell scripts...'
   - find . -name "*.sh" | xargs -I % bash -c 'echo % && shellcheck %'
+
+  # Lint any Ansible playbooks.
+  - find . -name "*.yml" | xargs ansible-lint -v
 
   # Check that all Packer templates validate & build - whichever directory they may be in.
   # TODO: Deregister these AMIs afterwards so that builds are idempotent.
