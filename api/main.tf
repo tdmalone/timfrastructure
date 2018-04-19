@@ -23,3 +23,4 @@ resource "aws_api_gateway_account" "default" {
 /*resource "aws_api_gateway_domain_name" "api-tm-id-au" {
   domain_name = "api.tm.id.au"
 }*/
+
