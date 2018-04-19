@@ -1,12 +1,13 @@
 {
 
+  "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
   "builders": [{
 
     "type": "amazon-ebs",
     "region": "ap-southeast-2",
     "instance_type": "t2.micro",
     "ssh_username": "ubuntu",
-    "ami_name": "packer-aws-tm-id-au {{timestamp}}",
+    "ami_name": "packer aws-tm-id-au {{timestamp}}",
 
     "source_ami_filter": {
       "filters": {
@@ -21,9 +22,10 @@
 
   }],
 
+  "_see": "https://www.packer.io/docs/provisioners/ansible.html",
   "provisioners": [{
-    "type": "shell",
-    "script": "./packer.sh"
+    "type": "ansible",
+    "script": "./playbook.sh"
   }]
 
 }

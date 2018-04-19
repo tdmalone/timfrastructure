@@ -1,0 +1,39 @@
+
+# TODO: In progress converting the partially written ./packer.sh over to here.
+
+- hosts: aws.tm.id.au
+  become: yes
+  tasks:
+
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: Install packages with apt
+      apt:
+        name: "{{ item }}"
+        #update_cache: yes # Comment out to save time while working on the playbook.
+        autoclean: yes
+        autoremove: yes
+      with_items:
+        - apt-transport-https
+        - unzip
+        - ansible
+        - google-cloud-sdk
+        - kubectl
+        - azure-cli
+        - amazon-ssm-agent
+        - nginx
+        - bzip2
+        - curl
+        - ftp
+        - mariadb-server
+        - heroku
+        - nodejs
+        - yarn
+        - php7.2
+        - python3
+        - ruby
+        - zsh
+        - git
+        - vim
+        - wget
+
+    #- name: Start services on boot
