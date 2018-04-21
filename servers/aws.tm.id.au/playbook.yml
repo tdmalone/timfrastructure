@@ -1,15 +1,96 @@
 
-# TODO: In progress converting the partially written ./packer.sh over to here.
+# TODO: IN PROGRESS! DO NOT USE YET.
 
 - hosts: default
   become: yes
+  gather_facts: no # This won't work until we install Python.
+
+  pre_tasks:
+
+    # @see https://stackoverflow.com/a/34402816/1982136
+    # @see http://docs.ansible.com/ansible/latest/modules/raw_module.html
+    - name: Check if python-simplejson is installed
+      command: dpkg-query --show python-simplejson
+      register: python_simplejson_installed
+      failed_when: python_simplejson_installed.rc > 1
+      changed_when: python_simplejson_installed.rc == 1
+      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+    - name: Install python module for Ansible support
+      raw: sudo apt-get install --assume-yes python-simplejson
+      when: "python_simplejson_installed.rc == 1"
+
+    - name: Gather facts now that Python is installed
+      setup: # No args required.
+
   tasks:
+
+    # TODO: Set up new hostname.
+
+    # TODO: Change server timezone.
+
+    # TODO: Add new user.
+
+    # TODO: Disable password login.
+
+    # TODO: Set up Papertrail monitoring.
+
+    # TODO: Install Datadog agent.
+
+    # TODO: Copy across common Datadog configuration.
+
+    # TODO: Clone tdmalone/dotfiles.
+
+    # Install Node.js.
+    # @see https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+    #curl --location https://deb.nodesource.com/setup_9.x | sudo --preserve-env bash /dev/stdin
+    #sudo apt-get install --assume-yes nodejs
+
+    # TODO: Install PHP, Python & PIP, Ruby, and Go.
+
+    # TODO: Install RubyGems if it wasn't installed with Ruby.
+    # @see https://rubygems.org/pages/download
+    # wget https://rubygems.org/rubygems/rubygems-2.7.6.tgz
+
+    # Install Ansible.
+    # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+    #sudo apt-get install --assume-yes software-properties-common
+    #sudo apt-add-repository ppa:ansible/ansible
+    #sudo apt-get update
+    #sudo apt-get install --assume-yes ansible
+
+    # @see https://stackoverflow.com/questions/36059804/ansible-store-commands-stdout-in-new-variable
+    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/set_fact_module.html
+    - name: Get dist codename for adding apt sources
+      command: lsb_release -cs
+      register: command_output
+      changed_when: false
+      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+    - set_fact:
+        dist_codename: "{{ command_output.stdout }}"
+
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
+    - name: Add neccessary apt sources
+      apt_repository:
+        repo: "{{ item }}"
+      with_items:
+        - deb https://packages.cloud.google.com/apt cloud-sdk-{{dist_codename}} main
+        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{dist_codename}} main
+
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
+    - name: Add Google Cloud apt key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    - name: Add Azure apt key
+      apt_key:
+        keyserver: packages.microsoft.com
+        id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     - name: Install packages with apt
       apt:
         name: "{{ item }}"
-        #update_cache: yes # Comment out to save time while working on the playbook.
+        update_cache: yes # Comment out to save time while working on the playbook.
         autoclean: yes
         autoremove: yes
       with_items:
@@ -19,7 +100,6 @@
         - google-cloud-sdk
         - kubectl
         - azure-cli
-        - amazon-ssm-agent
         - nginx
         - bzip2
         - curl
@@ -36,4 +116,85 @@
         - vim
         - wget
 
+    # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
+    # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
+    - name: Check if amazon-ssm-agent is installed
+      command: dpkg-query --show amazon-ssm-agent
+      register: amazon_ssm_agent_installed
+      failed_when: amazon_ssm_agent_installed.rc > 1
+      changed_when: amazon_ssm_agent_installed.rc == 1
+      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+    - name: Download amazon-ssm-agent
+      get_url:
+        url="https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb"
+        dest="/home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb"
+      when: amazon_ssm_agent_installed.rc == 1
+    - name: Install amazon-ssm-agent
+      apt: deb="/home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb"
+      when: amazon_ssm_agent_installed.rc == 1
+
+    # TODO: Install MariaDB.
+
+    # TODO: Install nginx & set up a vhost and php-fpm.
+
     #- name: Start services on boot
+    # sudo systemctl enable amazon-ssm-agent
+    # sudo systemctl start amazon-ssm-agent
+
+    # Install Yarn.
+    # @see https://yarnpkg.com/en/docs/install
+    #curl https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add /dev/stdin
+    #echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    #sudo apt-get update
+    #sudo apt-get install --assume-yes yarn
+
+    # Install Travis CLI and enable autocomplete.
+    # @see https://stackoverflow.com/a/44851034/1982136
+    # TODO: Uncomment the below once Ruby/RubyGems setup is added.
+    #sudo gem install travis
+    #echo "y" | travis --version
+
+    # Install Heroku CLI.
+    # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+    #wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+    # Install Papertrail CLI.
+    # @see https://github.com/papertrail/papertrail-cli
+    # TODO: Uncomment the below once Ruby/RubyGems setup is added.
+    #sudo gem install papertrail
+
+    # TODO: Install LastPass, Papertrail and AWS cli's.
+
+    # Install wp-cli.
+    # @see https://wp-cli.org/#installing
+    #curl --remote-name https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    #chmod +x wp-cli.phar
+    #sudo mv wp-cli.phar /usr/local/bin/wp
+
+    # Install Terraform.
+    # TODO: Find a way to programmatically download or get the latest version number.
+    #curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
+    #unzip terraform.zip
+    #sudo mv terraform /usr/local/bin/terraform
+
+    # Install Packer.
+    # TODO: Find a way to programmatically download or get the latest version number.
+    #curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
+    #unzip packer.zip
+    #sudo mv packer /usr/local/bin/packer
+
+    # TODO: Install Vagrant.
+
+    # TODO: Install minikube.
+    # @see https://github.com/kubernetes/minikube/releases
+
+    # Install IBM Cloud CLI.
+    #wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
+    #tar -zxvf linux64 && rm linux64
+    #Bluemix_CLI/install_bluemix_cli
+
+    # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
+
+    # TODO: Install and set up a local WordPress site to manage tm.id.au.
+
+    # TODO: Install zsh and oh-my-zsh.
