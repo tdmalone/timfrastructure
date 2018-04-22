@@ -1,5 +1,6 @@
 
 # TODO: IN PROGRESS! DO NOT USE YET.
+# TODO: Split up into separate files for related groups of tasks.
 
 - hosts: default
   become: yes
@@ -10,7 +11,7 @@
     # @see https://stackoverflow.com/a/34402816/1982136
     # @see http://docs.ansible.com/ansible/latest/modules/raw_module.html
     - name: Check if python-simplejson is installed
-      command: dpkg-query --show python-simplejson
+      raw: dpkg-query --show python-simplejson
       register: python_simplejson_installed
       failed_when: python_simplejson_installed.rc > 1
       changed_when: python_simplejson_installed.rc == 1
@@ -26,9 +27,14 @@
 
     # TODO: Set up new hostname.
 
-    # TODO: Change server timezone.
+    # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
+    - name: Set timezone to Australia/Melbourne
+      timezone:
+        name: Australia/Melbourne
 
     # TODO: Add new user.
+    # adduser tim
+    # usermod -aG sudo tim
 
     # TODO: Disable password login.
 
@@ -51,13 +57,6 @@
     # @see https://rubygems.org/pages/download
     # wget https://rubygems.org/rubygems/rubygems-2.7.6.tgz
 
-    # Install Ansible.
-    # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
-    #sudo apt-get install --assume-yes software-properties-common
-    #sudo apt-add-repository ppa:ansible/ansible
-    #sudo apt-get update
-    #sudo apt-get install --assume-yes ansible
-
     # @see https://stackoverflow.com/questions/36059804/ansible-store-commands-stdout-in-new-variable
     # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
     # @see http://docs.ansible.com/ansible/latest/modules/set_fact_module.html
@@ -66,21 +65,36 @@
       register: command_output
       changed_when: false
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-    - set_fact:
+    - name: Set fact with dist codename
+      set_fact:
         dist_codename: "{{ command_output.stdout }}"
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
+    # @see https://cloud.google.com/sdk/docs/#deb
+    # @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
+    # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+    # @see https://yarnpkg.com/en/docs/install
+    # @see https://tecadmin.net/install-php-7-on-ubuntu/
+    # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
     - name: Add neccessary apt sources
       apt_repository:
         repo: "{{ item }}"
       with_items:
-        - deb https://packages.cloud.google.com/apt cloud-sdk-{{dist_codename}} main
-        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{dist_codename}} main
+        - deb https://packages.cloud.google.com/apt cloud-sdk-{{ dist_codename }} main
+        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ dist_codename }} main
+        - deb https://cli-assets.heroku.com/branches/stable/apt ./
+        - deb https://dl.yarnpkg.com/debian/ stable main
+        - ppa:ondrej/php
+        - ppa:ansible/ansible
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
-    - name: Add Google Cloud apt key
+    - name: Add neccessary apt keys
       apt_key:
-        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        url: "{{ item }}"
+      with_items:
+        - https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        - https://cli-assets.heroku.com/apt/release.key
+        - https://dl.yarnpkg.com/debian/pubkey.gpg
     - name: Add Azure apt key
       apt_key:
         keyserver: packages.microsoft.com
@@ -100,7 +114,7 @@
         - google-cloud-sdk
         - kubectl
         - azure-cli
-        - nginx
+        #- nginx
         - bzip2
         - curl
         - ftp
@@ -116,21 +130,34 @@
         - vim
         - wget
 
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: Install nginx
+      apt:
+        name: nginx
+
     # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
+    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/get_url_module.html
     - name: Check if amazon-ssm-agent is installed
       command: dpkg-query --show amazon-ssm-agent
       register: amazon_ssm_agent_installed
       failed_when: amazon_ssm_agent_installed.rc > 1
       changed_when: amazon_ssm_agent_installed.rc == 1
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+    - name: Ensure /home/{{ ansible_env.USER }}/downloads dir exists
+      file:
+        path: /home/{{ ansible_env.USER }}/downloads
+        state: directory
+      when: amazon_ssm_agent_installed.rc == 1
     - name: Download amazon-ssm-agent
       get_url:
-        url="https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb"
-        dest="/home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb"
+        url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
+        dest: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
       when: amazon_ssm_agent_installed.rc == 1
     - name: Install amazon-ssm-agent
-      apt: deb="/home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb"
+      apt:
+        deb: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
       when: amazon_ssm_agent_installed.rc == 1
 
     # TODO: Install MariaDB.
@@ -141,22 +168,11 @@
     # sudo systemctl enable amazon-ssm-agent
     # sudo systemctl start amazon-ssm-agent
 
-    # Install Yarn.
-    # @see https://yarnpkg.com/en/docs/install
-    #curl https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add /dev/stdin
-    #echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    #sudo apt-get update
-    #sudo apt-get install --assume-yes yarn
-
     # Install Travis CLI and enable autocomplete.
     # @see https://stackoverflow.com/a/44851034/1982136
     # TODO: Uncomment the below once Ruby/RubyGems setup is added.
     #sudo gem install travis
     #echo "y" | travis --version
-
-    # Install Heroku CLI.
-    # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
-    #wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
     # Install Papertrail CLI.
     # @see https://github.com/papertrail/papertrail-cli
@@ -198,3 +214,6 @@
     # TODO: Install and set up a local WordPress site to manage tm.id.au.
 
     # TODO: Install zsh and oh-my-zsh.
+
+    # TODO: Print out versions of everything that was installed; also serves as a check that they
+    #       were installed properly.
