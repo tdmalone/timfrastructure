@@ -1,3 +1,8 @@
+/**
+ * Make the remote state for ../security available for querying.
+ *
+ * @see https://www.terraform.io/docs/providers/terraform/d/remote_state.html
+ */
 data "terraform_remote_state" "security" {
   backend = "s3"
 
@@ -8,17 +13,26 @@ data "terraform_remote_state" "security" {
 }
 
 /**
- * Get the most recent Ubuntu LTS AMI for later use.
+ * Make the current AWS account accessible as a data attribute.
  *
+ * @see https://www.terraform.io/docs/providers/aws/d/caller_identity.html
+ * @see https://www.terraform.io/docs/configuration/data-sources.html
+ */
+data "aws_caller_identity" "current" {}
+
+/**
+ * Get the most recent AMI created via Packer.
+ *
+ * @see ./packer.json
  * @see https://www.terraform.io/docs/providers/aws/d/ami.html
  * @see http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html
  */
-data "aws_ami" "ubuntu-latest" {
+data "aws_ami" "packer_latest" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*"]
+    values = ["packer aws-tm-id-au *"]
   }
 
   filter {
@@ -26,5 +40,5 @@ data "aws_ami" "ubuntu-latest" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["${data.aws_caller_identity.current.account_id}"]
 }

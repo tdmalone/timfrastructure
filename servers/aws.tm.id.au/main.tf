@@ -36,9 +36,50 @@ resource "aws_instance" "aws-tm-id-au" {
     "${data.terraform_remote_state.security.aws_security_group_ssh_id}",
     "${data.terraform_remote_state.security.aws_security_group_ping_id}",
   ]
+
+  tags {
+    Name = "aws.tm.id.au"
+  }
 }
 
-# https://www.terraform.io/docs/providers/aws/r/eip.html
+/**
+ * Upcoming dev server based on a custom API built with Packer and Ansible.
+ *
+ * @see ./packer.json
+ * @see ./playbook.yml
+ * @see https://www.terraform.io/docs/providers/aws/r/instance.html
+ */
+resource "aws_instance" "xenial-tm-id-au" {
+  ami                     = "${data.aws_ami.packer_latest.id}"
+  instance_type           = "${var.server_type}"
+  disable_api_termination = true
+  iam_instance_profile    = "EC2-SimpleSystemsManager"
+  monitoring              = false                              # Just for now, to keep costs down.
+
+  availability_zone = "ap-southeast-2a"
+  subnet_id = "subnet-dc832995" # TODO: Get from vpc remote state.
+  # TODO: Add public IP.
+
+  # TODO: Add volume.
+
+  vpc_security_group_ids = [
+    "${data.terraform_remote_state.security.aws_security_group_default_id}",
+    "${data.terraform_remote_state.security.aws_security_group_outbound_id}",
+    "${data.terraform_remote_state.security.aws_security_group_https_id}",
+    "${data.terraform_remote_state.security.aws_security_group_ssh_id}",
+    "${data.terraform_remote_state.security.aws_security_group_ping_id}",
+  ]
+
+  tags {
+    Name = "xenial.tm.id.au"
+  }
+}
+
+/**
+ *
+ *
+ * @see https://www.terraform.io/docs/providers/aws/r/eip.html
+ */
 resource "aws_eip" "aws-tm-id-au" {
   instance = "${aws_instance.aws-tm-id-au.id}"
   vpc      = true
