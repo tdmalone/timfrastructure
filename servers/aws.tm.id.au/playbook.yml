@@ -1,12 +1,24 @@
 
-# TODO: IN PROGRESS! DO NOT USE YET.
+####### IN PROGRESS! DO NOT USE YET. #######
 
 # TODO: Split up into separate files for related groups of tasks.
-# TODO: Set variables for configurable items such as username, timezone, public SSH key URL, etc.
+
+# TODO: Support CentOS as well as Ubuntu (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help).
+
+# TODO: Work out how to determine whether the system was created today or not, and use that to determine whether a dist-upgrade should be run. Running `sudo tune2fs -l /dev/xvda1 | grep created` should give the created date of the filesystem which is a pretty good way to determine system age, and then there's a bunch of useful facts in {{ansible_date_time}} to compare to current.
 
 - hosts: default
   become: yes
   gather_facts: no # This won't work until we install the needed Python module (see below).
+
+  vars:
+    username: tim
+    full_name: Tim Malone
+    timezone: Australia/Melbourne
+    ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
+    shell: /bin/zsh
+    hostname: aws.tm.id.au
+    dist_upgrade: false # WARNING: Should only be used on brand new servers!
 
   handlers:
 
@@ -35,30 +47,48 @@
 
   tasks:
 
-    # TODO: Set up new hostname.
+    # @see http://docs.ansible.com/ansible/latest/modules/hostname_module.html
+    - name: Set hostname to {{ hostname }}.
+      hostname:
+        name: "{{ hostname }}"
+
+    - name: Add hostname to /etc/hosts.
+      lineinfile:
+        dest: /etc/hosts
+        regexp: "^127.0.0.1"
+        line: "127.0.0.1 {{ hostname }}"
 
     # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
-    - name: Set timezone to Australia/Melbourne.
+    - name: Set timezone to {{ timezone }}.
       timezone:
-        name: Australia/Melbourne
+        name: "{{ timezone }}"
+
+    # @see http://docs.ansible.com/ansible/latest/modules/group_module.html
+    - name: Ensure groups are present.
+      group:
+        name: "{{ item }}"
+      with_items:
+        - "{{ username }}"
+        - docker
+        - sudo
 
     # @see http://docs.ansible.com/ansible/latest/modules/user_module.html
-    - name: Add user tim.
+    - name: Add user {{ username }}.
       user:
-        name: tim
-        comment: Tim Malone
-        group: tim
-        shell: /bin/zsh
-        groups: tim,docker,sudo
+        name: "{{ username }}"
+        comment: "{{ full_name }}"
+        group: "{{ username }}"
+        shell: "{{ shell }}"
+        groups: "{{ username }},docker,sudo"
 
     # @see http://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
     # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
     # @see https://github.com/vitalk/ansible-secure-ssh/blob/master/tasks/main.yml
     # @see https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/
-    - name: Add authorized_key for user tim.
+    - name: Add authorized_key for user {{ username }}.
       authorized_key:
-        user: tim
-        key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
+        user: "{{ username }}"
+        key: "{{ ssh_key }}"
       register: add_authorized_key
 
     - name: Disable empty password login.
@@ -116,16 +146,18 @@
     # @see https://github.com/reactiveops/ansible-papertrail
     # @see https://github.com/aptoma/ansible-papertrail
     # @see https://github.com/azavea/ansible-papertrail
+    # @see PAPERTRAIL_HOST & PAPERTRAIL_PORT env vars.
 
+    # TODO: Set up Datadog monitoring.
     # - include_role:
     #     name: Datadog.datadog
     #   vars:
     #     become: yes
     #     datadog_api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
 
-    # TODO: Copy across common Datadog configuration and restart Datadog agent.
+    # TODO: Copy across common Datadog configuration; restart Datadog agent.
 
-    # TODO: Configure git config.
+    # TODO: Configure git.
     # @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
 
     # TODO: Clone tdmalone/dotfiles.
@@ -136,24 +168,11 @@
     #curl --location https://deb.nodesource.com/setup_9.x | sudo --preserve-env bash /dev/stdin
     #sudo apt-get install --assume-yes nodejs
 
-    # TODO: Install PHP, Python & PIP, Ruby, and Go.
+    # TODO: Install Go.
 
     # TODO: Install RubyGems if it wasn't installed with Ruby.
     # @see https://rubygems.org/pages/download
     # wget https://rubygems.org/rubygems/rubygems-2.7.6.tgz
-
-    # @see https://stackoverflow.com/questions/36059804/ansible-store-commands-stdout-in-new-variable
-    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/set_fact_module.html
-    - name: Get distribution codename for adding apt sources.
-      command: lsb_release -cs
-      register: command_output
-      changed_when: false
-      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-
-    - name: Set the distribution codename as a fact.
-      set_fact:
-        dist_codename: "{{ command_output.stdout }}"
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
     # @see https://cloud.google.com/sdk/docs/#deb
@@ -162,12 +181,13 @@
     # @see https://yarnpkg.com/en/docs/install
     # @see https://tecadmin.net/install-php-7-on-ubuntu/
     # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+    # NOTE: {{ansible_lsb.codename}} will return eg. 'trusty' or 'xenial'. An alternative is {{ansible_distribution_release}}.
     - name: Add neccessary apt sources.
       apt_repository:
         repo: "{{ item }}"
       with_items:
-        - deb https://packages.cloud.google.com/apt cloud-sdk-{{ dist_codename }} main
-        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ dist_codename }} main
+        - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
+        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_lsb.codename }} main
         - deb https://cli-assets.heroku.com/branches/stable/apt ./
         - deb https://dl.yarnpkg.com/debian/ stable main
         - ppa:ondrej/php
@@ -188,30 +208,39 @@
         id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: Perform a full dist-upgrade.
+      apt:
+        upgrade: full
+      when: dist_upgrade == true
+
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+    # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
     - name: Install packages with apt.
       apt:
         name: "{{ item }}"
         cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
         autoclean: yes
         autoremove: yes
-        #upgrade: full # Should only be used on brand new servers; leave commented out for now.
       with_items:
         - apt-transport-https
         - unzip
         - ansible
-        - google-cloud-sdk
-        - kubectl
-        - azure-cli
+        #- google-cloud-sdk
+        #- kubectl
+        #- azure-cli
         #- nginx
         - bzip2
         - curl
         - ftp
         - mariadb-server
-        - heroku
+        #- heroku
         - nodejs
-        - yarn
+        #- yarn
         - php7.2
         - python3
+        #- python3-venv # May not work on Ubuntu 14.04.
+        - python3-pip
+        - python-pip
         - ruby
         - zsh
         - git
@@ -219,9 +248,9 @@
         - wget
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: Install nginx.
-      apt:
-        name: nginx
+    # - name: Install nginx.
+    #   apt:
+    #     name: nginx
 
     # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
@@ -253,7 +282,7 @@
 
     # TODO: Install MariaDB.
 
-    # TODO: Install nginx & set up a vhost and php-fpm.
+    # TODO: Set up an nginx vhost, and configure with php-fpm.
 
     #- name: Start services on boot
     # sudo systemctl enable amazon-ssm-agent
@@ -270,7 +299,9 @@
     # TODO: Uncomment the below once Ruby/RubyGems setup is added.
     #sudo gem install papertrail
 
-    # TODO: Install LastPass, Papertrail and AWS cli's.
+    # TODO: Install LastPass CLI.
+
+    # TODO: Install AWS CLI.
 
     # Install wp-cli.
     # @see https://wp-cli.org/#installing
@@ -311,25 +342,36 @@
 
     # TODO: Install zsh and oh-my-zsh.
 
+    # TODO: Set up Cloud9 environment, if possible/neccessary?
+
     # TODO: Print out versions of everything that was installed; also serves as a check that they
     #       were installed properly.
+
+    # @see http://docs.ansible.com/ansible/latest/modules/pip_module.html
+    - name: Install datadog dependencies.
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - datadog
+        #- pyyaml
 
     # @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
     - name: Send Datadog event.
       datadog_event:
         title: Playbook run
-        text: Successful playbook run on {{ ansible_hostname }} ({{ inventory_hostname }}).
+        text: Successful playbook run on {{ ansible_nodename }} ({{ inventory_hostname }}).
         priority: low
         api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
         app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
-        tags: "#host:{{ ansible_hostname }}"
+        tags: "#host:{{ ansible_nodename }}"
 
     # @see http://docs.ansible.com/ansible/latest/modules/slack_module.html
     # TODO: Possible to include stats about how the play went?
     # TODO: Possible to send a failure message if the play fails?
+    # TODO: This appears to succeed even if the sending fails via Slack API, eg. with an invalid hook.
     - name: Send notification message via Slack.
       slack:
         token: "{{ lookup('env', 'SLACK_HOOK') }}"
         color: good
-        msg: Playbook run on *{{ ansible_hostname }}* ({{ inventory_hostname }}) has completed successfully.
+        msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) has completed successfully.
       delegate_to: localhost
