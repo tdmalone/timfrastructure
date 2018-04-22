@@ -7,3 +7,6 @@
 
 # Ansible
 *.retry
+
+# Cloud9 editor.
+.~c9_*

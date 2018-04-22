@@ -1,26 +1,36 @@
 
 # TODO: IN PROGRESS! DO NOT USE YET.
+
 # TODO: Split up into separate files for related groups of tasks.
+# TODO: Set variables for configurable items such as username, timezone, public SSH key URL, etc.
 
 - hosts: default
   become: yes
-  gather_facts: no # This won't work until we install Python.
+  gather_facts: no # This won't work until we install the needed Python module (see below).
+
+  handlers:
+
+  - name: restart sshd
+    service:
+      name: sshd
+      state: restarted
 
   pre_tasks:
 
     # @see https://stackoverflow.com/a/34402816/1982136
     # @see http://docs.ansible.com/ansible/latest/modules/raw_module.html
-    - name: Check if python-simplejson is installed
+    - name: Check if python-simplejson is installed.
       raw: dpkg-query --show python-simplejson
       register: python_simplejson_installed
       failed_when: python_simplejson_installed.rc > 1
       changed_when: python_simplejson_installed.rc == 1
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-    - name: Install python module for Ansible support
+
+    - name: If not, install python-simplejson for Ansible support.
       raw: sudo apt-get install --assume-yes python-simplejson
       when: "python_simplejson_installed.rc == 1"
 
-    - name: Gather facts now that Python is installed
+    - name: Gather facts now that the needed Python module is installed.
       setup: # No args required.
 
   tasks:
@@ -28,23 +38,98 @@
     # TODO: Set up new hostname.
 
     # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
-    - name: Set timezone to Australia/Melbourne
+    - name: Set timezone to Australia/Melbourne.
       timezone:
         name: Australia/Melbourne
 
-    # TODO: Add new user.
-    # adduser tim
-    # usermod -aG sudo tim
+    # @see http://docs.ansible.com/ansible/latest/modules/user_module.html
+    - name: Add user tim.
+      user:
+        name: tim
+        comment: Tim Malone
+        group: tim
+        shell: /bin/zsh
+        groups: tim,docker,sudo
 
-    # TODO: Disable password login.
+    # @see http://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+    # @see https://github.com/vitalk/ansible-secure-ssh/blob/master/tasks/main.yml
+    # @see https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/
+    - name: Add authorized_key for user tim.
+      authorized_key:
+        user: tim
+        key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
+      register: add_authorized_key
+
+    - name: Disable empty password login.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?PermitEmptyPasswords"
+        line: "PermitEmptyPasswords no"
+      notify: restart sshd
+
+    - name: Disable remote root login.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?PermitRootLogin"
+        line: "PermitRootLogin no"
+      notify: restart sshd
+
+    - name: Disable password login.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication no"
+      notify: restart sshd
+
+    - name: Enable public key authentication.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?PubkeyAuthentication"
+        line: "PubkeyAuthentication yes"
+      notify: restart sshd
+
+    - name: Disable challenge response authentication.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?ChallengeResponseAuthentication"
+        line: "ChallengeResponseAuthentication no"
+      notify: restart sshd
+
+    - name: Disable PAM.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?UsePAM"
+        line: "UsePAM no"
+      notify: restart sshd
+
+    # @see https://stackoverflow.com/a/37334415/1982136
+    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+    - name: Allow 'sudo' group to have passwordless sudo.
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL:ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
 
     # TODO: Set up Papertrail monitoring.
+    # @see https://github.com/reactiveops/ansible-papertrail
+    # @see https://github.com/aptoma/ansible-papertrail
+    # @see https://github.com/azavea/ansible-papertrail
 
-    # TODO: Install Datadog agent.
+    # - include_role:
+    #     name: Datadog.datadog
+    #   vars:
+    #     become: yes
+    #     datadog_api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
 
-    # TODO: Copy across common Datadog configuration.
+    # TODO: Copy across common Datadog configuration and restart Datadog agent.
+
+    # TODO: Configure git config.
+    # @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
 
     # TODO: Clone tdmalone/dotfiles.
+    # @see http://docs.ansible.com/ansible/latest/modules/git_module.html
 
     # Install Node.js.
     # @see https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
@@ -60,12 +145,13 @@
     # @see https://stackoverflow.com/questions/36059804/ansible-store-commands-stdout-in-new-variable
     # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
     # @see http://docs.ansible.com/ansible/latest/modules/set_fact_module.html
-    - name: Get dist codename for adding apt sources
+    - name: Get distribution codename for adding apt sources.
       command: lsb_release -cs
       register: command_output
       changed_when: false
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-    - name: Set fact with dist codename
+
+    - name: Set the distribution codename as a fact.
       set_fact:
         dist_codename: "{{ command_output.stdout }}"
 
@@ -76,7 +162,7 @@
     # @see https://yarnpkg.com/en/docs/install
     # @see https://tecadmin.net/install-php-7-on-ubuntu/
     # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
-    - name: Add neccessary apt sources
+    - name: Add neccessary apt sources.
       apt_repository:
         repo: "{{ item }}"
       with_items:
@@ -88,25 +174,27 @@
         - ppa:ansible/ansible
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
-    - name: Add neccessary apt keys
+    - name: Add neccessary apt keys.
       apt_key:
         url: "{{ item }}"
       with_items:
         - https://packages.cloud.google.com/apt/doc/apt-key.gpg
         - https://cli-assets.heroku.com/apt/release.key
         - https://dl.yarnpkg.com/debian/pubkey.gpg
-    - name: Add Azure apt key
+
+    - name: Add Azure apt key.
       apt_key:
         keyserver: packages.microsoft.com
         id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: Install packages with apt
+    - name: Install packages with apt.
       apt:
         name: "{{ item }}"
-        update_cache: yes # Comment out to save time while working on the playbook.
+        cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
         autoclean: yes
         autoremove: yes
+        #upgrade: full # Should only be used on brand new servers; leave commented out for now.
       with_items:
         - apt-transport-https
         - unzip
@@ -131,7 +219,7 @@
         - wget
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: Install nginx
+    - name: Install nginx.
       apt:
         name: nginx
 
@@ -139,23 +227,26 @@
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
     # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
     # @see http://docs.ansible.com/ansible/latest/modules/get_url_module.html
-    - name: Check if amazon-ssm-agent is installed
+    - name: Check if amazon-ssm-agent is installed.
       command: dpkg-query --show amazon-ssm-agent
       register: amazon_ssm_agent_installed
       failed_when: amazon_ssm_agent_installed.rc > 1
       changed_when: amazon_ssm_agent_installed.rc == 1
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-    - name: Ensure /home/{{ ansible_env.USER }}/downloads dir exists
+
+    - name: If not, ensure /home/{{ ansible_env.USER }}/downloads dir exists, then...
       file:
         path: /home/{{ ansible_env.USER }}/downloads
         state: directory
       when: amazon_ssm_agent_installed.rc == 1
-    - name: Download amazon-ssm-agent
+
+    - name: ...download amazon-ssm-agent, and...
       get_url:
         url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
         dest: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
       when: amazon_ssm_agent_installed.rc == 1
-    - name: Install amazon-ssm-agent
+
+    - name: ...install amazon-ssm-agent.
       apt:
         deb: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
       when: amazon_ssm_agent_installed.rc == 1
@@ -210,10 +301,35 @@
     #Bluemix_CLI/install_bluemix_cli
 
     # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
+    # @see http://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html
 
     # TODO: Install and set up a local WordPress site to manage tm.id.au.
+    # @see http://docs.ansible.com/ansible/latest/modules/mysql_db_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/mysql_user_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/blockinfile_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/copy_module.html
 
     # TODO: Install zsh and oh-my-zsh.
 
     # TODO: Print out versions of everything that was installed; also serves as a check that they
     #       were installed properly.
+
+    # @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
+    - name: Send Datadog event.
+      datadog_event:
+        title: Playbook run
+        text: Successful playbook run on {{ ansible_hostname }} ({{ inventory_hostname }}).
+        priority: low
+        api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
+        app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
+        tags: "#host:{{ ansible_hostname }}"
+
+    # @see http://docs.ansible.com/ansible/latest/modules/slack_module.html
+    # TODO: Possible to include stats about how the play went?
+    # TODO: Possible to send a failure message if the play fails?
+    - name: Send notification message via Slack.
+      slack:
+        token: "{{ lookup('env', 'SLACK_HOOK') }}"
+        color: good
+        msg: Playbook run on *{{ ansible_hostname }}* ({{ inventory_hostname }}) has completed successfully.
+      delegate_to: localhost
