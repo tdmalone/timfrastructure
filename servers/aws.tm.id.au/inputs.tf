@@ -13,6 +13,20 @@ data "terraform_remote_state" "security" {
 }
 
 /**
+ * Make the remote state for ../vpc available for querying.
+ *
+ * @see https://www.terraform.io/docs/providers/terraform/d/remote_state.html
+ */
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config {
+    bucket = "timfrastructure"
+    key    = "vpc"
+  }
+}
+
+/**
  * Make the current AWS account accessible as a data attribute.
  *
  * @see https://www.terraform.io/docs/providers/aws/d/caller_identity.html

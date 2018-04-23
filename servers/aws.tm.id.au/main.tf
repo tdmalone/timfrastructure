@@ -3,8 +3,6 @@
 # Datadog?
 # AMIs
 # snapshots
-# volumes
-# eips
 # key pair
 
 /**
@@ -22,12 +20,19 @@
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
 resource "aws_instance" "aws-tm-id-au" {
-  #ami = "${data.aws_ami.ubuntu-latest.id}"
   ami                     = "ami-4cc8232e"             # 14.04 2017-11-15
   instance_type           = "${var.server_type}"
   disable_api_termination = true
   iam_instance_profile    = "EC2-SimpleSystemsManager"
   monitoring              = false                      # Just for now, to keep costs down.
+
+  availability_zone = "ap-southeast-2a"
+  subnet_id         = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "15"
+  }
 
   vpc_security_group_ids = [
     "${data.terraform_remote_state.security.aws_security_group_default_id}",
@@ -38,6 +43,10 @@ resource "aws_instance" "aws-tm-id-au" {
   ]
 
   tags {
+    Name = "aws.tm.id.au"
+  }
+
+  volume_tags {
     Name = "aws.tm.id.au"
   }
 }
@@ -52,15 +61,17 @@ resource "aws_instance" "aws-tm-id-au" {
 resource "aws_instance" "xenial-tm-id-au" {
   ami                     = "${data.aws_ami.packer_latest.id}"
   instance_type           = "${var.server_type}"
-  disable_api_termination = true
+  disable_api_termination = false
   iam_instance_profile    = "EC2-SimpleSystemsManager"
   monitoring              = false                              # Just for now, to keep costs down.
 
   availability_zone = "ap-southeast-2a"
-  subnet_id = "subnet-dc832995" # TODO: Get from vpc remote state.
-  # TODO: Add public IP.
+  subnet_id         = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
 
-  # TODO: Add volume.
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "15"
+  }
 
   vpc_security_group_ids = [
     "${data.terraform_remote_state.security.aws_security_group_default_id}",
@@ -73,20 +84,63 @@ resource "aws_instance" "xenial-tm-id-au" {
   tags {
     Name = "xenial.tm.id.au"
   }
+
+  volume_tags {
+    Name = "xenial.tm.id.au"
+  }
 }
 
 /**
- *
+ * Elastic IP address for main server.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/eip.html
  */
 resource "aws_eip" "aws-tm-id-au" {
   instance = "${aws_instance.aws-tm-id-au.id}"
   vpc      = true
+
+  tags {
+    Name = "aws.tm.id.au"
+  }
 }
 
 /**
+ * Elastic IP address for xenial server.
  *
+ * @see https://www.terraform.io/docs/providers/aws/r/eip.html
+ */
+resource "aws_eip" "xenial-tm-id-au" {
+  instance = "${aws_instance.xenial-tm-id-au.id}"
+  vpc      = true
+
+  tags {
+    Name = "xenial.tm.id.au"
+  }
+}
+
+/**
+ * Creates an Elastic File System resource for use between multiple EC2 instances.
+ *
+ * @see https://www.terraform.io/docs/providers/aws/r/efs_file_system.html
+ */
+resource "aws_efs_file_system" "default" {
+  encrypted = true
+}
+
+/**
+ * Creates a mount target for connecting the main EFS to instances.
+ *
+ * @see https://www.terraform.io/docs/providers/aws/r/efs_mount_target.html
+ */
+resource "aws_efs_mount_target" "alpha" {
+  file_system_id = "${aws_efs_file_system.default.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+}
+
+/**
+ * Default key pair for use with EC2 instances.
+ *
+ * TODO: Manage application of the public_key without breaking the existing key.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/key_pair.html
  */
@@ -133,6 +187,11 @@ resource "aws_launch_configuration" "default" {
 */
 
 
+/**
+ *
+ *
+ * @see https://www.terraform.io/docs/providers/aws/r/instance.html
+ */
 /*
 resource "aws_instance" "ansible" {
   ami = "ami-c9c403ab" # Ansible Tower 3.2.3 on CentOS 7 as recommended at https://www.ansible.com/products/tower/trial
