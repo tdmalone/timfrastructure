@@ -65,8 +65,9 @@ resource "aws_instance" "xenial-tm-id-au" {
   iam_instance_profile    = "EC2-SimpleSystemsManager"
   monitoring              = false                              # Just for now, to keep costs down.
 
-  availability_zone = "ap-southeast-2a"
-  subnet_id         = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  availability_zone           = "ap-southeast-2a"
+  subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  associate_public_ip_address = true
 
   root_block_device {
     volume_type = "gp2"

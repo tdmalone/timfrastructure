@@ -7,6 +7,8 @@
 
 # TODO: Work out how to determine whether the system was created today or not, and use that to determine whether a dist-upgrade should be run. Running `sudo tune2fs -l /dev/xvda1 | grep created` should give the created date of the filesystem which is a pretty good way to determine system age, and then there's a bunch of useful facts in {{ansible_date_time}} to compare to current.
 
+# TODO: Register with Ubuntu Landscape?
+
 - hosts: default
   become: yes
   gather_facts: no # This won't work until we install the needed Python module (see below).
@@ -14,6 +16,7 @@
   vars:
     username: tim
     full_name: Tim Malone
+    email: tdmalone@gmail.com
     timezone: Australia/Melbourne
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/zsh
@@ -23,9 +26,9 @@
 
   handlers:
 
-  - name: restart sshd
+  - name: restart ssh
     service:
-      name: sshd
+      name: ssh
       state: restarted
 
   pre_tasks:
@@ -53,11 +56,19 @@
       hostname:
         name: "{{ hostname }}"
 
+    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
     - name: Add hostname to /etc/hosts.
       lineinfile:
         dest: /etc/hosts
         regexp: "^127.0.0.1"
         line: "127.0.0.1 {{ hostname }}"
+
+    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+    - name: Prevent cloud-init from resetting the hostname on instance launch.
+      lineinfile:
+        dest: /etc/cloud/cloud.cfg
+        regexp: "^preserve_hostname"
+        line: "preserve_hostname: true"
 
     # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
     - name: Set timezone to {{ timezone }}.
@@ -97,49 +108,49 @@
         dest: /etc/ssh/sshd_config
         regexp: "^#?Port"
         line: "Port {{ ssh_port }}"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Disable empty password login.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?PermitEmptyPasswords"
         line: "PermitEmptyPasswords no"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Disable remote root login.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?PermitRootLogin"
         line: "PermitRootLogin no"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Disable password login.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?PasswordAuthentication"
         line: "PasswordAuthentication no"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Enable public key authentication.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?PubkeyAuthentication"
         line: "PubkeyAuthentication yes"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Disable challenge response authentication.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?ChallengeResponseAuthentication"
         line: "ChallengeResponseAuthentication no"
-      notify: restart sshd
+      notify: restart ssh
 
     - name: Enable PAM.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?UsePAM"
         line: "UsePAM yes"
-      notify: restart sshd
+      notify: restart ssh
 
     # @see https://stackoverflow.com/a/37334415/1982136
     # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
@@ -157,6 +168,7 @@
     # @see PAPERTRAIL_HOST & PAPERTRAIL_PORT env vars.
 
     # TODO: Set up Datadog monitoring.
+    # @see https://galaxy.ansible.com/manala/ansible-galaxy/ for possibly installing galaxy roles easily.
     # - include_role:
     #     name: Datadog.datadog
     #   vars:
@@ -165,8 +177,27 @@
 
     # TODO: Copy across common Datadog configuration; restart Datadog agent.
 
-    # TODO: Configure git.
     # @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
+    - name: Configure git.
+      git_config:
+        scope: global
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+      become_user: "{{ username }}"
+      with_items:
+        - { name: "user.name", value: "{{ full_name }}" }
+        - { name: "user.email", value: "{{ email }}" }
+        - { name: "core.editor", value: "/usr/bin/vim" }
+        - { name: "core.pager", value: "cat" }
+        - { name: "commit.gpgsign", value: "true" }
+        - { name: "gpg.program", value: "gpg2" }
+        - { name: "format.pretty", value: "oneline" }
+        - { name: "grep.linenumber", value: "true" }
+        - { name: "interactive.singleKey", value: "true" }
+        - { name: "push.default", value: "simple" }
+
+    # TODO: Add git aliases.
+    # @see https://github.com/tdmalone/dotfiles/blob/master/.gitconfig
 
     # TODO: Clone tdmalone/dotfiles.
     # @see http://docs.ansible.com/ansible/latest/modules/git_module.html
@@ -177,10 +208,6 @@
     #sudo apt-get install --assume-yes nodejs
 
     # TODO: Install Go.
-
-    # TODO: Install RubyGems if it wasn't installed with Ruby.
-    # @see https://rubygems.org/pages/download
-    # wget https://rubygems.org/rubygems/rubygems-2.7.6.tgz
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
     # @see https://cloud.google.com/sdk/docs/#deb
@@ -221,44 +248,66 @@
         upgrade: full
       when: dist_upgrade == true
 
+    # @see http://docs.ansible.com/ansible/latest/modules/service_module.html
+    - name: Stop apache, if running, before we try to remove it.
+      service:
+        name: apache2
+        state: stopped
+
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+    # - name: Remove default apt packages we don't want.
+    #   apt:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   with_items:
+    #     - apache2 # nginx install will fail if Apache is running, besides we don't use it anyway.
+
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
     - name: Install packages with apt.
       apt:
         name: "{{ item }}"
-        cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
+        #cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
+        update_cache: yes
         autoclean: yes
         autoremove: yes
       with_items:
-        - apt-transport-https
-        - unzip
         - ansible
-        #- google-cloud-sdk
-        #- kubectl
-        #- azure-cli
-        #- nginx
+        - apt-transport-https
         - bzip2
         - curl
         - ftp
-        - mariadb-server
-        #- heroku
-        - nodejs
-        #- yarn
-        - php7.2
-        - python3
-        #- python3-venv # May not work on Ubuntu 14.04.
-        - python3-pip
-        - python-pip
-        - ruby
-        - zsh
         - git
+        - mariadb-server
+        #- nginx
+        - php7.2
+        - ruby
+        - python-pip
+        - python3
+        - python3-pip
+        #- python3-venv # May not work on Ubuntu 14.04.
+        - unzip
         - vim
         - wget
+        - zsh
 
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    # - name: Install nginx.
+    - name: Install additional packages with apt.
+      apt:
+        name: "{{ item }}"
+      with_items:
+        - azure-cli
+        - google-cloud-sdk
+        - heroku
+        - kubectl
+        - nginx
+        - yarn
+
+    # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead
+    # - name: Install nginx with apt.
     #   apt:
-    #     name: nginx
+    #     name: "{{ item }}"
+    #   with_items:
+    #     - nginx
 
     # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
@@ -383,3 +432,21 @@
         color: good
         msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) has completed successfully.
       delegate_to: localhost
+
+    # TODO: Additional interesting roles to look into:
+    #       - https://github.com/manala/ansible-role-accounts
+    #       - https://github.com/manala/ansible-role-ansible
+    #       - https://github.com/manala/ansible-role-ansible-galaxy
+    #       - https://github.com/manala/ansible-role-cloud-init
+    #       - https://github.com/manala/ansible-role-cron
+    #       - https://github.com/manala/ansible-role-docker
+    #       - https://github.com/manala/ansible-role-git
+    #       - https://github.com/manala/ansible-role-logrotate
+    #       - https://github.com/manala/ansible-role-mysql
+    #       - https://github.com/manala/ansible-role-nginx
+    #       - https://github.com/manala/ansible-role-ohmyzsh
+    #       - https://github.com/manala/ansible-role-php
+    #       - https://github.com/manala/ansible-role-phpmyadmin
+    #       - https://github.com/manala/ansible-role-sudo
+    #       - https://github.com/manala/ansible-role-systemd
+    #       - https://github.com/manala/ansible-role-vim
