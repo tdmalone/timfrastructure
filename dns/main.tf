@@ -1,17 +1,43 @@
 /**
  * DNS configuration, usually using Cloudflare.
  *
- * @see ./domains.tf
- * @see ./redirects.tf
  * @see https://www.terraform.io/docs/providers/cloudflare/r/record.html
  * @author Tim Malone <tdmalone@gmail.com>
  */
 
 /** Domain 1. **/
 
+resource "cloudflare_record" "aws_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "aws.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.aws_tm_id_au_external_ip}"
+  type   = "A"
+}
+
+resource "cloudflare_record" "aws_int_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "aws.int.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.aws_tm_id_au_internal_ip}"
+  type   = "A"
+}
+
+resource "cloudflare_record" "xenial_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "xenial.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.xenial_tm_id_au_external_ip}"
+  type   = "A"
+}
+
+resource "cloudflare_record" "xenial_int_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "xenial.int.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.xenial_tm_id_au_internal_ip}"
+  type   = "A"
+}
+
 # TODO:
 #
-# aws.tm.id.au A & MX
+# aws.tm.id.au MX
 # CAA records
 # ACM CNAMEs
 # api.tm.id.au CNAME
