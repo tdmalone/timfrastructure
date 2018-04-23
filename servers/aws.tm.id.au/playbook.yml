@@ -19,6 +19,7 @@
     shell: /bin/zsh
     hostname: aws.tm.id.au
     dist_upgrade: false # WARNING: Should only be used on brand new servers!
+    ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
   handlers:
 
@@ -91,6 +92,13 @@
         key: "{{ ssh_key }}"
       register: add_authorized_key
 
+    - name: Change SSH port.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#?Port"
+        line: "Port {{ ssh_port }}"
+      notify: restart sshd
+
     - name: Disable empty password login.
       lineinfile:
         dest: /etc/ssh/sshd_config
@@ -126,11 +134,11 @@
         line: "ChallengeResponseAuthentication no"
       notify: restart sshd
 
-    - name: Disable PAM.
+    - name: Enable PAM.
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: "^#?UsePAM"
-        line: "UsePAM no"
+        line: "UsePAM yes"
       notify: restart sshd
 
     # @see https://stackoverflow.com/a/37334415/1982136
