@@ -248,27 +248,28 @@
         upgrade: full
       when: dist_upgrade == true
 
-    # @see http://docs.ansible.com/ansible/latest/modules/service_module.html
-    - name: Stop apache, if running, before we try to remove it.
-      service:
-        name: apache2
-        state: stopped
+    # # @see http://docs.ansible.com/ansible/latest/modules/service_module.html
+    # Does not appear to be working, possibly try solutions at https://stackoverflow.com/questions/14972792/nginx-nginx-emerg-bind-to-80-failed-98-address-already-in-use
+    # - name: Stop apache, if running, before we try to remove it.
+    #   service:
+    #     name: apache2
+    #     state: stopped
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    # - name: Remove default apt packages we don't want.
-    #   apt:
-    #     name: "{{ item }}"
-    #     state: absent
-    #   with_items:
-    #     - apache2 # nginx install will fail if Apache is running, besides we don't use it anyway.
+    - name: Remove default apt packages we don't want.
+      apt:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - apache2 # nginx install will fail if Apache is running, besides we don't use it anyway.
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
     - name: Install packages with apt.
       apt:
         name: "{{ item }}"
-        #cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
-        update_cache: yes
+        cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
+        #update_cache: yes
         autoclean: yes
         autoremove: yes
       with_items:
@@ -299,7 +300,6 @@
         - google-cloud-sdk
         - heroku
         - kubectl
-        - nginx
         - yarn
 
     # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead
@@ -308,6 +308,20 @@
     #     name: "{{ item }}"
     #   with_items:
     #     - nginx
+
+    # @see https://github.com/papertrail/papertrail-cli
+    # @see http://docs.ansible.com/ansible/2.4/gem_module.html
+    - name: Install commonly used gems.
+      gem:
+        name: "{{ item }}"
+      with_items:
+        - papertrail
+        - travis
+
+    - name: Ensure /home/{{ username }}/downloads dir exists before downloading files for manual installs.
+      file:
+        path: /home/{{ ansible_env.USER }}/downloads
+        state: directory
 
     # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
@@ -320,13 +334,7 @@
       changed_when: amazon_ssm_agent_installed.rc == 1
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
 
-    - name: If not, ensure /home/{{ ansible_env.USER }}/downloads dir exists, then...
-      file:
-        path: /home/{{ ansible_env.USER }}/downloads
-        state: directory
-      when: amazon_ssm_agent_installed.rc == 1
-
-    - name: ...download amazon-ssm-agent, and...
+    - name: If not, download amazon-ssm-agent, and...
       get_url:
         url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
         dest: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
@@ -337,47 +345,40 @@
         deb: /home/{{ ansible_env.USER }}/downloads/amazon-ssm-agent.deb
       when: amazon_ssm_agent_installed.rc == 1
 
-    # TODO: Install MariaDB.
-
-    # TODO: Set up an nginx vhost, and configure with php-fpm.
-
     #- name: Start services on boot
     # sudo systemctl enable amazon-ssm-agent
     # sudo systemctl start amazon-ssm-agent
 
-    # Install Travis CLI and enable autocomplete.
-    # @see https://stackoverflow.com/a/44851034/1982136
-    # TODO: Uncomment the below once Ruby/RubyGems setup is added.
-    #sudo gem install travis
-    #echo "y" | travis --version
-
-    # Install Papertrail CLI.
-    # @see https://github.com/papertrail/papertrail-cli
-    # TODO: Uncomment the below once Ruby/RubyGems setup is added.
-    #sudo gem install papertrail
+    # TODO: Set up an nginx vhost, and configure with php-fpm.
 
     # TODO: Install LastPass CLI.
 
     # TODO: Install AWS CLI.
 
+    # Check if wp-cli is installed.
     # Install wp-cli.
     # @see https://wp-cli.org/#installing
     #curl --remote-name https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     #chmod +x wp-cli.phar
     #sudo mv wp-cli.phar /usr/local/bin/wp
 
+    # Check if Terraform is installed.
     # Install Terraform.
     # TODO: Find a way to programmatically download or get the latest version number.
-    #curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
+    # get_url:
+    #     url: https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
+    #     dest: ...../terraform.zip
     #unzip terraform.zip
     #sudo mv terraform /usr/local/bin/terraform
 
+    # Check if Packer is installed.
     # Install Packer.
     # TODO: Find a way to programmatically download or get the latest version number.
     #curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
     #unzip packer.zip
     #sudo mv packer /usr/local/bin/packer
 
+    # Check if Vagrant is installed.
     # TODO: Install Vagrant.
 
     # TODO: Install minikube.
