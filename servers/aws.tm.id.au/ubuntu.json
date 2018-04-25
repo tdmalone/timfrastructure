@@ -26,7 +26,7 @@
   "_see": "https://www.packer.io/docs/provisioners/ansible.html",
   "provisioners": [{
     "type": "ansible",
-    "playbook_file": "./playbook.yml"
+    "playbook_file": "./ubuntu.yml"
   }]
 
 }
