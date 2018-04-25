@@ -21,10 +21,11 @@
     - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
     - deb https://cli-assets.heroku.com/branches/stable/apt ./
     - deb https://dl.yarnpkg.com/debian/ stable main
-    - ppa:ondrej/php
     - ppa:ansible/ansible
+    - ppa:ondrej/php
+  register: apt_sources
 
-- name: Add neccessary apt keys.
+- name: Add neccessary apt keys by URL.
   apt_key:
     url: "{{ item }}"
   with_items:
@@ -32,21 +33,23 @@
     - https://packages.cloud.google.com/apt/doc/apt-key.gpg
     - https://cli-assets.heroku.com/apt/release.key
     - https://dl.yarnpkg.com/debian/pubkey.gpg
+  register: apt_keys_url
 
-- name: Add Azure apt key.
+- name: Add neccessary apt keys by keyserver.
   apt_key:
     keyserver: packages.microsoft.com
     id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
+  register: apt_keys_keyserver
 
 - name: Perform a full dist-upgrade (for new systems).
   apt:
     upgrade: full
   when: new_system == true
 
-- name: Update the apt cache (for new systems).
+- name: Update the apt cache (for new systems, or on new apt sources or keys).
   apt:
     update_cache: yes # Comment out and uncomment the above to avoid slowness.
-  when: new_system == true
+  when: new_system == true or apt_sources.changed or apt_keys_url.changed or apt_keys_keyserver.changed
 
 - name: Update the apt cache only if stale (for existing systems).
   apt:
@@ -62,13 +65,12 @@
 
 # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
 # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead for nginx.
-- name: Install packages with apt.
+- name: Install primary packages with apt.
   apt:
     name: "{{ item }}"
     autoclean: yes
     autoremove: yes
   with_items:
-    - ansible
     - apt-transport-https
     - bzip2
     - ca-certificates
@@ -78,7 +80,6 @@
     - jq
     - mariadb-server
     - nginx
-    - php7.2-fpm
     - python-pip
     - python3
     - python3-pip
@@ -91,15 +92,17 @@
     - wget
     - zsh
 
-- name: Install additional packages with apt.
+- name: Install additional packages with apt (from secondary repositories).
   apt:
     name: "{{ item }}"
   with_items:
+    - ansible
     - azure-cli
     - docker-ce
     - google-cloud-sdk
     - heroku
     - kubectl
+    - php7.2-fpm
     - yarn
 
 ...

@@ -25,7 +25,7 @@
 
   tasks:
 
-    - name: Include tasks common to multiple distros.
+    - name: Include tasks common to all distros.
       include_tasks: ./tasks/common.yml
 
 ...

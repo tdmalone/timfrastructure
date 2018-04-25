@@ -6,7 +6,8 @@
   changed_when: false
   #run_once: true # TODO: Activate this if I can work out how to save the hostname as a var all hosts can access.
 
-- set_fact:
+- name: Set hostname of Ansible host system.
+  set_fact:
     host_system_hostname: "{{ host_system_hostname.stdout }}"
 
 # @see http://docs.ansible.com/ansible/latest/modules/pip_module.html
