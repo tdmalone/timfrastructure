@@ -1,0 +1,26 @@
+---
+
+- name: Include hostname tasks.
+  include_tasks: ./hostname.yml
+
+# @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
+- name: Set timezone to {{ timezone }}.
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Include hostname tasks.
+  include_tasks: ./users-groups.yml
+
+- name: Include SSH tasks.
+  include_tasks: ./ssh.yml
+
+# @see https://stackoverflow.com/a/37334415/1982136
+# @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+- name: Allow 'sudo' group to have passwordless sudo.
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL:ALL) NOPASSWD:ALL'
+    validate: 'visudo -cf %s'
+
+...

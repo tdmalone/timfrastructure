@@ -1,0 +1,101 @@
+---
+
+# @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+# @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
+# @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
+
+# @see https://cloud.google.com/sdk/docs/#deb
+# @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
+# @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+# @see https://yarnpkg.com/en/docs/install
+# @see https://tecadmin.net/install-php-7-on-ubuntu/
+# @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+# NOTE: {{ansible_lsb.codename}} will return eg. 'trusty' or 'xenial'. An alternative is {{ansible_distribution_release}}.
+- name: Add neccessary apt sources.
+  apt_repository:
+    repo: "{{ item }}"
+  with_items:
+    - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
+    - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_lsb.codename }} main
+    - deb https://cli-assets.heroku.com/branches/stable/apt ./
+    - deb https://dl.yarnpkg.com/debian/ stable main
+    - ppa:ondrej/php
+    - ppa:ansible/ansible
+
+- name: Add neccessary apt keys.
+  apt_key:
+    url: "{{ item }}"
+  with_items:
+    - https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    - https://cli-assets.heroku.com/apt/release.key
+    - https://dl.yarnpkg.com/debian/pubkey.gpg
+
+- name: Add Azure apt key.
+  apt_key:
+    keyserver: packages.microsoft.com
+    id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
+
+- name: Perform a full dist-upgrade (for new systems).
+  apt:
+    upgrade: full
+  when: new_system == true
+
+- name: Update the apt cache (for new systems).
+  apt:
+    update_cache: yes # Comment out and uncomment the above to avoid slowness.
+  when: new_system == true
+
+- name: Update the apt cache only if stale (for existing systems).
+  apt:
+    cache_valid_time: 86400 # One day.
+  when: new_system == false
+
+- name: Remove default apt packages we don't want.
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - apache2 # nginx install will fail if Apache is running, besides we don't use it anyway.
+
+# @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
+# TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead for nginx.
+- name: Install packages with apt.
+  apt:
+    name: "{{ item }}"
+    autoclean: yes
+    autoremove: yes
+  with_items:
+    - ansible
+    - apt-transport-https
+    - bzip2
+    - ca-certificates
+    - curl
+    - ftp
+    - git
+    - jq
+    - mariadb-server
+    - nginx
+    - php7.2-fpm
+    - python-pip
+    - python3
+    - python3-pip
+    #- python3-venv # May not work on Ubuntu 14.04.
+    - ruby
+    - ruby-dev # Needed for Travis gem installation to succeed.
+    - software-properties-common
+    - unzip
+    - vim
+    - wget
+    - zsh
+
+- name: Install additional packages with apt.
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - azure-cli
+    - google-cloud-sdk
+    - heroku
+    - kubectl
+    - yarn
+
+...

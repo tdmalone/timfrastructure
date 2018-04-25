@@ -1,0 +1,21 @@
+---
+
+# @see http://docs.ansible.com/ansible/latest/modules/group_module.html
+- name: Ensure groups are present.
+  group:
+    name: "{{ item }}"
+  with_items:
+    - "{{ username }}"
+    - docker
+    - sudo
+
+# @see http://docs.ansible.com/ansible/latest/modules/user_module.html
+- name: Add user {{ username }}.
+  user:
+    name: "{{ username }}"
+    comment: "{{ full_name }}"
+    group: "{{ username }}"
+    shell: "{{ shell }}"
+    groups: "{{ username }},docker,sudo"
+
+...

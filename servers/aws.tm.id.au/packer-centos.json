@@ -10,7 +10,7 @@
     "region": "ap-southeast-2",
     "instance_type": "t2.micro",
     "spot_price": "auto",
-    "shutdown_behaviour": "terminate",
+    "shutdown_behavior": "terminate",
     "ssh_username": "centos",
     "ami_name": "packer centos.tm.id.au {{timestamp}}",
 

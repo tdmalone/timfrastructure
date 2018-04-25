@@ -78,7 +78,7 @@ resource "aws_instance" "xenial_tm_id_au" {
   instance_type           = "${var.server_type}"
   disable_api_termination = false
   iam_instance_profile    = "EC2-SimpleSystemsManager"
-  monitoring              = false                              # Just for now, to keep costs down.
+  monitoring              = false                                     # Just for now, to keep costs down.
 
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
@@ -123,7 +123,7 @@ resource "aws_instance" "centos_tm_id_au" {
   instance_type           = "${var.server_type}"
   disable_api_termination = false
   iam_instance_profile    = "EC2-SimpleSystemsManager"
-  monitoring              = false                              # Just for now, to keep costs down.
+  monitoring              = false                                     # Just for now, to keep costs down.
 
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"

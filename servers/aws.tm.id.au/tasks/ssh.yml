@@ -1,0 +1,62 @@
+---
+
+# @see http://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
+# @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+# @see https://github.com/vitalk/ansible-secure-ssh/blob/master/tasks/main.yml
+# @see https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/
+- name: Add authorized_key for user {{ username }}.
+  authorized_key:
+    user: "{{ username }}"
+    key: "{{ ssh_key }}"
+  register: add_authorized_key
+
+- name: Change SSH port.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?Port"
+    line: "Port {{ ssh_port }}"
+  notify: restart ssh
+
+- name: Disable empty password login.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?PermitEmptyPasswords"
+    line: "PermitEmptyPasswords no"
+  notify: restart ssh
+
+- name: Disable remote root login.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+  notify: restart ssh
+
+- name: Disable password login.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+  notify: restart ssh
+
+- name: Enable public key authentication.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?PubkeyAuthentication"
+    line: "PubkeyAuthentication yes"
+  notify: restart ssh
+
+- name: Disable challenge response authentication.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?ChallengeResponseAuthentication"
+    line: "ChallengeResponseAuthentication no"
+  notify: restart ssh
+
+- name: Enable PAM.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?UsePAM"
+    line: "UsePAM yes"
+  notify: restart ssh
+
+...

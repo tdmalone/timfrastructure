@@ -1,0 +1,27 @@
+---
+
+# @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
+# TODO: This doesn't appear to be sticking if run at AMI build time.
+- name: Configure git.
+  git_config:
+    scope: global
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  become: yes
+  become_user: "{{ username }}"
+  with_items:
+    - { name: "user.name", value: "{{ full_name }}" }
+    - { name: "user.email", value: "{{ email }}" }
+    - { name: "core.editor", value: "/usr/bin/vim" }
+    - { name: "core.pager", value: "cat" }
+    - { name: "commit.gpgsign", value: "true" }
+    - { name: "gpg.program", value: "gpg2" }
+    - { name: "format.pretty", value: "oneline" }
+    - { name: "grep.linenumber", value: "true" }
+    - { name: "interactive.singleKey", value: "true" }
+    - { name: "push.default", value: "simple" }
+
+# TODO: Add git aliases.
+# @see https://github.com/tdmalone/dotfiles/blob/master/.gitconfig
+
+...

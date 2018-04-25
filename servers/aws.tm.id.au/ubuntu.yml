@@ -1,8 +1,6 @@
 ---
 
-####### IN PROGRESS! DO NOT USE YET. #######
-
-# TODO: Split up into separate files for related groups of tasks.
+# TODO: Split up further into separate files for related groups of tasks.
 
 # TODO: Support CentOS as well as Ubuntu (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help).
 
@@ -22,7 +20,7 @@
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/zsh
     hostname: aws.tm.id.au
-    dist_upgrade: true # WARNING: Should only be used on brand new servers!
+    new_system: false # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
   handlers:
@@ -52,115 +50,8 @@
 
   tasks:
 
-    # @see http://docs.ansible.com/ansible/latest/modules/hostname_module.html
-    - name: Set hostname to {{ hostname }}.
-      hostname:
-        name: "{{ hostname }}"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
-    - name: Add hostname to /etc/hosts.
-      lineinfile:
-        dest: /etc/hosts
-        regexp: "^127.0.0.1"
-        line: "127.0.0.1 {{ hostname }}"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
-    - name: Prevent cloud-init from resetting the hostname on instance launch.
-      lineinfile:
-        dest: /etc/cloud/cloud.cfg
-        regexp: "^preserve_hostname"
-        line: "preserve_hostname: true"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
-    - name: Set timezone to {{ timezone }}.
-      timezone:
-        name: "{{ timezone }}"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/group_module.html
-    - name: Ensure groups are present.
-      group:
-        name: "{{ item }}"
-      with_items:
-        - "{{ username }}"
-        - docker
-        - sudo
-
-    # @see http://docs.ansible.com/ansible/latest/modules/user_module.html
-    - name: Add user {{ username }}.
-      user:
-        name: "{{ username }}"
-        comment: "{{ full_name }}"
-        group: "{{ username }}"
-        shell: "{{ shell }}"
-        groups: "{{ username }},docker,sudo"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
-    # @see https://github.com/vitalk/ansible-secure-ssh/blob/master/tasks/main.yml
-    # @see https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/
-    - name: Add authorized_key for user {{ username }}.
-      authorized_key:
-        user: "{{ username }}"
-        key: "{{ ssh_key }}"
-      register: add_authorized_key
-
-    - name: Change SSH port.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?Port"
-        line: "Port {{ ssh_port }}"
-      notify: restart ssh
-
-    - name: Disable empty password login.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?PermitEmptyPasswords"
-        line: "PermitEmptyPasswords no"
-      notify: restart ssh
-
-    - name: Disable remote root login.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?PermitRootLogin"
-        line: "PermitRootLogin no"
-      notify: restart ssh
-
-    - name: Disable password login.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?PasswordAuthentication"
-        line: "PasswordAuthentication no"
-      notify: restart ssh
-
-    - name: Enable public key authentication.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?PubkeyAuthentication"
-        line: "PubkeyAuthentication yes"
-      notify: restart ssh
-
-    - name: Disable challenge response authentication.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?ChallengeResponseAuthentication"
-        line: "ChallengeResponseAuthentication no"
-      notify: restart ssh
-
-    - name: Enable PAM.
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#?UsePAM"
-        line: "UsePAM yes"
-      notify: restart ssh
-
-    # @see https://stackoverflow.com/a/37334415/1982136
-    # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
-    - name: Allow 'sudo' group to have passwordless sudo.
-      lineinfile:
-        dest: /etc/sudoers
-        regexp: '^%sudo'
-        line: '%sudo ALL=(ALL:ALL) NOPASSWD:ALL'
-        validate: 'visudo -cf %s'
+    - name: Include tasks common to multiple distros.
+      include_tasks: ./tasks/common.yml
 
     # TODO: Mount EFS target.
     # @see https://docs.aws.amazon.com/console/efs/mount-considerations
@@ -193,28 +84,8 @@
 
     # TODO: Copy across common Datadog configuration; restart Datadog agent.
 
-    # @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
-    - name: Configure git.
-      git_config:
-        scope: global
-        name: "{{ item.name }}"
-        value: "{{ item.value }}"
-      become: yes
-      become_user: "{{ username }}"
-      with_items:
-        - { name: "user.name", value: "{{ full_name }}" }
-        - { name: "user.email", value: "{{ email }}" }
-        - { name: "core.editor", value: "/usr/bin/vim" }
-        - { name: "core.pager", value: "cat" }
-        - { name: "commit.gpgsign", value: "true" }
-        - { name: "gpg.program", value: "gpg2" }
-        - { name: "format.pretty", value: "oneline" }
-        - { name: "grep.linenumber", value: "true" }
-        - { name: "interactive.singleKey", value: "true" }
-        - { name: "push.default", value: "simple" }
-
-    # TODO: Add git aliases.
-    # @see https://github.com/tdmalone/dotfiles/blob/master/.gitconfig
+    - name: Include git configuration.
+      include_tasks: ./tasks/git.yml
 
     # TODO: Clone tdmalone/dotfiles.
     # @see http://docs.ansible.com/ansible/latest/modules/git_module.html
@@ -226,94 +97,8 @@
 
     # TODO: Install Go.
 
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
-    # @see https://cloud.google.com/sdk/docs/#deb
-    # @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
-    # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
-    # @see https://yarnpkg.com/en/docs/install
-    # @see https://tecadmin.net/install-php-7-on-ubuntu/
-    # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
-    # NOTE: {{ansible_lsb.codename}} will return eg. 'trusty' or 'xenial'. An alternative is {{ansible_distribution_release}}.
-    - name: Add neccessary apt sources.
-      apt_repository:
-        repo: "{{ item }}"
-      with_items:
-        - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
-        - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_lsb.codename }} main
-        - deb https://cli-assets.heroku.com/branches/stable/apt ./
-        - deb https://dl.yarnpkg.com/debian/ stable main
-        - ppa:ondrej/php
-        - ppa:ansible/ansible
-
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
-    - name: Add neccessary apt keys.
-      apt_key:
-        url: "{{ item }}"
-      with_items:
-        - https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        - https://cli-assets.heroku.com/apt/release.key
-        - https://dl.yarnpkg.com/debian/pubkey.gpg
-
-    - name: Add Azure apt key.
-      apt_key:
-        keyserver: packages.microsoft.com
-        id: 52E16F86FEE04B979B07E28DB02C46DF417A0893
-
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: Perform a full dist-upgrade.
-      apt:
-        upgrade: full
-      when: dist_upgrade == true
-
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: Remove default apt packages we don't want.
-      apt:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - apache2 # nginx install will fail if Apache is running, besides we don't use it anyway.
-
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
-    # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead for nginx.
-    - name: Install packages with apt.
-      apt:
-        name: "{{ item }}"
-        #cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
-        update_cache: yes # Comment out and uncomment the above to avoid slowness.
-        autoclean: yes
-        autoremove: yes
-      with_items:
-        - ansible
-        - apt-transport-https
-        - bzip2
-        - curl
-        - ftp
-        - git
-        - jq
-        - mariadb-server
-        - nginx
-        - php7.2-fpm
-        - ruby
-        - ruby-dev # Needed for Travis gem installation to succeed.
-        - python-pip
-        - python3
-        - python3-pip
-        #- python3-venv # May not work on Ubuntu 14.04.
-        - unzip
-        - vim
-        - wget
-        - zsh
-
-    - name: Install additional packages with apt.
-      apt:
-        name: "{{ item }}"
-      with_items:
-        - azure-cli
-        - google-cloud-sdk
-        - heroku
-        - kubectl
-        - yarn
+    - name: Include apt installations.
+      include_tasks: ./tasks/apt.yml
 
     # @see https://github.com/papertrail/papertrail-cli
     # @see http://docs.ansible.com/ansible/2.4/gem_module.html
@@ -324,7 +109,7 @@
         - papertrail
         - travis # TODO: Run once and press y to enable shell completion.
 
-    # @see http://docs.ansible.com/ansible/2.4/file_module.html
+    # @see http://docs.ansible.com/ansible/latest/modules/file_module.html
     - name: Ensure /home/{{ username }}/downloads dir exists before downloading files for manual installs.
       file:
         path: /home/{{ username }}/downloads
@@ -332,34 +117,8 @@
         owner: "{{ username }}"
         group: "{{ username }}"
 
-    # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
-    # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
-    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-    - name: Check if amazon-ssm-agent is installed.
-      command: dpkg-query --show amazon-ssm-agent
-      register: amazon_ssm_agent_is_installed
-      failed_when: amazon_ssm_agent_is_installed.rc > 1
-      changed_when: amazon_ssm_agent_is_installed.rc == 1
-      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-
-    # @see http://docs.ansible.com/ansible/latest/modules/get_url_module.html
-    - name: If not, download amazon-ssm-agent, and...
-      get_url:
-        url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
-        dest: /home/{{ username }}/downloads/amazon-ssm-agent.deb
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      when: amazon_ssm_agent_is_installed.rc == 1
-
-    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-    - name: ...install amazon-ssm-agent.
-      apt:
-        deb: /home/{{ username }}/downloads/amazon-ssm-agent.deb
-      when: amazon_ssm_agent_is_installed.rc == 1
-
-    #- name: Start services on boot
-    # sudo systemctl enable amazon-ssm-agent
-    # sudo systemctl start amazon-ssm-agent
+    - name: Include amazon-ssm-agent installation.
+      include_tasks: ./tasks/aws-ssm.yml
 
     # TODO: Set up an nginx vhost, and configure with php-fpm.
 
@@ -374,47 +133,8 @@
     #chmod +x wp-cli.phar
     #sudo mv wp-cli.phar /usr/local/bin/wp
 
-    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-    - name: Check if Terraform is installed.
-      shell: command -v terraform
-      register: terraform_is_installed
-      changed_when: terraform_is_installed.rc > 0
-      failed_when: false
-      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
-
-    # @see https://github.com/hashicorp/terraform/issues/9803#issuecomment-257903082
-    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-    - name: If not, get latest Terraform version download URL...
-      shell: echo "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')_linux_amd64.zip"
-      register: terraform_download_url
-      when: terraform_is_installed.rc > 0
-
-    # @see http://docs.ansible.com/ansible/latest/modules/unarchive_module.html
-    - name: ...then download, unzip, and place the Terraform binary in the path.
-      unarchive:
-        src: "{{ terraform_download_url.stdout }}"
-        dest: /usr/local/bin
-        remote_src: yes
-        mode: +x
-      when: terraform_is_installed.rc > 0
-
-    # get_url:
-    #     url: https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
-    #     dest: ...../terraform.zip
-    #     owner: "{{ username }}"
-    #     group: "{{ username }}"
-    #unzip terraform.zip
-    #sudo mv terraform /usr/local/bin/terraform
-
-    # Check if Packer is installed.
-    # Install Packer.
-    # TODO: Find a way to programmatically download or get the latest version number.
-    #curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
-    #unzip packer.zip
-    #sudo mv packer /usr/local/bin/packer
-
-    # Check if Vagrant is installed.
-    # TODO: Install Vagrant.
+    - name: Include Hashicorp installations.
+      include_tasks: ./tasks/hashicorp.yml
 
     # TODO: Install minikube.
     # @see https://github.com/kubernetes/minikube/releases
@@ -437,37 +157,8 @@
 
     # TODO: Set up Cloud9 environment, if possible/neccessary?
 
-    # TODO: Print out versions of everything that was installed; also serves as a check that they
-    #       were installed properly.
-
-    # @see http://docs.ansible.com/ansible/latest/modules/pip_module.html
-    - name: Install datadog dependencies.
-      pip:
-        name: "{{ item }}"
-      with_items:
-        - datadog
-        #- pyyaml # May not actually be needed.
-
-    # @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
-    - name: Send Datadog event.
-      datadog_event:
-        title: Playbook run
-        text: Successful playbook run on {{ ansible_nodename }} ({{ inventory_hostname }}).
-        priority: low
-        api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
-        app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
-        tags: "#host:{{ ansible_nodename }}"
-
-    # @see http://docs.ansible.com/ansible/latest/modules/slack_module.html
-    # TODO: Possible to include stats about how the play went?
-    # TODO: Possible to send a failure message if the play fails?
-    # TODO: This appears to succeed even if the sending fails via Slack API, eg. with an invalid hook.
-    - name: Send notification message via Slack.
-      slack:
-        token: "{{ lookup('env', 'SLACK_HOOK') }}"
-        color: good
-        msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) has completed successfully.
-      #delegate_to: localhost
+    - name: Include notification tasks.
+      include_tasks: ./tasks/notifications.yml
 
     # TODO: Additional interesting roles to look into:
     #       - https://github.com/manala/ansible-role-accounts
