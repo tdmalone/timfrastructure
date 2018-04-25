@@ -20,6 +20,8 @@
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/zsh
     hostname: aws.tm.id.au
+    aws_region: ap-southeast-2
+    efs_id: fs-31ac5308
     new_system: false # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
@@ -52,21 +54,6 @@
 
     - name: Include tasks common to multiple distros.
       include_tasks: ./tasks/common.yml
-
-    # TODO: Mount EFS target.
-    # @see https://docs.aws.amazon.com/console/efs/mount-considerations
-    # @see https://github.com/oranmoshai/efsAwsMount
-    # sudo apt-get install nfs-common
-    # sudo mkdir efs
-    # sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 fs-31ac5308.efs.ap-southeast-2.amazonaws.com:/ efs
-    # sudo chown tim.tim efs
-    # - name: Mount EFS target.
-    #   mount:
-    #     path: /home/{{ username }}/efs
-    #     src: fs-31ac5308.efs.ap-southeast-2.amazonaws.com:/
-    #     fstype: iso9660
-    #     opts: ro,noauto
-    #     state: present
 
     # TODO: Set up Papertrail monitoring.
     # @see https://github.com/reactiveops/ansible-papertrail
@@ -143,6 +130,9 @@
     #wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
     #tar -zxvf linux64 && rm linux64
     #Bluemix_CLI/install_bluemix_cli
+
+    - name: Include EFS mount.
+      include_tasks: ./tasks/efs.yml
 
     # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
     # @see http://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html

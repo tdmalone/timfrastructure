@@ -1,0 +1,22 @@
+---
+
+# @see http://docs.ansible.com/ansible/latest/modules/file_module.html
+# @see http://docs.ansible.com/ansible/latest/modules/mount_module.html
+# @see https://docs.aws.amazon.com/console/efs/mount-considerations
+
+- name: Ensure /home/{{ username }}/efs dir exists for EFS mount.
+  file:
+    path: /home/{{ username }}/efs
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Mount EFS target.
+  mount:
+    path: /home/{{ username }}/efs
+    src: "{{ efs_id }}.efs.{{ aws_region }}.amazonaws.com:/"
+    fstype: nfs4
+    opts: nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
+    state: mounted
+
+...

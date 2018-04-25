@@ -80,6 +80,7 @@
     - git
     - jq
     - mariadb-server
+    - nfs-common # For EFS mounts.
     - nginx
     - python-pip
     - python3
