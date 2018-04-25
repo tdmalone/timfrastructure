@@ -1,7 +1,6 @@
 ---
 
 # @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
-# TODO: This doesn't appear to be sticking if run at AMI build time.
 - name: Configure git.
   git_config:
     scope: global

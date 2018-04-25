@@ -4,6 +4,7 @@
   local_action: command hostname
   register: host_system_hostname
   changed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
   #run_once: true # TODO: Activate this if I can work out how to save the hostname as a var all hosts can access.
 
 - name: Set hostname of Ansible host system.

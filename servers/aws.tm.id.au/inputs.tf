@@ -46,7 +46,7 @@ data "aws_ami" "packer_ubuntu_latest" {
 
   filter {
     name   = "name"
-    values = ["packer aws.tm.id.au *"]
+    values = ["aws.tm.id.au *"]
   }
 
   filter {
@@ -69,7 +69,7 @@ data "aws_ami" "packer_centos_latest" {
 
   filter {
     name   = "name"
-    values = ["packer centos.tm.id.au *"]
+    values = ["centos.tm.id.au *"]
   }
 
   filter {
