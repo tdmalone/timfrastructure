@@ -29,7 +29,7 @@ resource "aws_instance" "aws-tm-id-au" {
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   associate_public_ip_address = true
 
-  private_ip = "10.0.0.186"
+  private_ip = "10.0.0.186" # TODO: Change to .101 when this instance is safe for recreation.
 
   root_block_device {
     volume_type = "gp2"
@@ -84,7 +84,7 @@ resource "aws_instance" "xenial_tm_id_au" {
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   associate_public_ip_address = true
 
-  private_ip = "10.0.0.249"
+  private_ip = "10.0.0.102"
 
   root_block_device {
     volume_type = "gp2"
@@ -129,7 +129,7 @@ resource "aws_instance" "centos_tm_id_au" {
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   associate_public_ip_address = true
 
-  private_ip = "10.0.0.248"
+  private_ip = "10.0.0.103"
 
   root_block_device {
     volume_type = "gp2"
@@ -172,21 +172,6 @@ resource "aws_eip" "aws-tm-id-au" {
 }
 
 /**
- * Elastic IP address for Xenial server.
- *
- * @see https://www.terraform.io/docs/providers/aws/r/eip.html
- */
-resource "aws_eip" "xenial_tm_id_au" {
-  instance = "${aws_instance.xenial_tm_id_au.id}"
-  vpc      = true
-
-  tags {
-    "Name"       = "xenial.tm.id.au"
-    "Managed By" = "Terraform"
-  }
-}
-
-/**
  * Creates an Elastic File System resource for use between multiple EC2 instances.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/efs_file_system.html
@@ -208,6 +193,7 @@ resource "aws_efs_file_system" "default" {
 resource "aws_efs_mount_target" "alpha" {
   file_system_id = "${aws_efs_file_system.default.id}"
   subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  ip_address     = "10.0.0.87"                                                 # TODO: Change to .11 when ready to recreate.
 }
 
 /**

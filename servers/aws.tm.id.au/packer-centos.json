@@ -10,12 +10,13 @@
     "region": "ap-southeast-2",
     "instance_type": "t2.micro",
     "spot_price": "auto",
+    "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
     "shutdown_behavior": "terminate",
     "ssh_username": "centos",
-    "ami_name": "packer centos.tm.id.au {{timestamp}}",
+    "ami_name": "centos.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
 
     "tags": {
-      "Name": "packer centos.tm.id.au {{timestamp}}",
+      "Name": "centos.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
       "Built By": "Packer {{packer_version}}"
     },
 
@@ -31,10 +32,12 @@
     },
 
     "run_tags": {
-      "Managed By": "Packer"
+      "Managed By": "Packer",
+      "OS": "CentOS 7.4 1801"
     },
 
     "run_volume_tags": {
+      "Name": "Packer Builder",
       "Managed By": "Packer"
     }
 

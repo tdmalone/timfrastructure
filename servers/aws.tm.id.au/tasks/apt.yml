@@ -50,6 +50,7 @@
   apt:
     update_cache: yes # Comment out and uncomment the above to avoid slowness.
   when: new_system == true or apt_sources.changed or apt_keys_url.changed or apt_keys_keyserver.changed
+  tags: skip_ansible_lint # https://github.com/willthames/ansible-lint/issues/273#issuecomment-352767920
 
 - name: Update the apt cache only if stale (for existing systems).
   apt:
