@@ -13,9 +13,9 @@
     "ami_name": "packer aws.tm.id.au {{timestamp}}",
 
     "tags": {
-      "Name": "packer aws.tm.id.au {{timestamp}}"
+      "Name": "packer aws.tm.id.au {{timestamp}}",
       "Built By": "Packer {{packer_version}}"
-    }
+    },
 
     "source_ami_filter": {
       "filters": {

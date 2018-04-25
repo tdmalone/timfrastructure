@@ -10,7 +10,7 @@
 
 # TODO: Register with Ubuntu Landscape?
 
-- hosts: default
+- hosts: all
   become: yes
   gather_facts: no # This won't work until we install the needed Python module (see below).
 
@@ -290,6 +290,7 @@
         - curl
         - ftp
         - git
+        - jq
         - mariadb-server
         - nginx
         - php7.2-fpm
@@ -334,26 +335,27 @@
     # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
     # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
     # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/get_url_module.html
     - name: Check if amazon-ssm-agent is installed.
       command: dpkg-query --show amazon-ssm-agent
-      register: amazon_ssm_agent_installed
-      failed_when: amazon_ssm_agent_installed.rc > 1
-      changed_when: amazon_ssm_agent_installed.rc == 1
+      register: amazon_ssm_agent_is_installed
+      failed_when: amazon_ssm_agent_is_installed.rc > 1
+      changed_when: amazon_ssm_agent_is_installed.rc == 1
       check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
 
+    # @see http://docs.ansible.com/ansible/latest/modules/get_url_module.html
     - name: If not, download amazon-ssm-agent, and...
       get_url:
         url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
         dest: /home/{{ username }}/downloads/amazon-ssm-agent.deb
         owner: "{{ username }}"
         group: "{{ username }}"
-      when: amazon_ssm_agent_installed.rc == 1
+      when: amazon_ssm_agent_is_installed.rc == 1
 
+    # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     - name: ...install amazon-ssm-agent.
       apt:
         deb: /home/{{ username }}/downloads/amazon-ssm-agent.deb
-      when: amazon_ssm_agent_installed.rc == 1
+      when: amazon_ssm_agent_is_installed.rc == 1
 
     #- name: Start services on boot
     # sudo systemctl enable amazon-ssm-agent
@@ -372,9 +374,30 @@
     #chmod +x wp-cli.phar
     #sudo mv wp-cli.phar /usr/local/bin/wp
 
-    # Check if Terraform is installed.
-    # Install Terraform.
-    # TODO: Find a way to programmatically download or get the latest version number.
+    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+    - name: Check if Terraform is installed.
+      shell: command -v terraform
+      register: terraform_is_installed
+      changed_when: terraform_is_installed.rc > 0
+      failed_when: false
+      check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+
+    # @see https://github.com/hashicorp/terraform/issues/9803#issuecomment-257903082
+    # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+    - name: If not, get latest Terraform version download URL...
+      shell: echo "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')_linux_amd64.zip"
+      register: terraform_download_url
+      when: terraform_is_installed.rc > 0
+
+    # @see http://docs.ansible.com/ansible/latest/modules/unarchive_module.html
+    - name: ...then download, unzip, and place the Terraform binary in the path.
+      unarchive:
+        src: "{{ terraform_download_url.stdout }}"
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: +x
+      when: terraform_is_installed.rc > 0
+
     # get_url:
     #     url: https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
     #     dest: ...../terraform.zip
@@ -444,7 +467,7 @@
         token: "{{ lookup('env', 'SLACK_HOOK') }}"
         color: good
         msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) has completed successfully.
-      delegate_to: localhost
+      #delegate_to: localhost
 
     # TODO: Additional interesting roles to look into:
     #       - https://github.com/manala/ansible-role-accounts

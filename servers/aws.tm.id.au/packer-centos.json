@@ -15,9 +15,9 @@
     "ami_name": "packer centos.tm.id.au {{timestamp}}",
 
     "tags": {
-      "Name": "packer centos.tm.id.au {{timestamp}}"
+      "Name": "packer centos.tm.id.au {{timestamp}}",
       "Built By": "Packer {{packer_version}}"
-    }
+    },
 
     "source_ami_filter": {
       "filters": {
@@ -28,7 +28,7 @@
 
       "owners": ["679593333241"],
       "most_recent": true
-    }
+    },
 
     "run_tags": {
       "Managed By": "Packer"
