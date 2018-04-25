@@ -10,13 +10,15 @@
 # @see https://yarnpkg.com/en/docs/install
 # @see https://tecadmin.net/install-php-7-on-ubuntu/
 # @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+# @see https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-repository
 # NOTE: {{ansible_lsb.codename}} will return eg. 'trusty' or 'xenial'. An alternative is {{ansible_distribution_release}}.
 - name: Add neccessary apt sources.
   apt_repository:
     repo: "{{ item }}"
   with_items:
-    - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
     - deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_lsb.codename }} main
+    - deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+    - deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_lsb.codename }} main
     - deb https://cli-assets.heroku.com/branches/stable/apt ./
     - deb https://dl.yarnpkg.com/debian/ stable main
     - ppa:ondrej/php
@@ -26,6 +28,7 @@
   apt_key:
     url: "{{ item }}"
   with_items:
+    - https://download.docker.com/linux/ubuntu/gpg
     - https://packages.cloud.google.com/apt/doc/apt-key.gpg
     - https://cli-assets.heroku.com/apt/release.key
     - https://dl.yarnpkg.com/debian/pubkey.gpg
@@ -93,6 +96,7 @@
     name: "{{ item }}"
   with_items:
     - azure-cli
+    - docker-ce
     - google-cloud-sdk
     - heroku
     - kubectl
