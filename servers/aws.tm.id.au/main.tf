@@ -1,7 +1,7 @@
 # EC2
 # CloudWatch alarms
 # Datadog?
-# AMIs
+# AMIs - https://www.terraform.io/docs/providers/aws/r/ami_from_instance.html
 # snapshots
 # key pair
 
@@ -28,6 +28,9 @@ resource "aws_instance" "aws-tm-id-au" {
 
   availability_zone = "ap-southeast-2a"
   subnet_id         = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  associate_public_ip_address = true
+
+  private_ip = "10.0.0.186"
 
   root_block_device {
     volume_type = "gp2"
@@ -71,6 +74,8 @@ resource "aws_instance" "xenial_tm_id_au" {
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   associate_public_ip_address = true
+
+  private_ip = "10.0.0.249"
 
   root_block_device {
     volume_type = "gp2"

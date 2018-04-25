@@ -1,3 +1,4 @@
+---
 
 ####### IN PROGRESS! DO NOT USE YET. #######
 
@@ -163,6 +164,7 @@
 
     # TODO: Mount EFS target.
     # @see https://docs.aws.amazon.com/console/efs/mount-considerations
+    # @see https://github.com/oranmoshai/efsAwsMount
     # sudo apt-get install nfs-common
     # sudo mkdir efs
     # sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 fs-31ac5308.efs.ap-southeast-2.amazonaws.com:/ efs
@@ -262,13 +264,6 @@
         upgrade: full
       when: dist_upgrade == true
 
-    # # @see http://docs.ansible.com/ansible/latest/modules/service_module.html
-    # Does not appear to be working, possibly try solutions at https://stackoverflow.com/questions/14972792/nginx-nginx-emerg-bind-to-80-failed-98-address-already-in-use
-    # - name: Stop apache, if running, before we try to remove it.
-    #   service:
-    #     name: apache2
-    #     state: stopped
-
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     - name: Remove default apt packages we don't want.
       apt:
@@ -279,6 +274,7 @@
 
     # @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
     # @see https://packaging.python.org/guides/installing-using-linux-tools/#debian-ubuntu
+    # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead for nginx.
     - name: Install packages with apt.
       apt:
         name: "{{ item }}"
@@ -294,8 +290,8 @@
         - ftp
         - git
         - mariadb-server
-        #- nginx
-        - php7.2
+        - nginx
+        - php7.2-fpm
         - ruby
         - ruby-dev # Needed for Travis gem installation to succeed.
         - python-pip
@@ -420,7 +416,7 @@
     # @see http://docs.ansible.com/ansible/latest/modules/blockinfile_module.html
     # @see http://docs.ansible.com/ansible/latest/modules/copy_module.html
 
-    # TODO: Install zsh and oh-my-zsh.
+    # TODO: Install oh-my-zsh.
 
     # TODO: Set up Cloud9 environment, if possible/neccessary?
 
@@ -473,3 +469,5 @@
     #       - https://github.com/manala/ansible-role-sudo
     #       - https://github.com/manala/ansible-role-systemd
     #       - https://github.com/manala/ansible-role-vim
+
+...
