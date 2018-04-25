@@ -43,11 +43,14 @@ resource "aws_instance" "aws-tm-id-au" {
   ]
 
   tags {
-    Name = "aws.tm.id.au"
+    "Name"       = "aws.tm.id.au"
+    "Managed By" = "Terraform"
+    "OS"         = "Ubuntu 14.04"
   }
 
   volume_tags {
-    Name = "aws.tm.id.au"
+    "Name"       = "aws.tm.id.au"
+    "Managed By" = "Terraform"
   }
 }
 
@@ -58,7 +61,7 @@ resource "aws_instance" "aws-tm-id-au" {
  * @see ./playbook.yml
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
-resource "aws_instance" "xenial-tm-id-au" {
+resource "aws_instance" "xenial_tm_id_au" {
   ami                     = "${data.aws_ami.packer_latest.id}"
   instance_type           = "${var.server_type}"
   disable_api_termination = false
@@ -83,11 +86,14 @@ resource "aws_instance" "xenial-tm-id-au" {
   ]
 
   tags {
-    Name = "xenial.tm.id.au"
+    "Name"       = "xenial.tm.id.au"
+    "Managed By" = "Terraform"
+    "OS"         = "Ubuntu 16.04"
   }
 
   volume_tags {
-    Name = "xenial.tm.id.au"
+    "Name"       = "xenial.tm.id.au"
+    "Managed By" = "Terraform"
   }
 }
 
@@ -101,7 +107,8 @@ resource "aws_eip" "aws-tm-id-au" {
   vpc      = true
 
   tags {
-    Name = "aws.tm.id.au"
+    "Name"       = "aws.tm.id.au"
+    "Managed By" = "Terraform"
   }
 }
 
@@ -110,12 +117,13 @@ resource "aws_eip" "aws-tm-id-au" {
  *
  * @see https://www.terraform.io/docs/providers/aws/r/eip.html
  */
-resource "aws_eip" "xenial-tm-id-au" {
-  instance = "${aws_instance.xenial-tm-id-au.id}"
+resource "aws_eip" "xenial_tm_id_au" {
+  instance = "${aws_instance.xenial_tm_id_au.id}"
   vpc      = true
 
   tags {
-    Name = "xenial.tm.id.au"
+    "Name"       = "xenial.tm.id.au"
+    "Managed By" = "Terraform"
   }
 }
 
@@ -126,6 +134,11 @@ resource "aws_eip" "xenial-tm-id-au" {
  */
 resource "aws_efs_file_system" "default" {
   encrypted = true
+
+  tags {
+    "Name"       = "Tim Repos"
+    "Managed By" = "Terraform"
+  }
 }
 
 /**
