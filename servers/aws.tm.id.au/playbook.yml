@@ -22,7 +22,7 @@
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/zsh
     hostname: aws.tm.id.au
-    dist_upgrade: false # WARNING: Should only be used on brand new servers!
+    dist_upgrade: true # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
   handlers:
@@ -278,8 +278,8 @@
     - name: Install packages with apt.
       apt:
         name: "{{ item }}"
-        cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
-        #update_cache: yes
+        #cache_valid_time: 86400 # One day. Set to avoid slowness when re-running/testing the playbook.
+        update_cache: yes # Comment out and uncomment the above to avoid slowness.
         autoclean: yes
         autoremove: yes
       with_items:
@@ -312,13 +312,6 @@
         - heroku
         - kubectl
         - yarn
-
-    # TODO: Potentially see https://github.com/geerlingguy/ansible-role-nginx instead
-    # - name: Install nginx with apt.
-    #   apt:
-    #     name: "{{ item }}"
-    #   with_items:
-    #     - nginx
 
     # @see https://github.com/papertrail/papertrail-cli
     # @see http://docs.ansible.com/ansible/2.4/gem_module.html

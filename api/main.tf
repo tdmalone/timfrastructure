@@ -27,6 +27,7 @@ resource "aws_api_gateway_account" "default" {
   domain_name = "api.tm.id.au"
 }*/
 
+
 # aws_api_gateway_resource
 # aws_api_gateway_method
 # aws_api_gateway_method_response
@@ -35,3 +36,4 @@ resource "aws_api_gateway_account" "default" {
 # aws_api_gateway_integration_response
 # aws_api_gateway_gateway_response
 # aws_api_gateway_model
+

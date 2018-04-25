@@ -1,7 +1,6 @@
 # EC2
 # CloudWatch alarms
 # Datadog?
-# AMIs - https://www.terraform.io/docs/providers/aws/r/ami_from_instance.html
 # snapshots
 # key pair
 
@@ -26,8 +25,8 @@ resource "aws_instance" "aws-tm-id-au" {
   iam_instance_profile    = "EC2-SimpleSystemsManager"
   monitoring              = false                      # Just for now, to keep costs down.
 
-  availability_zone = "ap-southeast-2a"
-  subnet_id         = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  availability_zone           = "ap-southeast-2a"
+  subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   associate_public_ip_address = true
 
   private_ip = "10.0.0.186"
@@ -56,6 +55,16 @@ resource "aws_instance" "aws-tm-id-au" {
     "Managed By" = "Terraform"
   }
 }
+
+/**
+ *
+ *
+ * @see https://www.terraform.io/docs/providers/aws/r/ami_from_instance.html
+ */
+#resource "aws_ami_from_instance" "aws_tm_id_au" {
+#  name               = "aws.tm.id.au"
+#  source_instance_id = "${aws_instance.aws-tm-id-au.id}"
+#}
 
 /**
  * Upcoming dev server based on a custom API built with Packer and Ansible.
