@@ -1,19 +1,28 @@
 {
 
   "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
-  "_notes": "'owners' value refers to CentOS.",
+  "_see": "https://aws.amazon.com/marketplace/server/procurement?productId=b7ee8a69-ee97-4a49-9e68-afaee216db2e",
+  "_see": "https://wiki.centos.org/Cloud/AWS",
+  "_notes": "'owners' value refers to the AWS Marketplace.",
   "builders": [{
 
     "type": "amazon-ebs",
     "region": "ap-southeast-2",
     "instance_type": "t2.micro",
+    "spot_price": "auto",
+    "shutdown_behaviour": "terminate",
     "ssh_username": "centos",
     "ami_name": "packer centos.tm.id.au {{timestamp}}",
+
+    "tags": {
+      "Name": "packer centos.tm.id.au {{timestamp}}"
+      "Built By": "Packer {{packer_version}}"
+    }
 
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",
-        "name": "ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*",
+        "name": "CentOS Linux 7 x86_64 HVM EBS 1801*",
         "root-device-type": "ebs"
       },
 
@@ -21,12 +30,21 @@
       "most_recent": true
     }
 
+    "run_tags": {
+      "Managed By": "Packer"
+    },
+
+    "run_volume_tags": {
+      "Managed By": "Packer"
+    }
+
   }],
 
   "_see": "https://www.packer.io/docs/provisioners/ansible.html",
   "provisioners": [{
     "type": "ansible",
-    "playbook_file": "./centos.yml"
+    "playbook_file": "./centos.yml",
+    "extra_arguments": [ "--diff" ]
   }]
 
 }

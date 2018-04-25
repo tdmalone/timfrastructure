@@ -74,7 +74,7 @@ resource "aws_instance" "aws-tm-id-au" {
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
 resource "aws_instance" "xenial_tm_id_au" {
-  ami                     = "${data.aws_ami.packer_latest.id}"
+  ami                     = "${data.aws_ami.packer_ubuntu_latest.id}"
   instance_type           = "${var.server_type}"
   disable_api_termination = false
   iam_instance_profile    = "EC2-SimpleSystemsManager"
@@ -107,6 +107,51 @@ resource "aws_instance" "xenial_tm_id_au" {
 
   volume_tags {
     "Name"       = "xenial.tm.id.au"
+    "Managed By" = "Terraform"
+  }
+}
+
+/**
+ * CentOS test server based on a custom API built with Packer and Ansible.
+ *
+ * @see ./packer-centos.json
+ * @see ./centos.yml
+ * @see https://www.terraform.io/docs/providers/aws/r/instance.html
+ */
+resource "aws_instance" "centos_tm_id_au" {
+  ami                     = "${data.aws_ami.packer_centos_latest.id}"
+  instance_type           = "${var.server_type}"
+  disable_api_termination = false
+  iam_instance_profile    = "EC2-SimpleSystemsManager"
+  monitoring              = false                              # Just for now, to keep costs down.
+
+  availability_zone           = "ap-southeast-2a"
+  subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  associate_public_ip_address = true
+
+  private_ip = "10.0.0.248"
+
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "8"
+  }
+
+  vpc_security_group_ids = [
+    "${data.terraform_remote_state.security.aws_security_group_default_id}",
+    "${data.terraform_remote_state.security.aws_security_group_outbound_id}",
+    "${data.terraform_remote_state.security.aws_security_group_https_id}",
+    "${data.terraform_remote_state.security.aws_security_group_ssh_id}",
+    "${data.terraform_remote_state.security.aws_security_group_ping_id}",
+  ]
+
+  tags {
+    "Name"       = "centos.tm.id.au"
+    "Managed By" = "Terraform"
+    "OS"         = "CentOS 7.4 1801"
+  }
+
+  volume_tags {
+    "Name"       = "centos.tm.id.au"
     "Managed By" = "Terraform"
   }
 }

@@ -35,6 +35,20 @@ resource "cloudflare_record" "xenial_int_tm_id_au" {
   type   = "A"
 }
 
+resource "cloudflare_record" "centos_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "centos.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.centos_tm_id_au_external_ip}"
+  type   = "A"
+}
+
+resource "cloudflare_record" "centos_int_tm_id_au" {
+  domain = "${var.domain1}"
+  name   = "centos.int.${var.domain1}"
+  value  = "${data.terraform_remote_state.aws_tm_id_au.centos_tm_id_au_internal_ip}"
+  type   = "A"
+}
+
 # TODO:
 #
 # aws.tm.id.au MX
