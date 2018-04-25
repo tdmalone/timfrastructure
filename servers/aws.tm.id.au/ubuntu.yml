@@ -27,10 +27,10 @@
 
   handlers:
 
-  - name: restart ssh
-    service:
-      name: ssh
-      state: restarted
+    - name: restart ssh
+      service:
+        name: ssh
+        state: restarted
 
   pre_tasks:
 
@@ -199,6 +199,7 @@
         scope: global
         name: "{{ item.name }}"
         value: "{{ item.value }}"
+      become: yes
       become_user: "{{ username }}"
       with_items:
         - { name: "user.name", value: "{{ full_name }}" }

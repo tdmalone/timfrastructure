@@ -46,7 +46,7 @@ script:
 
   # Find all Terraform config directories and Packer templates.
   - TERRAFORM_DIRS="$( find . -name "*.tf" | sort | xargs dirname | uniq )"
-  - PACKER_TEMPLATES="$( find . -name "packer.json" | sort )"
+  - PACKER_TEMPLATES="$( find . -name "packer-*.json" | sort )"
 
   # Check that Terraform config files are formatted correctly and that they validate - whichever
   # directory they may be in.

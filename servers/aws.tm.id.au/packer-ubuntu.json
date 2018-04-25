@@ -1,0 +1,48 @@
+{
+
+  "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
+  "_notes": "'owners' value refers to Canonical.",
+  "builders": [{
+
+    "type": "amazon-ebs",
+    "region": "ap-southeast-2",
+    "instance_type": "t2.micro",
+    "spot_price": "auto",
+    "shutdown_behaviour": "terminate",
+    "ssh_username": "ubuntu",
+    "ami_name": "packer aws.tm.id.au {{timestamp}}",
+
+    "tags": {
+      "Name": "packer aws.tm.id.au {{timestamp}}"
+      "Built By": "Packer {{packer_version}}"
+    }
+
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+      },
+
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+
+    "run_tags": {
+      "Managed By": "Packer"
+    },
+
+    "run_volume_tags": {
+      "Managed By": "Packer"
+    }
+
+  }],
+
+  "_see": "https://www.packer.io/docs/provisioners/ansible.html",
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "./ubuntu.yml",
+    "extra_arguments": [ "--diff" ]
+  }]
+
+}

@@ -69,8 +69,8 @@ resource "aws_instance" "aws-tm-id-au" {
 /**
  * Upcoming dev server based on a custom API built with Packer and Ansible.
  *
- * @see ./packer.json
- * @see ./playbook.yml
+ * @see ./packer-ubuntu.json
+ * @see ./ubuntu.yml
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
 resource "aws_instance" "xenial_tm_id_au" {
@@ -88,7 +88,7 @@ resource "aws_instance" "xenial_tm_id_au" {
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = "15"
+    volume_size = "8"
   }
 
   vpc_security_group_ids = [
@@ -127,7 +127,7 @@ resource "aws_eip" "aws-tm-id-au" {
 }
 
 /**
- * Elastic IP address for xenial server.
+ * Elastic IP address for Xenial server.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/eip.html
  */

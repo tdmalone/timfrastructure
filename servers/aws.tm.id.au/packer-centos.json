@@ -1,14 +1,14 @@
 {
 
   "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
-  "_notes": "'owners' value refers to Canonical.",
+  "_notes": "'owners' value refers to CentOS.",
   "builders": [{
 
     "type": "amazon-ebs",
     "region": "ap-southeast-2",
     "instance_type": "t2.micro",
-    "ssh_username": "ubuntu",
-    "ami_name": "packer aws-tm-id-au {{timestamp}}",
+    "ssh_username": "centos",
+    "ami_name": "packer centos.tm.id.au {{timestamp}}",
 
     "source_ami_filter": {
       "filters": {
@@ -17,7 +17,7 @@
         "root-device-type": "ebs"
       },
 
-      "owners": ["099720109477"],
+      "owners": ["679593333241"],
       "most_recent": true
     }
 
@@ -26,7 +26,7 @@
   "_see": "https://www.packer.io/docs/provisioners/ansible.html",
   "provisioners": [{
     "type": "ansible",
-    "playbook_file": "./ubuntu.yml"
+    "playbook_file": "./centos.yml"
   }]
 
 }
