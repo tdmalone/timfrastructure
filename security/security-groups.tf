@@ -90,6 +90,13 @@ resource "aws_security_group" "packer_builds" {
     cidr_blocks = ["${var.ip_address_list_3}"]
   }
 
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags {
     "Name"       = "Packer Builds"
     "Managed By" = "Terraform"
