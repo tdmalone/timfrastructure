@@ -113,6 +113,8 @@
 
     # TODO: Install AWS CLI.
 
+    # TODO: Install Keybase CLI.
+
     # Check if wp-cli is installed.
     # Install wp-cli.
     # @see https://wp-cli.org/#installing

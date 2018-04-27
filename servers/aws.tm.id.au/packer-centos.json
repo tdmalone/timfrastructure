@@ -4,6 +4,7 @@
   "_see": "https://aws.amazon.com/marketplace/server/procurement?productId=b7ee8a69-ee97-4a49-9e68-afaee216db2e",
   "_see": "https://wiki.centos.org/Cloud/AWS",
   "_notes": "'owners' value refers to the AWS Marketplace.",
+  "_notes": "'subnet_id' is required to launch into the VPC for the EFS mount in the Ansible playbook to work.",
   "builders": [{
 
     "type": "amazon-ebs",
@@ -14,6 +15,10 @@
     "shutdown_behavior": "terminate",
     "ssh_username": "centos",
     "ami_name": "centos.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
+
+    "subnet_id": "subnet-dc832995",
+    "associate_public_ip_address": true,
+    "security_group_id": "sg-70b4f309",
 
     "tags": {
       "Name": "centos.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
