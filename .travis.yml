@@ -45,6 +45,10 @@ install:
   # Install ansible-lint.
   - sudo pip2 install ansible-lint
 
+before_script:
+
+  - echo "External IP address of build machine: $( curl --silent http://api.ipify.org )"
+
 script:
 
   # Find all Terraform config directories and Packer templates.
