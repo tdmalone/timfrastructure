@@ -1,9 +1,3 @@
-# IAM - access keys, users, groups, policies and roles
-# CloudTrail
-# Config?
-# GuardDuty?
-# Inspector?
-
 /**
  * Defines EC2 security groups.
  *
@@ -12,9 +6,9 @@
  */
 
 resource "aws_security_group" "default_vpc_default" {
-  name = "default"
+  name        = "default"
   description = "default VPC security group"
-  vpc_id = "vpc-a84dbacf"
+  vpc_id      = "vpc-a84dbacf"
 
   ingress {
     protocol  = "-1"
@@ -24,15 +18,15 @@ resource "aws_security_group" "default_vpc_default" {
   }
 
   tags {
-    "Name" = "default VPC security group"
+    "Name"       = "default VPC security group"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "default" {
-  name = "default"
+  name        = "default"
   description = "default VPC security group"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     protocol  = "-1"
@@ -42,15 +36,15 @@ resource "aws_security_group" "default" {
   }
 
   tags {
-    "Name" = "default VPC security group"
+    "Name"       = "default VPC security group"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "outbound" {
-  name = "Unrestricted outbound"
+  name        = "Unrestricted outbound"
   description = "Unrestricted outbound"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   egress {
     protocol    = "-1"
@@ -60,26 +54,26 @@ resource "aws_security_group" "outbound" {
   }
 
   tags {
-    "Name" = "Unrestricted outbound"
+    "Name"       = "Unrestricted outbound"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "blank" {
-  name = "Blank Security Group (no access)"
+  name        = "Blank Security Group (no access)"
   description = "Blank Security Group (no access)"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   tags {
-    "Name" = "Blank Security Group (no access)"
+    "Name"       = "Blank Security Group (no access)"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "packer_builds" {
-  name = "Packer Builds"
+  name        = "Packer Builds"
   description = "Packer Builds"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     protocol  = "-1"
@@ -97,15 +91,15 @@ resource "aws_security_group" "packer_builds" {
   }
 
   tags {
-    "Name" = "Packer Builds"
+    "Name"       = "Packer Builds"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "https" {
-  name = "Restricted inbound HTTP/HTTPS"
+  name        = "Restricted inbound HTTP/HTTPS"
   description = "Restricted inbound HTTP/HTTPS"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     description = "HTTP"
@@ -132,15 +126,15 @@ resource "aws_security_group" "https" {
   }
 
   tags {
-    "Name" = "Restricted inbound HTTP/HTTPS"
+    "Name"       = "Restricted inbound HTTP/HTTPS"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "ssh" {
-  name = "Restricted inbound SSH"
+  name        = "Restricted inbound SSH"
   description = "Restricted inbound SSH"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     description = "SSH"
@@ -151,7 +145,7 @@ resource "aws_security_group" "ssh" {
   }
 
   tags {
-    "Name" = "Restricted inbound SSH"
+    "Name"       = "Restricted inbound SSH"
     "Managed By" = "Terraform"
   }
 }
@@ -162,9 +156,9 @@ resource "aws_security_group" "ssh" {
  * @see https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_DefAppCfg_guide_ICMP_intro.html
  */
 resource "aws_security_group" "ping" {
-  name = "Restricted ping access"
+  name        = "Restricted ping access"
   description = "Restricted ping access"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     description = "Ping"
@@ -189,15 +183,15 @@ resource "aws_security_group" "ping" {
   }
 
   tags {
-    "Name" = "Restricted ping access"
+    "Name"       = "Restricted ping access"
     "Managed By" = "Terraform"
   }
 }
 
 resource "aws_security_group" "rdp" {
-  name = "Restricted RDP access"
+  name        = "Restricted RDP access"
   description = "Restricted RDP access"
-  vpc_id = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc"
 
   ingress {
     description = "RDP"
@@ -208,7 +202,7 @@ resource "aws_security_group" "rdp" {
   }
 
   tags {
-    "Name" = "Restricted RDP access"
+    "Name"       = "Restricted RDP access"
     "Managed By" = "Terraform"
   }
 }
