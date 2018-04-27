@@ -13,3 +13,7 @@ variable "ip_address_list_1" {
 variable "ip_address_list_2" {
   default = []
 }
+
+variable "ip_address_list_3" {
+  default = []
+}

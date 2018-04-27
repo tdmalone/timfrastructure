@@ -11,8 +11,10 @@
  * @see https://www.terraform.io/docs/providers/aws/r/security_group.html
  */
 
-resource "aws_security_group" "default" {
+resource "aws_security_group" "default_vpc_default" {
+  name = "default"
   description = "default VPC security group"
+  vpc_id = "vpc-a84dbacf"
 
   ingress {
     protocol  = "-1"
@@ -20,10 +22,35 @@ resource "aws_security_group" "default" {
     to_port   = 0
     self      = true
   }
+
+  tags {
+    "Name" = "default VPC security group"
+    "Managed By" = "Terraform"
+  }
+}
+
+resource "aws_security_group" "default" {
+  name = "default"
+  description = "default VPC security group"
+  vpc_id = "vpc-9ba455fc"
+
+  ingress {
+    protocol  = "-1"
+    from_port = 0
+    to_port   = 0
+    self      = true
+  }
+
+  tags {
+    "Name" = "default VPC security group"
+    "Managed By" = "Terraform"
+  }
 }
 
 resource "aws_security_group" "outbound" {
+  name = "Unrestricted outbound"
   description = "Unrestricted outbound"
+  vpc_id = "vpc-9ba455fc"
 
   egress {
     protocol    = "-1"
@@ -31,14 +58,54 @@ resource "aws_security_group" "outbound" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags {
+    "Name" = "Unrestricted outbound"
+    "Managed By" = "Terraform"
+  }
 }
 
 resource "aws_security_group" "blank" {
+  name = "Blank Security Group (no access)"
   description = "Blank Security Group (no access)"
+  vpc_id = "vpc-9ba455fc"
+
+  tags {
+    "Name" = "Blank Security Group (no access)"
+    "Managed By" = "Terraform"
+  }
+}
+
+resource "aws_security_group" "packer_builds" {
+  name = "Packer Builds"
+  description = "Packer Builds"
+  vpc_id = "vpc-9ba455fc"
+
+  ingress {
+    protocol  = "-1"
+    from_port = 0
+    to_port   = 0
+    self      = true
+  }
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ip_address_list_3}"]
+  }
+
+  tags {
+    "Name" = "Packer Builds"
+    "Managed By" = "Terraform"
+  }
 }
 
 resource "aws_security_group" "https" {
+  name = "Restricted inbound HTTP/HTTPS"
   description = "Restricted inbound HTTP/HTTPS"
+  vpc_id = "vpc-9ba455fc"
 
   ingress {
     description = "HTTP"
@@ -63,10 +130,17 @@ resource "aws_security_group" "https" {
     protocol    = "tcp"
     cidr_blocks = ["${var.ip_address_list_1}"]
   }
+
+  tags {
+    "Name" = "Restricted inbound HTTP/HTTPS"
+    "Managed By" = "Terraform"
+  }
 }
 
 resource "aws_security_group" "ssh" {
+  name = "Restricted inbound SSH"
   description = "Restricted inbound SSH"
+  vpc_id = "vpc-9ba455fc"
 
   ingress {
     description = "SSH"
@@ -74,6 +148,11 @@ resource "aws_security_group" "ssh" {
     to_port     = "${var.ssh_port}"
     protocol    = "tcp"
     cidr_blocks = ["${var.ip_address_list_2}"]
+  }
+
+  tags {
+    "Name" = "Restricted inbound SSH"
+    "Managed By" = "Terraform"
   }
 }
 
@@ -83,7 +162,9 @@ resource "aws_security_group" "ssh" {
  * @see https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_DefAppCfg_guide_ICMP_intro.html
  */
 resource "aws_security_group" "ping" {
+  name = "Restricted ping access"
   description = "Restricted ping access"
+  vpc_id = "vpc-9ba455fc"
 
   ingress {
     description = "Ping"
@@ -106,10 +187,17 @@ resource "aws_security_group" "ping" {
       "${var.ip_address_list_1}",
     ]
   }
+
+  tags {
+    "Name" = "Restricted ping access"
+    "Managed By" = "Terraform"
+  }
 }
 
 resource "aws_security_group" "rdp" {
+  name = "Restricted RDP access"
   description = "Restricted RDP access"
+  vpc_id = "vpc-9ba455fc"
 
   ingress {
     description = "RDP"
@@ -117,5 +205,10 @@ resource "aws_security_group" "rdp" {
     to_port     = "${var.rdp_port}"
     protocol    = "tcp"
     cidr_blocks = ["${var.ip_address_list_1}"]
+  }
+
+  tags {
+    "Name" = "Restricted RDP access"
+    "Managed By" = "Terraform"
   }
 }
