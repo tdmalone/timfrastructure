@@ -47,7 +47,7 @@ install:
 
 before_script:
 
-  - echo "External IP address of build machine: $( curl --silent http://api.ipify.org )"
+  - echo "External IP address of build machine:" "$( curl --silent http://api.ipify.org )"
 
 script:
 
