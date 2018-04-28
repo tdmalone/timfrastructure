@@ -54,6 +54,11 @@ resource "aws_instance" "aws-tm-id-au" {
     "Name"       = "aws.tm.id.au"
     "Managed By" = "Terraform"
   }
+
+  # Prevent Terraform from trying to recreate the instance when it is stopped.
+  lifecycle {
+    ignore_changes = ["associate_public_ip_address"]
+  }
 }
 
 /**
@@ -109,6 +114,11 @@ resource "aws_instance" "xenial_tm_id_au" {
     "Name"       = "xenial.tm.id.au"
     "Managed By" = "Terraform"
   }
+
+  # Prevent Terraform from trying to recreate the instance when it is stopped.
+  lifecycle {
+    ignore_changes = ["associate_public_ip_address"]
+  }
 }
 
 /**
@@ -154,6 +164,11 @@ resource "aws_instance" "centos_tm_id_au" {
     "Name"       = "centos.tm.id.au"
     "Managed By" = "Terraform"
   }
+
+  # Prevent Terraform from trying to recreate the instance when it is stopped.
+  lifecycle {
+    ignore_changes = ["associate_public_ip_address"]
+  }
 }
 
 /**
@@ -172,7 +187,7 @@ resource "aws_eip" "aws-tm-id-au" {
 }
 
 /**
- * Creates an Elastic File System resource for use between multiple EC2 instances.
+ * Creates Elastic File System resources for use between multiple EC2 instances.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/efs_file_system.html
  */
@@ -183,10 +198,40 @@ resource "aws_efs_file_system" "default" {
     "Name"       = "Tim Repos"
     "Managed By" = "Terraform"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_efs_file_system" "web" {
+  encrypted = true
+
+  tags {
+    "Name"       = "Tim Webroot"
+    "Managed By" = "Terraform"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_efs_file_system" "downloads" {
+  encrypted = true
+
+  tags {
+    "Name"       = "Tim Downloads"
+    "Managed By" = "Terraform"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 /**
- * Creates a mount target for connecting the main EFS to instances.
+ * Creates mount targets for connecting EFS' to instances.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/efs_mount_target.html
  */
@@ -194,6 +239,69 @@ resource "aws_efs_mount_target" "alpha" {
   file_system_id = "${aws_efs_file_system.default.id}"
   subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
   ip_address     = "10.0.0.87"                                                 # TODO: Change to .11 when ready to recreate.
+
+  # TODO: Link these to remote state.
+  security_groups = [
+    "sg-70b4f309",
+    "sg-b0b785d6"
+  ]
+}
+
+resource "aws_efs_mount_target" "beta" {
+  file_system_id = "${aws_efs_file_system.default.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_b_id}"
+  ip_address     = "10.0.1.11"
+
+  # TODO: Link these to remote state.
+  security_groups = [
+    "sg-b0b785d6"
+  ]
+}
+
+resource "aws_efs_mount_target" "web_alpha" {
+  file_system_id = "${aws_efs_file_system.web.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  ip_address     = "10.0.0.12"
+
+  # TODO: Link these to remote state.
+  security_groups = [
+    "sg-70b4f309",
+    "sg-b0b785d6"
+  ]
+}
+
+resource "aws_efs_mount_target" "web_beta" {
+  file_system_id = "${aws_efs_file_system.web.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_b_id}"
+  ip_address     = "10.0.1.12"
+
+  # TODO: Link this to remote state.
+  security_groups = [
+    "sg-b0b785d6"
+  ]
+}
+
+resource "aws_efs_mount_target" "downloads_alpha" {
+  file_system_id = "${aws_efs_file_system.downloads.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
+  ip_address     = "10.0.0.13"
+
+  # TODO: Link these to remote state.
+  security_groups = [
+    "sg-70b4f309",
+    "sg-b0b785d6"
+  ]
+}
+
+resource "aws_efs_mount_target" "downloads_beta" {
+  file_system_id = "${aws_efs_file_system.downloads.id}"
+  subnet_id      = "${data.terraform_remote_state.vpc.aws_subnet_public_b_id}"
+  ip_address     = "10.0.1.13"
+
+  # TODO: Link this to remote state.
+  security_groups = [
+    "sg-b0b785d6"
+  ]
 }
 
 /**

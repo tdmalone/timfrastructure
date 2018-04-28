@@ -21,7 +21,9 @@
     shell: /bin/zsh
     hostname: aws.tm.id.au
     aws_region: ap-southeast-2
-    efs_id: fs-31ac5308
+    efs_id_1: fs-31ac5308 # Repos. TODO: Get these dynamically from Terraform, also set as an array.
+    efs_id_2: fs-ab2ad592 # Downloads.
+    efs_id_3: fs-db2bd4e2 # Webroot.
     new_system: false # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
@@ -96,13 +98,10 @@
         - papertrail
         - travis # TODO: Run once and press y to enable shell completion.
 
-    # @see http://docs.ansible.com/ansible/latest/modules/file_module.html
-    - name: Ensure /home/{{ username }}/downloads dir exists before downloading files for manual installs.
-      file:
-        path: /home/{{ username }}/downloads
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+    - name: Include EFS mount.
+      include_tasks: ./tasks/efs.yml
+      tags:
+        - mounts
 
     - name: Include amazon-ssm-agent installation.
       include_tasks: ./tasks/aws-ssm.yml
@@ -132,9 +131,6 @@
     #wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
     #tar -zxvf linux64 && rm linux64
     #Bluemix_CLI/install_bluemix_cli
-
-    - name: Include EFS mount.
-      include_tasks: ./tasks/efs.yml
 
     # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
     # @see http://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html
