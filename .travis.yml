@@ -36,9 +36,16 @@ before_install:
   - tar --xz -xvf shellcheck.tar.xz
   - shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-latest/shellcheck" "$@"; }
   - export -f shellcheck
-  - shellcheck --version
 
 install: ./install.sh
+
+before_script:
+
+  - terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
+  - export -f terraform
+  - packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
+  - export -f packer
+
 script: ./script.sh
 
 notifications:

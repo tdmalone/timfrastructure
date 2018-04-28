@@ -23,16 +23,12 @@ echo "Installing Terraform ${TERRAFORM_LATEST} and making it available as a comm
 echo
 curl --location --fail --silent "${HASHICORP_RELEASE_BASE}/terraform/${TERRAFORM_LATEST}/terraform_${TERRAFORM_LATEST}_linux_amd64.zip" > terraform.zip
 unzip terraform.zip
-terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
-export -f terraform
 
 echo
 echo "Installing Packer ${PACKER_LATEST} and making it available as a command..."
 echo
 curl --location --fail --silent "${HASHICORP_RELEASE_BASE}/packer/${PACKER_LATEST}/packer_${PACKER_LATEST}_linux_amd64.zip" > packer.zip
 unzip packer.zip
-packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
-export -f packer
 
 echo
 echo Installing ansible-lint with pip...
