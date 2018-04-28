@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     bucket         = "timfrastructure"
     dynamodb_table = "timfrastructure"
-    key            = "servers/aws.tm.id.au"
+    key            = "servers/aws.tm.id.au" # TODO: Move state file to just 'servers'.
     encrypt        = true
   }
 }

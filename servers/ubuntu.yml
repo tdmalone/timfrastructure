@@ -76,9 +76,6 @@
     - name: Include git configuration.
       include_tasks: ./tasks/git.yml
 
-    # TODO: Clone tdmalone/dotfiles.
-    # @see http://docs.ansible.com/ansible/latest/modules/git_module.html
-
     # Install Node.js.
     # @see https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
     #curl --location https://deb.nodesource.com/setup_9.x | sudo --preserve-env bash /dev/stdin
@@ -107,11 +104,8 @@
       include_tasks: ./tasks/aws-ssm.yml
 
     # TODO: Set up an nginx vhost, and configure with php-fpm.
-
     # TODO: Install LastPass CLI.
-
     # TODO: Install AWS CLI.
-
     # TODO: Install Keybase CLI.
 
     # Check if wp-cli is installed.
@@ -142,8 +136,10 @@
     # @see http://docs.ansible.com/ansible/latest/modules/copy_module.html
 
     # TODO: Install oh-my-zsh.
-
     # TODO: Set up Cloud9 environment, if possible/neccessary?
+    # TODO: Set up crontab with any regular jobs.
+    # TODO: Symlink any neccessary configuration files to the cloned dotfiles (in EFS mount).
+    # TODO: Set up SSH config and SSH keys (if possible to do it securely).
 
     - name: Include notification tasks.
       include_tasks: ./tasks/notifications.yml
