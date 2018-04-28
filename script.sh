@@ -67,7 +67,7 @@ find . -name "*.sh" -print0 | grep --null-data --invert-match "./script.sh" | xa
 echo
 echo Linting all Ansible playbooks...
 echo
-#find . -name "*.yml" -print0 | grep --null-data --invert-match "./.travis.yml" | xargs --null ansible-lint -v
+find . -name "*.yml" -print0 | grep --null-data --invert-match "./.travis.yml" | xargs --null ansible-lint -v
 
 echo
 echo Validating all Packer templates...

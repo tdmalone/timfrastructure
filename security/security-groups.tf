@@ -87,7 +87,23 @@ resource "aws_security_group" "packer_builds" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    cidr_blocks = ["${var.ip_address_list_1}"]
+  }
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["${var.ip_address_list_3}"]
+  }
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${data.terraform_remote_state.aws_tm_id_au.aws_tm_id_au_external_ip}/32"]
   }
 
   egress {
