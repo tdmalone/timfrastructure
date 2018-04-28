@@ -28,60 +28,8 @@ env:
     # SSH_PORT
     - secure: LMFdtTRfofUacpCa6ET+T9heWQUdXz2q5ZESTjhhIO/pqhrAQsVd0jfZ5bu0mjj0hPNDpQQpdBvqhzXsU7V48R1NBJ1t3pE9KCvsxhGzMM/UwBaEwxlWfxmAHKbUPmTzyLmBX9Dh+iTOkZjwRXI1MoYhZlDo/Lut6fGqRbolk6vg8VsZWsaN16Aw+EbPq37v29tCURty5qQPZ8KlUvhmjylHDpeynr7zLDl7NmJyq1iaNTkXB5dh9EdA538o940LcXhV61CfBe2756cgsg40sRbNV+rgbSF5+gHoYJ0WRzO7tEoig8gPocNQwAofxdjuJOI4H2bNqtHndlCO+nabhe7gDre7QQC2K0Tq7KZ7RXHmD4IrUMQ6sqSSldmk8UmyE1ZqnRLTKkBD1pDvk0s/6VytKDpp24LhHGi0NQDszUFtT+P2JmZfBmfCqvuQQeCNC31X+7k2nfsyqm5IsxYIsgfwz1AGPb+B4bKvYFscPwv8PerGa45gRo63ZSoRbhwaa8vmDHu45T0HVM9ZCaSaSjTOo+5BpdypOQvyLWhrsJAoQCuoGjb4SfmvB4UmcJm8YqZYMNCGuvwLvr7cA+YKmZiXKHzG3faO2gsyQDUTBY3MUDg9yjtBXn7MN+2HS8QiqLH8ZEgkTs9kH+ceeyZNWSIzrpnq4oScup00tzIvfCc=
 
-install:
-
-  # Install Terraform.
-  - curl --location https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip > terraform.zip
-  - unzip terraform.zip
-  - terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
-  - export -f terraform
-
-  # Install Packer
-  - curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
-  - unzip packer.zip
-  - packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
-  - export -f packer
-
-  # Install ansible-lint.
-  - sudo pip2 install ansible-lint
-
-before_script:
-
-  - echo "External IP address of build machine:" "$( curl --silent http://api.ipify.org )"
-
-script:
-
-  # Find all Terraform config directories and Packer templates.
-  - TERRAFORM_DIRS="$( find . -name "*.tf" | sort | xargs dirname | uniq )"
-  - PACKER_TEMPLATES="$( find . -name "packer-*.json" | sort )"
-
-  # Check that Terraform config files are formatted correctly and that they validate - whichever
-  # directory they may be in.
-  - terraform fmt -check
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && ( cd % && terraform init -input=false -lock=false )'
-  - echo && echo 'Validating all Terraform files...'
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo % && ( cd % && terraform validate )'
-
-  # Additional checks using tflint.
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo && echo % && docker run --rm --tty --volume $(pwd)/%:/data wata727/tflint --error-with-issues'
-
-  # Check that the state is up-to-date - i.e. that no changes have been pushed without being
-  # applied. We only care about the exit code here, and don't want to expose any potentially
-  # sensitive data, so we also redirect the output.
-  - echo && echo 'Checking there are no outstanding changes to be applied (changes will be hidden for security reasons)...'
-  - echo "${TERRAFORM_DIRS}" | xargs -I % bash -c 'echo "%" && ( cd % && terraform plan -detailed-exitcode -lock=false > /dev/null )'
-
-  # Shellcheck any shell scripts.
-  - echo && echo 'Checking shell scripts...'
-  - find . -name "*.sh" | xargs -I % bash -c 'echo % && shellcheck %'
-
-  # Lint any Ansible playbooks.
-  - find . -name "*.yml" | xargs ansible-lint -v
-
-  # Check that all Packer templates validate & build - whichever directory they may be in.
-  # TODO: Deregister these AMIs afterwards so that builds are idempotent.
-  - echo "${PACKER_TEMPLATES}" | xargs -I % bash -c 'echo % && ( cd $( dirname % ) && packer validate $( basename % ) )'
-  - echo "${PACKER_TEMPLATES}" | xargs -I % bash -c 'echo % && ( cd $( dirname % ) && packer build $( basename % ) )'
+install: ./install.sh
+script: ./script.sh
 
 notifications:
   email: false

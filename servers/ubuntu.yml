@@ -140,6 +140,7 @@
     # TODO: Set up crontab with any regular jobs.
     # TODO: Symlink any neccessary configuration files to the cloned dotfiles (in EFS mount).
     # TODO: Set up SSH config and SSH keys (if possible to do it securely).
+    # TODO: Set up Ansible hosts.. OR move to dynamic inventory?
 
     - name: Include notification tasks.
       include_tasks: ./tasks/notifications.yml

@@ -243,7 +243,7 @@ resource "aws_efs_mount_target" "alpha" {
   # TODO: Link these to remote state.
   security_groups = [
     "sg-70b4f309",
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
@@ -254,7 +254,7 @@ resource "aws_efs_mount_target" "beta" {
 
   # TODO: Link these to remote state.
   security_groups = [
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
@@ -266,7 +266,7 @@ resource "aws_efs_mount_target" "web_alpha" {
   # TODO: Link these to remote state.
   security_groups = [
     "sg-70b4f309",
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
@@ -277,7 +277,7 @@ resource "aws_efs_mount_target" "web_beta" {
 
   # TODO: Link this to remote state.
   security_groups = [
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
@@ -289,7 +289,7 @@ resource "aws_efs_mount_target" "downloads_alpha" {
   # TODO: Link these to remote state.
   security_groups = [
     "sg-70b4f309",
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
@@ -300,7 +300,7 @@ resource "aws_efs_mount_target" "downloads_beta" {
 
   # TODO: Link this to remote state.
   security_groups = [
-    "sg-b0b785d6"
+    "sg-b0b785d6",
   ]
 }
 
