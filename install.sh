@@ -8,6 +8,13 @@ set -euo pipefail
 ##################################################################
 
 echo
+echo Installing the latest version of Shellcheck...
+curl --location --fail --silent https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz > shellcheck.tar.xz
+tar --xz -xvf shellcheck.tar.xz
+shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-stable/shellcheck" "$@"; }
+export -f shellcheck
+
+echo
 echo Linting install script before starting, script will not run if there are problems...
 shellcheck "${0}"
 
@@ -24,7 +31,7 @@ echo
 curl --location --fail --silent "${HASHICORP_RELEASE_BASE}/terraform/${TERRAFORM_LATEST}/terraform_${TERRAFORM_LATEST}_linux_amd64.zip" > terraform.zip
 unzip terraform.zip
 terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
-#export -f terraform
+export -f terraform
 
 echo
 echo "Installing Packer ${PACKER_LATEST} and making it available as a command..."
@@ -32,7 +39,7 @@ echo
 curl --location --fail --silent "${HASHICORP_RELEASE_BASE}/packer/${PACKER_LATEST}/packer_${PACKER_LATEST}_linux_amd64.zip" > packer.zip
 unzip packer.zip
 packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
-#export -f packer
+export -f packer
 
 echo
 echo Installing ansible-lint with pip...
