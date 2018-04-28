@@ -8,13 +8,6 @@ set -euo pipefail
 ##################################################################
 
 echo
-echo Installing the latest version of Shellcheck...
-curl --location --fail --silent https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz > shellcheck.tar.xz
-tar --xz -xvf shellcheck.tar.xz
-shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-stable/shellcheck" "$@"; }
-export -f shellcheck
-
-echo
 echo Linting install script before starting, script will not run if there are problems...
 shellcheck "${0}"
 
