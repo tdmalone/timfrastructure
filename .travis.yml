@@ -32,10 +32,11 @@ env:
 pre_install:
 
   - echo Installing the latest version of Shellcheck...
-  - curl --location --fail --silent https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz > shellcheck.tar.xz
+  - curl --location --fail --silent https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz > shellcheck.tar.xz
   - tar --xz -xvf shellcheck.tar.xz
-  - shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-stable/shellcheck" "$@"; }
+  - shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-latest/shellcheck" "$@"; }
   - export -f shellcheck
+  - shellcheck --version
 
 install: ./install.sh
 script: ./script.sh
