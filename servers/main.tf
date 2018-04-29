@@ -107,7 +107,7 @@ resource "aws_instance" "ubuntu_tm_id_au" {
   tags {
     "Name"       = "ubuntu.tm.id.au"
     "Managed By" = "Terraform"
-    "OS"         = "Ubuntu 16.04" # TODO: Get this from the Packer build or AMI somehow?
+    "OS"         = "Ubuntu 16.04"    # TODO: Get this from the Packer build or AMI somehow?
   }
 
   volume_tags {
