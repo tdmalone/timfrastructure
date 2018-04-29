@@ -57,7 +57,7 @@ echo "${TERRAFORM_DIRS}" | xxd -revert | xargs --null --replace="%" bash -c 'ech
 echo
 echo "Checking there are no outstanding changes to be applied (changes will be hidden for security reasons)..."
 # shellcheck disable=SC2016 # We intentionally don't want to expand below until run.
-echo "${TERRAFORM_DIRS}" | xxd -revert | xargs --null --replace="%" bash -c '( cd "%" && terraform plan -detailed-exitcode -lock=false > /dev/null; EXIT_CODE="${?}"; echo "%: ${EXIT_CODE}"; exit "${EXIT_CODE}" )'
+echo "${TERRAFORM_DIRS}" | xxd -revert | xargs --null --replace="%" bash -c '( cd "%" && terraform plan -detailed-exitcode -lock=false -no-color > tfplan; EXIT_CODE="${?}"; if [ "${EXIT_CODE}" != 0 ]; then aws sns publish --topic-arn="${SNS_ARN}" --message="$( cat tfplan )"; fi; echo "%: ${EXIT_CODE}"; exit "${EXIT_CODE}" )'
 
 echo
 echo Linting any shell scripts...
