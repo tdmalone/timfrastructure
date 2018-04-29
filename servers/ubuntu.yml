@@ -21,9 +21,6 @@
     shell: /bin/zsh
     hostname: ubuntu.tm.id.au
     aws_region: ap-southeast-2
-    efs_id_1: fs-31ac5308 # Repos. TODO: Get these dynamically from Terraform, also set as an array.
-    efs_id_2: fs-ab2ad592 # Downloads.
-    efs_id_3: fs-db2bd4e2 # Webroot.
     new_system: false # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
@@ -95,10 +92,7 @@
         - papertrail
         - travis # TODO: Run once and press y to enable shell completion.
 
-    - name: Include EFS mount.
-      include_tasks: ./tasks/efs.yml
-      tags:
-        - mounts
+    # TODO: Set up mounts??
 
     - name: Include amazon-ssm-agent installation.
       include_tasks: ./tasks/aws-ssm.yml
@@ -138,7 +132,7 @@
     # TODO: Install oh-my-zsh.
     # TODO: Set up Cloud9 environment, if possible/neccessary?
     # TODO: Set up crontab with any regular jobs.
-    # TODO: Symlink any neccessary configuration files to the cloned dotfiles (in EFS mount).
+    # TODO: Symlink any neccessary configuration files to the cloned dotfiles (from mounted drive).
     # TODO: Set up SSH config and SSH keys (if possible to do it securely).
     # TODO: Set up Ansible hosts.. OR move to dynamic inventory?
 

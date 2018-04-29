@@ -2,7 +2,7 @@
 server {
 
   server_name slashies.tm.id.au;
-  root /home/tim/slashies/src;
+  root /home/tim/data/code/slashies/src;
   index index.php run.php;
 
   # Deny access to any dotfiles.

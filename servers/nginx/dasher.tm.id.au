@@ -2,7 +2,7 @@
 server {
 
   server_name dasher.tm.id.au;
-  root /home/tim/dasher;
+  root /home/tim/data/code/dasher;
   index index.html;
   listen 80;
 
