@@ -33,6 +33,11 @@ unzip packer.zip
 echo
 echo Installing ansible-lint with pip...
 echo
-sudo pip2 install ansible-lint
+pip install ansible-lint --upgrade --user
+
+echo
+echo Installing the AWS CLI with pip...
+echo
+pip install awscli --upgrade --user
 
 echo

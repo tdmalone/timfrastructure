@@ -1,6 +1,5 @@
 
 language: generic
-sudo: required
 
 env:
   global:
