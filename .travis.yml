@@ -1,5 +1,5 @@
-
 language: generic
+services: docker
 
 env:
   global:
