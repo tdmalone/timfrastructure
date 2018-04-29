@@ -3,6 +3,7 @@
   "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
   "_notes": "'owners' value refers to Canonical.",
   "_notes": "'subnet_id' is required to launch into the VPC for the EFS mount in the Ansible playbook to work.",
+  "_todo": "",
   "builders": [{
 
     "type": "amazon-ebs",
@@ -12,14 +13,14 @@
     "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
     "shutdown_behavior": "terminate",
     "ssh_username": "ubuntu",
-    "ami_name": "aws.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
+    "ami_name": "ubuntu.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
 
     "subnet_id": "subnet-dc832995",
     "associate_public_ip_address": true,
     "security_group_id": "sg-70b4f309",
 
     "tags": {
-      "Name": "aws.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
+      "Name": "ubuntu.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
       "Built By": "Packer {{packer_version}}"
     },
 

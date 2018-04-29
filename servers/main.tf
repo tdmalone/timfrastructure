@@ -78,7 +78,7 @@ resource "aws_instance" "aws-tm-id-au" {
  * @see ./ubuntu.yml
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
-resource "aws_instance" "xenial_tm_id_au" {
+resource "aws_instance" "ubuntu_tm_id_au" {
   ami                     = "${data.aws_ami.packer_ubuntu_latest.id}"
   instance_type           = "${var.server_type}"
   disable_api_termination = false
@@ -105,13 +105,13 @@ resource "aws_instance" "xenial_tm_id_au" {
   ]
 
   tags {
-    "Name"       = "xenial.tm.id.au"
+    "Name"       = "ubuntu.tm.id.au"
     "Managed By" = "Terraform"
-    "OS"         = "Ubuntu 16.04"
+    "OS"         = "Ubuntu 16.04" # TODO: Get this from the Packer build or AMI somehow?
   }
 
   volume_tags {
-    "Name"       = "xenial.tm.id.au"
+    "Name"       = "ubuntu.tm.id.au"
     "Managed By" = "Terraform"
   }
 
@@ -157,7 +157,7 @@ resource "aws_instance" "centos_tm_id_au" {
   tags {
     "Name"       = "centos.tm.id.au"
     "Managed By" = "Terraform"
-    "OS"         = "CentOS 7.4 1801"
+    "OS"         = "CentOS 7.4 1801" # TODO: Get this from the Packer build or AMI somehow?
   }
 
   volume_tags {

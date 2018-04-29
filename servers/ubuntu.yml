@@ -19,7 +19,7 @@
     timezone: Australia/Melbourne
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/zsh
-    hostname: aws.tm.id.au
+    hostname: ubuntu.tm.id.au
     aws_region: ap-southeast-2
     efs_id_1: fs-31ac5308 # Repos. TODO: Get these dynamically from Terraform, also set as an array.
     efs_id_2: fs-ab2ad592 # Downloads.

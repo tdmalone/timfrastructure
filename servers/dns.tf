@@ -12,17 +12,17 @@ resource "cloudflare_record" "aws_int_tm_id_au" {
   type   = "A"
 }
 
-resource "cloudflare_record" "xenial_tm_id_au" {
+resource "cloudflare_record" "ubuntu_tm_id_au" {
   domain = "tm.id.au"
-  name   = "xenial.tm.id.au"
-  value  = "${aws_instance.xenial_tm_id_au.public_ip}"
+  name   = "ubuntu.tm.id.au"
+  value  = "${aws_instance.ubuntu_tm_id_au.public_ip}"
   type   = "A"
 }
 
-resource "cloudflare_record" "xenial_int_tm_id_au" {
+resource "cloudflare_record" "ubuntu_int_tm_id_au" {
   domain = "tm.id.au"
-  name   = "xenial.int.tm.id.au"
-  value  = "${aws_instance.xenial_tm_id_au.private_ip}"
+  name   = "ubuntu.int.tm.id.au"
+  value  = "${aws_instance.ubuntu_tm_id_au.private_ip}"
   type   = "A"
 }
 
