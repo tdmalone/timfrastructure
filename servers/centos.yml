@@ -2,6 +2,9 @@
 
 # TODO: Finish this based on the ubuntu.yml when that is completed.
 
+# TODO: Add Bamboo installation.
+# TODO: Add Ansible Tower or AWX installation.
+
 - hosts: default
   become: yes
 
