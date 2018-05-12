@@ -1,0 +1,39 @@
+---
+
+- hosts: mac
+  become: no
+
+  vars:
+
+  tasks:
+
+    # TODO: Install Homebrew.
+
+    - name: Install homebrew packages
+      homebrew:
+        name: "{{ item }}"
+      with_items:
+        - awscli
+        - git-flow
+        - heroku
+        - jq
+        - lastpass-cli
+        - lftp
+        - mariadb
+        - nginx
+        - node
+        - shellcheck
+        - telnet
+        - wget
+        - wput
+        - xz
+        - yarn
+
+    - name: Install gems
+      gem:
+        name: "{{ item }}"
+      with_items:
+        - papertrail
+        - travis # TODO: Run once and press y to enable shell completion.
+
+...
