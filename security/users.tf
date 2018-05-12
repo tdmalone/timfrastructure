@@ -42,22 +42,10 @@ resource "aws_iam_user" "tim_iphone_pocket_console" {
   name = "tim-iphone-pocket-console"
 }
 
-resource "aws_iam_user" "tim_mac_aws_cli" {
-  name = "tim-mac-aws-cli"
-}
-
-resource "aws_iam_user" "tim_mac_sdb_navigator_chrome" {
-  name = "SdbNavigatorChromeMac"
-}
-
-resource "aws_iam_user" "tim_windows_aws_cli" {
-  name = "tim-win-aws-cli"
-}
-
-resource "aws_iam_user" "tim_windows_beyond_compare_s3" {
-  name = "tim-win-beyondcompare-s3"
-}
-
 resource "aws_iam_user" "travis_ci_timfrastructure" {
   name = "travis-ci-timfrastructure"
+}
+
+resource "aws_iam_user" "mac_stacktray" {
+  name = "mac-stacktray"
 }
