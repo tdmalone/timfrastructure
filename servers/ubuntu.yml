@@ -8,7 +8,7 @@
 
 # TODO: Register with Ubuntu Landscape?
 
-- hosts: all
+- hosts: ubuntu
   become: yes
   gather_facts: no # This won't work until we install the needed Python module (see below).
 

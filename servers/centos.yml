@@ -5,7 +5,7 @@
 # TODO: Add Bamboo installation (./tasks/bamboo.yml).
 # TODO: Add Ansible Tower or AWX installation.
 
-- hosts: default
+- hosts: centos
   become: yes
 
   vars:
