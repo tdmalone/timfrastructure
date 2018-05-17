@@ -43,7 +43,6 @@ resource "aws_instance" "aws-tm-id-au" {
     "Managed By" = "Terraform"
   }
 
-
   lifecycle {
     prevent_destroy = true
 
