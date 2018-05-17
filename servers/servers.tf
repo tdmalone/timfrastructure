@@ -19,6 +19,9 @@ resource "aws_instance" "aws-tm-id-au" {
   root_block_device {
     volume_type = "gp2"
     volume_size = "15"
+
+    # TODO: Remove this to set back to the default of true, when it's safe to destroy this instance.
+    delete_on_termination = false
   }
 
   vpc_security_group_ids = [
@@ -40,8 +43,11 @@ resource "aws_instance" "aws-tm-id-au" {
     "Managed By" = "Terraform"
   }
 
-  # Prevent Terraform from trying to recreate the instance when it is stopped.
+
   lifecycle {
+    prevent_destroy = true
+
+    # Prevent Terraform from trying to recreate the instance when it is stopped.
     ignore_changes = ["associate_public_ip_address"]
   }
 }
