@@ -43,6 +43,6 @@ pip install awscli --upgrade --user
 # @see https://docs.travis-ci.com/user/encrypting-files/#Manual-Encryption
 echo
 echo Decrypting encrypted Terraform vars...
-find . -name "*.gpg" | xargs --replace="%" bash -c 'echo && echo "%" && echo "${TF_VARS_ENCRYPTION_PASSPHRASE}" | gpg --passphrase-fd 0 "%"'
+find . -name "*.gpg" -print0 | xargs --null --replace="%" bash -c "echo && echo '%' && echo \"${TF_VARS_ENCRYPTION_PASSPHRASE}\" | gpg --passphrase-fd 0 '%'"
 
 echo
