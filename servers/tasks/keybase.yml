@@ -1,0 +1,27 @@
+---
+
+# @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
+# @see https://keybase.io/docs/the_app/install_linux
+# @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+- name: Check if the Keybase CLI is installed...
+  command: dpkg-query --show keybase
+  register: keybase_is_installed
+  failed_when: keybase_is_installed.rc > 1
+  changed_when: keybase_is_installed.rc == 1
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+
+# @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+- name: ...install the Keybase CLI...
+  apt:
+    deb: https://prerelease.keybase.io/keybase_amd64.deb
+  when: keybase_is_installed.rc == 1
+
+- name: ...fix packages after Keybase installation...
+  command: apt-get install --fix-broken --assume-yes
+  when: keybase_is_installed.rc == 1
+
+- name: ...and run the Keybase CLI setup program.
+  command: run_keybase
+  when: keybase_is_installed.rc == 1
+
+...

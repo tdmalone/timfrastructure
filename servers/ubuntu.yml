@@ -1,12 +1,8 @@
 ---
 
-# TODO: Split up further into separate files for related groups of tasks.
-
 # TODO: Support CentOS as well as Ubuntu (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help).
 
 # TODO: Work out how to determine whether the system was created today or not, and use that to determine whether a dist-upgrade should be run. Running `sudo tune2fs -l /dev/xvda1 | grep created` should give the created date of the filesystem which is a pretty good way to determine system age, and then there's a bunch of useful facts in {{ansible_date_time}} to compare to current.
-
-# TODO: Register with Ubuntu Landscape?
 
 - hosts: ubuntu
   become: yes
@@ -51,6 +47,9 @@
 
   tasks:
 
+    - name: Include apt installations.
+      include_tasks: ./tasks/apt.yml
+
     - name: Include tasks common to multiple distros.
       include_tasks: ./tasks/common.yml
 
@@ -70,47 +69,27 @@
 
     # TODO: Copy across common Datadog configuration; restart Datadog agent.
 
-    - name: Include git configuration.
-      include_tasks: ./tasks/git.yml
-
-    # Install Node.js.
-    # @see https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
-    #curl --location https://deb.nodesource.com/setup_9.x | sudo --preserve-env bash /dev/stdin
-    #sudo apt-get install --assume-yes nodejs
-
-    # TODO: Install Go.
-
-    - name: Include apt installations.
-      include_tasks: ./tasks/apt.yml
-
-    # @see https://github.com/papertrail/papertrail-cli
-    # @see http://docs.ansible.com/ansible/2.4/gem_module.html
-    - name: Install commonly used gems.
-      gem:
-        name: "{{ item }}"
-      with_items:
-        - papertrail
-        - travis # TODO: Run once and press y to enable shell completion.
-
-    # TODO: Set up mounts??
-
     - name: Include amazon-ssm-agent installation.
       include_tasks: ./tasks/aws-ssm.yml
 
-    # TODO: Set up an nginx vhost, and configure with php-fpm.
-    # TODO: Install LastPass CLI.
-    # TODO: Install AWS CLI.
-    # TODO: Install Keybase CLI.
+    - name: Include git configuration.
+      include_tasks: ./tasks/git.yml
 
-    # Check if wp-cli is installed.
-    # Install wp-cli.
-    # @see https://wp-cli.org/#installing
-    #curl --remote-name https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    #chmod +x wp-cli.phar
-    #sudo mv wp-cli.phar /usr/local/bin/wp
+    - name: Install wp-cli.
+      include_tasks: ./tasks/wp-cli.yml
+
+    - name: Install the Keybase CLI.
+      include_tasks: ./tasks/keybase.yml
 
     - name: Include Hashicorp installations.
       include_tasks: ./tasks/hashicorp.yml
+
+    # TODO: Install Go.
+    # TODO: Set up mounts??
+    # TODO: Set up an nginx vhost, and configure with php-fpm.
+
+    # TODO: Download, build and install the LastPass CLI.
+    # @see https://github.com/lastpass/lastpass-cli#debianubuntu
 
     # TODO: Install minikube.
     # @see https://github.com/kubernetes/minikube/releases

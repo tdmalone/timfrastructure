@@ -1,4 +1,8 @@
 /**
+ * TODO: Add IAM roles for servers.
+ */
+
+/**
  * Current/old server for playing around with stuff, hosting a development environment, etc.
  *
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html

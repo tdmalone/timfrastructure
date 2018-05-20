@@ -4,6 +4,7 @@
 - name: Set hostname to {{ hostname }}.
   hostname:
     name: "{{ hostname }}"
+  when: new_system == true
 
 # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
 - name: Add hostname to /etc/hosts.
@@ -11,6 +12,7 @@
     dest: /etc/hosts
     regexp: "^127.0.0.1"
     line: "127.0.0.1 {{ hostname }}"
+  when: new_system == true
 
 # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
 - name: Prevent cloud-init from resetting the hostname on instance launch.

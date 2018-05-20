@@ -4,6 +4,9 @@
 # @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
 # @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
 
+# TODO: Include Nodesource sources, if neccessary.
+# @see https://deb.nodesource.com/setup_10.x
+
 # @see https://cloud.google.com/sdk/docs/#deb
 # @see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest
 # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
@@ -81,10 +84,11 @@
     - jq
     - mariadb-server
     - nginx
+    - nodejs
     - python-pip
     - python3
     - python3-pip
-    #- python3-venv # May not work on Ubuntu 14.04.
+    #- python3-venv # TODO: May not work on Ubuntu 14.04. Remove when we're ready to upgrade.
     - ruby
     - ruby-dev # Needed for Travis gem installation to succeed.
     - software-properties-common

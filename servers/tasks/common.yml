@@ -8,7 +8,7 @@
   timezone:
     name: "{{ timezone }}"
 
-- name: Include hostname tasks.
+- name: Include user & group tasks.
   include_tasks: ./users-groups.yml
 
 - name: Include SSH tasks.
