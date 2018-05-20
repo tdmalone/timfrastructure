@@ -48,7 +48,7 @@ echo
 echo Peforming additional checks on Terraform files using tflint...
 # Note: an easy way to test tflint is working is to set an invalid EC2 instance type.
 # shellcheck disable=SC2016 # We intentionally don't want $(pwd) to expand until it's run.
-echo "${TERRAFORM_DIRS}" | xxd -revert | xargs --null --replace="%" bash -c 'echo && echo "%" && docker run --rm --tty --volume "$( pwd )/%":/data wata727/tflint --error-with-issues --quiet'
+echo "${TERRAFORM_DIRS}" | xxd -revert | xargs --null --replace="%" bash -c 'echo "%" && docker run --rm --tty --volume "$( pwd )/%":/data wata727/tflint --error-with-issues --quiet'
 
 # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
 # We only care about the exit code here, and don't want to expose any potentially sensitive data,

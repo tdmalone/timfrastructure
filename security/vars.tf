@@ -1,3 +1,7 @@
+variable "keybase_username" {
+  default = "tdmalone"
+}
+
 variable "ssh_port" {
   default = 22
 }
