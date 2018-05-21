@@ -31,6 +31,23 @@ resource "aws_iam_user" "tim_android_app" {
   name = "tim-android-app"
 }
 
+resource "aws_iam_user" "tim_mac_aws_cli" {
+  name = "tim-mac-aws-cli"
+}
+
+resource "aws_iam_access_key" "tim_mac_aws_cli" {
+  user    = "${aws_iam_user.tim_mac_aws_cli.name}"
+  pgp_key = "keybase:${var.keybase_username}"
+}
+
+output "tim_mac_aws_cli_access_key_id" {
+  value = "${aws_iam_access_key.tim_mac_aws_cli.id}"
+}
+
+output "tim_mac_aws_cli_secret_access_key" {
+  value = "${aws_iam_access_key.tim_mac_aws_cli.encrypted_secret}"
+}
+
 resource "aws_iam_user" "tim_ubuntu_aws_cli" {
   name = "tim-aws-aws-cli"
 }
