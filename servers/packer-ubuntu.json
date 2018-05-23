@@ -51,6 +51,7 @@
   "provisioners": [{
     "type": "ansible",
     "playbook_file": "./ubuntu.yml",
+    "host_alias": "ubuntu",
     "extra_arguments": [ "--diff" ]
   }]
 
