@@ -19,6 +19,7 @@
 - name: ...fix packages after Keybase installation...
   command: apt-get install --fix-broken --assume-yes
   when: keybase_is_installed.rc == 1
+  tags: skip_ansible_lint # Skip ANSIBLE0006, because aot module does not provide --fix-broken.
 
 - name: ...and run the Keybase CLI setup program.
   command: run_keybase
