@@ -15,7 +15,7 @@
     timezone: Australia/Melbourne
     ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
     shell: /bin/bash # TODO: Set to zsh once that's installed.
-    hostname: centos.tm.id.au
+    #hostname: centos.tm.id.au # Should be supplied in host_vars.
     new_system: false # WARNING: Should only be used on brand new servers!
     ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
 
