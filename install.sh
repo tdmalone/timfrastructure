@@ -49,7 +49,7 @@ pip install datadog pyyaml --upgrade --user
 # imports within Python code, as this is how Ansible's Datadog module works.
 # @see https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/monitoring/datadog_event.py
 # @see https://stackoverflow.com/questions/38112756/how-do-i-access-packages-installed-by-pip-user
-PYTHONPATH="$( python -c "import site; print( site.USER_SITE );" ):${PYTHONPATH}"
+PYTHONPATH="$( python -c "import site; print( site.USER_SITE );" ):${PYTHONPATH:-}"
 export PYTHONPATH
 
 # @see https://docs.travis-ci.com/user/encrypting-files/#Manual-Encryption
