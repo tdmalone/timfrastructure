@@ -53,6 +53,7 @@
     "type": "ansible",
     "playbook_file": "./centos.yml",
     "host_alias": "centos",
+    "groups": [ "tim" ],
     "extra_arguments": [ "--diff" ]
   }]
 

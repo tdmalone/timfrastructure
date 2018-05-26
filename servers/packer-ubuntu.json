@@ -52,6 +52,7 @@
     "type": "ansible",
     "playbook_file": "./ubuntu.yml",
     "host_alias": "ubuntu",
+    "groups": [ "tim" ],
     "extra_arguments": [ "--diff" ]
   }]
 
