@@ -40,6 +40,11 @@ echo Installing the AWS CLI with pip...
 echo
 pip install awscli --upgrade --user
 
+echo
+echo Installing the Datadog Python tools for use during Ansible runs...
+echo
+pip install datadog pyyaml --upgrade --user
+
 # @see https://docs.travis-ci.com/user/encrypting-files/#Manual-Encryption
 echo
 echo Decrypting encrypted Terraform vars...

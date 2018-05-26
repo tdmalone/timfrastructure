@@ -10,4 +10,13 @@
 
 # TODO: Copy across common Datadog configuration; restart Datadog agent.
 
+# @see http://docs.ansible.com/ansible/latest/modules/pip_module.html
+- name: Install additional Python Datadog dependencies, for running the datadog_event module in later Ansible runs.
+  pip:
+    name: "{{ item }}"
+    executable: pip3
+  with_items:
+    - datadog
+    - pyyaml
+
 ...

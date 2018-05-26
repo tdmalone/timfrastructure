@@ -12,19 +12,7 @@
   set_fact:
     host_system_hostname: "{{ host_system_hostname.stdout }}"
 
-# @see http://docs.ansible.com/ansible/latest/modules/pip_module.html
-- name: Install datadog dependencies.
-  pip:
-    name: "{{ item }}"
-    executable: pip3
-  with_items:
-    - datadog
-    #- pyyaml # May not actually be needed.
-
 # @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
-# TODO: We may need to use delegate_to: localhost in order for this to work when running the Mac
-#       playbook, but it would be good to understand why... and if required, delegate it *only* on
-#       that playbook.
 - name: Send Datadog event.
   datadog_event:
     title: Playbook run
@@ -34,6 +22,7 @@
     app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
     tags: "#host:{{ ansible_nodename }}"
   changed_when: false
+  delegate_to: localhost
 
 # @see http://docs.ansible.com/ansible/latest/modules/slack_module.html
 # TODO: Possible to include stats about how the play went?
@@ -44,5 +33,6 @@
     token: "{{ lookup('env', 'SLACK_HOOK') }}"
     color: good
     msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) from {{ host_system_hostname }} has completed successfully.
+  delegate_to: localhost
 
 ...
