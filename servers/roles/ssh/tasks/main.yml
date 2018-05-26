@@ -1,7 +1,7 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
-# @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/authorized_key_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
 # @see https://github.com/vitalk/ansible-secure-ssh/blob/master/tasks/main.yml
 # @see https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/
 - name: Add authorized_key for user {{ username }}.

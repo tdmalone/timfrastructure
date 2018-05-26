@@ -3,6 +3,6 @@
 # TODO: Set up an nginx vhost, and configure with php-fpm.
 
 # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
-    # @see http://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html
 
 ...

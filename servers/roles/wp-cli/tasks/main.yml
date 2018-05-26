@@ -9,7 +9,7 @@
   tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
 
 # @see https://wp-cli.org/#installing
-# @see http://docs.ansible.com/ansible/latest/modules/uri_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/uri_module.html
 - name: If not, download wp-cli...
   uri:
     url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar

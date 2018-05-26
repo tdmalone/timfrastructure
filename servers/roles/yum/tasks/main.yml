@@ -1,6 +1,6 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/yum_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
 - name: Install primary packages with yum.
   yum:
     name: "{{ item }}"

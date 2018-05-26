@@ -1,7 +1,7 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/command_module.html
-# @see http://docs.ansible.com/ansible/latest/modules/unarchive_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/unarchive_module.html
 
 # @see https://github.com/hashicorp/terraform/issues/9803#issuecomment-257903082
 
@@ -13,7 +13,7 @@
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
   tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
 
-# TODO: Move to using http://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
 - name: If not, get latest Terraform version download URL...
   shell: TERRAFORM_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/terraform/${TERRAFORM_LATEST}/terraform_${TERRAFORM_LATEST}_linux_amd64.zip'
   register: terraform_download_url
@@ -37,7 +37,7 @@
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
   tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
 
-# TODO: Move to using http://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
 - name: If not, get latest Packer version download URL...
   shell: PACKER_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/packer/${PACKER_LATEST}/packer_${PACKER_LATEST}_linux_amd64.zip'
   register: packer_download_url
@@ -61,7 +61,7 @@
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
   tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
 
-# TODO: Move to using http://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
 - name: If not, get latest Vagrant version download URL...
   shell: VAGRANT_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/vagrant | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/vagrant/${VAGRANT_LATEST}/vagrant_${VAGRANT_LATEST}_x86_64.deb'
   register: vagrant_download_url

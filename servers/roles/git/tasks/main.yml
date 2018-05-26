@@ -1,6 +1,6 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/git_config_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/git_config_module.html
 - name: Configure git.
   git_config:
     scope: global

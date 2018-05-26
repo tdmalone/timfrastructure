@@ -12,7 +12,7 @@
   set_fact:
     host_system_hostname: "{{ host_system_hostname.stdout }}"
 
-# @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
 - name: Send Datadog event.
   datadog_event:
     title: Playbook run
@@ -24,7 +24,7 @@
   changed_when: false
   delegate_to: localhost
 
-# @see http://docs.ansible.com/ansible/latest/modules/slack_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/slack_module.html
 # TODO: Possible to include stats about how the play went?
 # TODO: Possible to send a failure message if the play fails?
 # TODO: This appears to succeed even if the sending fails via Slack API, eg. with an invalid hook.

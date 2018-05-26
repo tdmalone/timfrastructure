@@ -5,7 +5,7 @@
 
 # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
 # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
-# @see http://docs.ansible.com/ansible/latest/modules/command_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
 - name: Check if the Amazon SSM Agent is installed...
   command: dpkg-query --show amazon-ssm-agent
   register: amazon_ssm_agent_is_installed
@@ -13,7 +13,7 @@
   changed_when: amazon_ssm_agent_is_installed.rc == 1
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
 
-# @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/apt_module.html
 - name: ...and install the Amazon SSM Agent.
   apt:
     deb: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb

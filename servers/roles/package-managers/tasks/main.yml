@@ -1,12 +1,12 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/gem_module.html
+# @see https://docs.ansible.com/ansible/latest/gem_module.html
 - name: Install commonly used gems.
   gem:
     name: "{{ item }}"
   with_items: "{{ gem_packages }}"
 
-# @see http://docs.ansible.com/ansible/latest/pip_module.html
+# @see https://docs.ansible.com/ansible/latest/pip_module.html
 - name: Install commonly used pip packages.
   pip:
     name: "{{ item }}"
@@ -15,7 +15,7 @@
 
 # TODO: Add global Yarn packages using the new Yarn module in 2.6 - should be out around July 2018.
 # @see https://docs.ansible.com/ansible/devel/modules/yarn_module.html
-# @see http://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html
+# @see https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html
 # - name: Install commonly used Node.js packages globally with Yarn.
 #   yarn:
 #     name: "{{ item }}"

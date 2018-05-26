@@ -1,6 +1,6 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/group_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/group_module.html
 - name: Ensure groups are present.
   group:
     name: "{{ item }}"
@@ -9,7 +9,7 @@
     - docker
     - sudo
 
-# @see http://docs.ansible.com/ansible/latest/modules/user_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/user_module.html
 - name: Add user {{ username }}.
   user:
     name: "{{ username }}"

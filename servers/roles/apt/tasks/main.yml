@@ -1,8 +1,8 @@
 ---
 
-# @see http://docs.ansible.com/ansible/latest/modules/apt_module.html
-# @see http://docs.ansible.com/ansible/latest/modules/apt_key_module.html
-# @see http://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/apt_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/apt_key_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/apt_repository_module.html
 
 # TODO: Include Nodesource sources, if neccessary.
 # @see https://deb.nodesource.com/setup_10.x
@@ -12,7 +12,7 @@
 # @see https://devcenter.heroku.com/articles/heroku-cli#download-and-install
 # @see https://yarnpkg.com/en/docs/install
 # @see https://tecadmin.net/install-php-7-on-ubuntu/
-# @see http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+# @see https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
 # @see https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-repository
 # NOTE: {{ansible_lsb.codename}} will return eg. 'trusty' or 'xenial'. An alternative is {{ansible_distribution_release}}.
 - name: Add neccessary apt sources.
