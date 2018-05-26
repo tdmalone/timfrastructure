@@ -22,17 +22,17 @@
     app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
     tags: "#host:{{ ansible_nodename }}"
   changed_when: false
-  delegate_to: localhost
+  #delegate_to: localhost
 
 # @see https://docs.ansible.com/ansible/latest/modules/slack_module.html
 # TODO: Possible to include stats about how the play went?
 # TODO: Possible to send a failure message if the play fails?
-# TODO: This appears to succeed even if the sending fails via Slack API, eg. with an invalid hook.
+# TODO: This appears to 'succeed' even if the sending fails via Slack API, eg. with an invalid hook.
 - name: Send notification message via Slack.
   slack:
     token: "{{ lookup('env', 'SLACK_HOOK') }}"
     color: good
     msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) from {{ host_system_hostname }} has completed successfully.
-  delegate_to: localhost
+  #delegate_to: localhost
 
 ...
