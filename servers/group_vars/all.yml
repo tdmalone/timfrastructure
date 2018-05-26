@@ -101,6 +101,7 @@ yarn_packages:
 yum_packages:
   - curl
   - git
+  - python-pip
   - telnet
   - unzip
   - wget

@@ -1,6 +1,11 @@
 ---
 
 # @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+- name: Enable the EPEL repository.
+  yum:
+    name: epel-release
+
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
 - name: Install primary packages with yum.
   yum:
     name: "{{ item }}"
