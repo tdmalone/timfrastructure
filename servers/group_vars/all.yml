@@ -27,7 +27,7 @@ apt_packages:
 # @see roles/apt/tasks/main.yml
 apt_packages_secondary:
   - ansible
-  - azure-cli
+  #- azure-cli # TODO: Renable once we can get the package authenticated again.
   - docker-ce
   - google-cloud-sdk
   - heroku
