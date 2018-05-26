@@ -1,5 +1,9 @@
 ---
 
-# TODO: Install common packages with yum (using {{ yum packages }} list).
+# @see http://docs.ansible.com/ansible/latest/modules/yum_module.html
+- name: Install primary packages with yum.
+  yum:
+    name: "{{ item }}"
+  with_items: "{{ yum_packages }}"
 
 ...

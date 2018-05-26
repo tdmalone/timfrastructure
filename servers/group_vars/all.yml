@@ -97,7 +97,13 @@ yarn_packages:
   - wt-cli
   - yo
 
-# TODO: Fill this out.
+# TODO: Fill this out further.
 yum_packages:
+  - curl
+  - git
+  - telnet
+  - unzip
+  - wget
+  - zsh
 
 ...
