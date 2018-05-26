@@ -1,5 +1,7 @@
 ---
 
+# TODO: Support Mac, as well as Ubuntu.
+
 # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
 # @see https://keybase.io/docs/the_app/install_linux
 # @see http://docs.ansible.com/ansible/latest/modules/command_module.html

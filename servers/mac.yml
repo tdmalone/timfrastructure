@@ -1,39 +1,27 @@
 ---
 
+# TODO: Finish this playbook!
+# TODO: Find a way to test this playbook, perhaps with Travis CI Mac support.
+
 - hosts: mac
   become: no
 
-  vars:
+  roles:
 
-  tasks:
+    - { role: homebrew,         tags: [ "homebrew",         "packages" ] }
+    - { role: hostname,         tags: [ "hostname",         "config" ] }
+    - { role: papertrail,       tags: [ "papertrail",       "packages" ] }
+    - { role: git,              tags: [ "git",              "config" ] }
+    - { role: package-managers, tags: [ "package-managers", "packages" ] }
 
-    # TODO: Install Homebrew.
+    # TODO: Enable once it supports Mac.
+    #- { role: keybase,          tags: [ "keybase",          "packages" ] }
 
-    - name: Install homebrew packages
-      homebrew:
-        name: "{{ item }}"
-      with_items:
-        - awscli
-        - git-flow
-        - heroku
-        - jq
-        - lastpass-cli
-        - lftp
-        - mariadb
-        - nginx
-        - node
-        - shellcheck
-        - telnet
-        - wget
-        - wput
-        - xz
-        - yarn
+    - { role: hashicorp,        tags: [ "hashicorp",        "packages" ] }
+    - { role: go,               tags: [ "go",               "packages" ] }
+    - { role: nginx,            tags: [ "nginx",            "packages", "config" ] }
+    - { role: lastpass,         tags: [ "lastpass",         "packages" ] }
 
-    - name: Install gems
-      gem:
-        name: "{{ item }}"
-      with_items:
-        - papertrail
-        - travis # TODO: Run once and press y to enable shell completion.
+    - { role: notifications,    tags: [ "notifications" ] }
 
 ...

@@ -10,6 +10,8 @@
     key: "{{ ssh_key }}"
   register: add_authorized_key
 
+# TODO: Set up SSH config and SSH keys (if possible to do it securely).
+
 - name: Change SSH port.
   lineinfile:
     dest: /etc/ssh/sshd_config

@@ -13,6 +13,12 @@ set -euo pipefail
 #       exit the entire script. To help track down the problem command, it should probably also show
 #       a coloured notice after it runs.
 
+# TODO: Ubuntu and CentOS Ansible playbooks are essentially validated by running them on new Packer
+#       builds, however we also need to find a way to validate the Mac playbook - eg. by running
+#       separately in a new Travis build, on the Mac infrastructure? It might also be useful to
+#       validate the Ubuntu and CentOS playbooks against the *live* infrastructure to ensure
+#       regular protection against configuration drift.
+
 # This script uses find and xargs a lot to perform operations within directories containing
 # Terraform files. Whenever possible, null terminators are used for safety in supporting a wider
 # variety of file and directory naming. Take suitable care when operating on any piped output to

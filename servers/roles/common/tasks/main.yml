@@ -1,18 +1,9 @@
 ---
 
-- name: Include hostname tasks.
-  include_tasks: ./hostname.yml
-
 # @see http://docs.ansible.com/ansible/latest/modules/timezone_module.html
 - name: Set timezone to {{ timezone }}.
   timezone:
     name: "{{ timezone }}"
-
-- name: Include user & group tasks.
-  include_tasks: ./users-groups.yml
-
-- name: Include SSH tasks.
-  include_tasks: ./ssh.yml
 
 # @see https://stackoverflow.com/a/37334415/1982136
 # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html

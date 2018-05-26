@@ -1,0 +1,10 @@
+---
+
+# TODO: Install Homebrew.
+
+- name: Install homebrew packages
+  homebrew:
+    name: "{{ item }}"
+  with_items: "{{ brew_packages }}"
+
+...

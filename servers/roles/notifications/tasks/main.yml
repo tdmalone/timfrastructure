@@ -2,6 +2,7 @@
 
 - name: Get hostname of Ansible host system.
   local_action: command hostname
+  become: no # Needed to support running playbooks on a system without passwordless sudo.
   register: host_system_hostname
   changed_when: false
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
@@ -15,11 +16,15 @@
 - name: Install datadog dependencies.
   pip:
     name: "{{ item }}"
+    executable: pip3
   with_items:
     - datadog
     #- pyyaml # May not actually be needed.
 
 # @see http://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
+# TODO: We may need to use delegate_to: localhost in order for this to work when running the Mac
+#       playbook, but it would be good to understand why... and if required, delegate it *only* on
+#       that playbook.
 - name: Send Datadog event.
   datadog_event:
     title: Playbook run

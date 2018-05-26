@@ -1,28 +1,22 @@
 ---
 
-# TODO: Support CentOS as well as Ubuntu (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help).
+# TODO: Finish this playbook!
+
+# TODO: Support CentOS as well as Ubuntu for as many roles as possible (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help). See also the Ansible package module (http://docs.ansible.com/ansible/latest/modules/package_module.html).
 
 # TODO: Work out how to determine whether the system was created today or not, and use that to determine whether a dist-upgrade should be run. Running `sudo tune2fs -l /dev/xvda1 | grep created` should give the created date of the filesystem which is a pretty good way to determine system age, and then there's a bunch of useful facts in {{ansible_date_time}} to compare to current.
 
-- hosts: ubuntu
+# TODO: Because we're delaying the gathering of facts, work out how we can still gather facts if we're running with limited tags.
+
+# TODO: Add documentation to each role. See the sample README.md structure in the apt role.
+
+- hosts: aws, ubuntu
   become: yes
   gather_facts: no # This won't work until we install the needed Python module (see below).
 
-  vars:
-    username: tim
-    full_name: Tim Malone
-    email: tdmalone@gmail.com
-    timezone: Australia/Melbourne
-    ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
-    shell: /bin/zsh
-    #hostname: ubuntu.tm.id.au # Should be supplied in host_vars.
-    aws_region: ap-southeast-2
-    new_system: false # WARNING: Should only be used on brand new servers!
-    ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
-
-
-
   pre_tasks:
+
+    # TODO: Should/can this go into a role?
 
     # @see https://stackoverflow.com/a/34402816/1982136
     # @see http://docs.ansible.com/ansible/latest/modules/raw_module.html
@@ -40,78 +34,31 @@
     - name: Gather facts now that the needed Python module is installed.
       setup: # No args required.
 
-  tasks:
+  roles:
 
-    - name: Include apt installations.
-      include_tasks: ./tasks/apt.yml
+    - { role: apt,              tags: [ "apt",              "packages" ] }
+    - { role: hostname,         tags: [ "hostname",         "config" ] }
+    - { role: users-groups,     tags: [ "users-groups",     "config" ] }
+    - { role: ssh,              tags: [ "ssh",              "config" ] }
+    - { role: common,           tags: [ "common",           "config" ] }
+    - { role: papertrail,       tags: [ "papertrail",       "packages" ] }
+    - { role: datadog,          tags: [ "datadog",          "packages", "monitoring" ] }
+    - { role: aws-ssm,          tags: [ "aws-ssm",          "packages", "monitoring" ] }
+    - { role: git,              tags: [ "git",              "config" ] }
 
-    - name: Include tasks common to multiple distros.
-      include_tasks: ./tasks/common.yml
+    - { role: package-managers, tags: [ "package-managers", "packages" ] }
+    - { role: wp-cli,           tags: [ "wp-cli",           "packages" ] }
+    - { role: keybase,          tags: [ "keybase",          "packages" ] }
+    - { role: hashicorp,        tags: [ "hashicorp",        "packages" ] }
+    - { role: go,               tags: [ "go",               "packages" ] }
+    - { role: mounts,           tags: [ "mounts",           "config" ] }
+    - { role: nginx,            tags: [ "nginx",            "packages", "config" ] }
+    - { role: lastpass,         tags: [ "lastpass",         "packages" ] }
+    - { role: minikube,         tags: [ "minikube",         "packages" ] }
+    - { role: ibm-cloud,        tags: [ "ibm-cloud",        "packages" ] }
+    - { role: wordpress,        tags: [ "wordpress" ] }
 
-    # TODO: Set up Papertrail monitoring.
-    # @see https://github.com/reactiveops/ansible-papertrail
-    # @see https://github.com/aptoma/ansible-papertrail
-    # @see https://github.com/azavea/ansible-papertrail
-    # @see PAPERTRAIL_HOST & PAPERTRAIL_PORT env vars.
-
-    # TODO: Set up Datadog monitoring.
-    # @see https://galaxy.ansible.com/manala/ansible-galaxy/ for possibly installing galaxy roles easily.
-    # - include_role:
-    #     name: Datadog.datadog
-    #   vars:
-    #     become: yes
-    #     datadog_api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
-
-    # TODO: Copy across common Datadog configuration; restart Datadog agent.
-
-    - name: Include amazon-ssm-agent installation.
-      include_tasks: ./tasks/aws-ssm.yml
-
-    - name: Include git configuration.
-      include_tasks: ./tasks/git.yml
-
-    - name: Install wp-cli.
-      include_tasks: ./tasks/wp-cli.yml
-
-    - name: Install the Keybase CLI.
-      include_tasks: ./tasks/keybase.yml
-
-    - name: Include Hashicorp installations.
-      include_tasks: ./tasks/hashicorp.yml
-
-    # TODO: Install Go.
-    # TODO: Set up mounts??
-    # TODO: Set up an nginx vhost, and configure with php-fpm.
-
-    # TODO: Download, build and install the LastPass CLI.
-    # @see https://github.com/lastpass/lastpass-cli#debianubuntu
-
-    # TODO: Install minikube.
-    # @see https://github.com/kubernetes/minikube/releases
-
-    # Install IBM Cloud CLI.
-    #wget https://clis.ng.bluemix.net/download/bluemix-cli/0.6.6/linux64
-    #tar -zxvf linux64 && rm linux64
-    #Bluemix_CLI/install_bluemix_cli
-
-    # TODO: Set up HTTPS for nginx with a LetsEncrypt certificate.
-    # @see http://docs.ansible.com/ansible/latest/modules/letsencrypt_module.html
-
-    # TODO: Install and set up a local WordPress site to manage tm.id.au.
-    # @see http://docs.ansible.com/ansible/latest/modules/mysql_db_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/mysql_user_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/blockinfile_module.html
-    # @see http://docs.ansible.com/ansible/latest/modules/copy_module.html
-
-    # TODO: Install oh-my-zsh.
-    # TODO: Set up Cloud9 environment, if possible/neccessary?
-    # TODO: Set up crontab with any regular jobs.
-    # TODO: Symlink any neccessary configuration files to the cloned dotfiles (from mounted drive).
-    # TODO: Set up SSH config and SSH keys (if possible to do it securely).
-    # TODO: Set up Ansible hosts.. OR move to dynamic inventory?
-
-    - name: Include notification tasks.
-      include_tasks: ./tasks/notifications.yml
+    - { role: notifications,    tags: [ "notifications" ] }
 
     # TODO: Additional interesting roles to look into:
     #       - https://github.com/manala/ansible-role-accounts

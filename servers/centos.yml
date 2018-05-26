@@ -1,34 +1,26 @@
 ---
 
-# TODO: Finish this based on the ubuntu.yml when that is completed.
-
-# TODO: Add Bamboo installation (./tasks/bamboo.yml).
-# TODO: Add Ansible Tower or AWX installation.
+# TODO: Finish this playbook!
 
 - hosts: centos
   become: yes
 
-  vars:
-    username: tim
-    full_name: Tim Malone
-    email: tdmalone@gmail.com
-    timezone: Australia/Melbourne
-    ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
-    shell: /bin/bash # TODO: Set to zsh once that's installed.
-    #hostname: centos.tm.id.au # Should be supplied in host_vars.
-    new_system: false # WARNING: Should only be used on brand new servers!
-    ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
+  roles:
 
-  handlers:
+    - { role: yum,           tags: [ "yum",          "packages" ] }
+    - { role: hostname,      tags: [ "hostname",     "config" ] }
+    - { role: users-groups,  tags: [ "users-groups", "config" ] }
+    - { role: ssh,           tags: [ "ssh",          "config" ] }
+    - { role: common,        tags: [ "common",       "config" ] }
+    - { role: papertrail,    tags: [ "papertrail",   "packages" ] }
+    - { role: datadog,       tags: [ "datadog",      "packages", "monitoring" ] }
+    - { role: aws-ssm,       tags: [ "aws-ssm",      "packages", "monitoring" ] }
+    - { role: git,           tags: [ "git",          "config" ] }
 
-    - name: restart ssh
-      service:
-        name: sshd
-        state: restarted
+    - { role: awx,           tags: [ "awx",          "packages" ] }
+    - { role: bamboo,        tags: [ "bamboo",       "packages" ] }
+    - { role: elk,           tags: [ "elk",          "packages" ] }
 
-  tasks:
-
-    - name: Include tasks common to all distros.
-      include_tasks: ./tasks/common.yml
+    - { role: notifications, tags: [ "notifications" ] }
 
 ...

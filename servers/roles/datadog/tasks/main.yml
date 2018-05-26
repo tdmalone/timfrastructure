@@ -1,0 +1,13 @@
+---
+
+# TODO: Set up Datadog monitoring.
+# @see https://galaxy.ansible.com/manala/ansible-galaxy/ for possibly installing galaxy roles easily.
+# - include_role:
+#     name: Datadog.datadog
+#   vars:
+#     become: yes
+#     datadog_api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
+
+# TODO: Copy across common Datadog configuration; restart Datadog agent.
+
+...

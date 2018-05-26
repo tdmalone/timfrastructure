@@ -4,21 +4,26 @@
 - name: Set hostname to {{ hostname }}.
   hostname:
     name: "{{ hostname }}"
-  when: new_system == true
 
 # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
 - name: Add hostname to /etc/hosts.
   lineinfile:
     dest: /etc/hosts
     regexp: "^127.0.0.1"
-    line: "127.0.0.1 {{ hostname }}"
-  when: new_system == true
+    line: "127.0.0.1 {{ hostname }} localhost"
+
+# @see http://docs.ansible.com/ansible/latest/modules/stat_module.html
+- name: Check if cloud-init is installed...
+  stat:
+    path: /etc/cloud/cloud.cfg
+  register: cloud_init
 
 # @see http://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
-- name: Prevent cloud-init from resetting the hostname on instance launch.
+- name: ...and if so, prevent cloud-init from resetting the hostname on instance launch.
   lineinfile:
     dest: /etc/cloud/cloud.cfg
     regexp: "^preserve_hostname"
     line: "preserve_hostname: true"
+  when: cloud_init.stat.exists == true
 
 ...

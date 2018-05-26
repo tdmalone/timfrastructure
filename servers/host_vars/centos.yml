@@ -1,5 +1,6 @@
 ---
 
 hostname: "centos.tm.id.au"
+new_system: true
 
 ...

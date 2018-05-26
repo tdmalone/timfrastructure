@@ -55,6 +55,7 @@
   when: new_system == true or apt_sources.changed or apt_keys_url.changed or apt_keys_keyserver.changed
   tags: skip_ansible_lint # https://github.com/willthames/ansible-lint/issues/273#issuecomment-352767920
 
+# TODO: Work out why this sometimes reports a change even when the cache has just been updated...
 - name: Update the apt cache only if stale (for existing systems).
   apt:
     cache_valid_time: 86400 # One day.
@@ -74,40 +75,11 @@
     name: "{{ item }}"
     autoclean: yes
     autoremove: yes
-  with_items:
-    - apt-transport-https
-    - bzip2
-    - ca-certificates
-    - curl
-    - ftp
-    - git
-    - jq
-    - mariadb-server
-    - nginx
-    - nodejs
-    - python-pip
-    - python3
-    - python3-pip
-    #- python3-venv # TODO: May not work on Ubuntu 14.04. Remove when we're ready to upgrade.
-    - ruby
-    - ruby-dev # Needed for Travis gem installation to succeed.
-    - software-properties-common
-    - unzip
-    - vim
-    - wget
-    - zsh
+  with_items: "{{ apt_packages }}"
 
 - name: Install additional packages with apt (from secondary repositories).
   apt:
     name: "{{ item }}"
-  with_items:
-    - ansible
-    - azure-cli
-    - docker-ce
-    - google-cloud-sdk
-    - heroku
-    - kubectl
-    - php7.2-fpm
-    - yarn
+  with_items: "{{ apt_packages_secondary }}"
 
 ...

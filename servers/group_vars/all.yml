@@ -1,0 +1,103 @@
+---
+
+apt_packages:
+  - apt-transport-https
+  - bzip2
+  - ca-certificates
+  - curl
+  - ftp
+  - git
+  - jq
+  - mariadb-server
+  - nginx
+  - nodejs
+  - python-pip
+  - python3
+  - python3-pip
+  #- python3-venv # TODO: May not work on Ubuntu 14.04. Remove when we're ready to upgrade.
+  - ruby
+  - ruby-dev # Needed for Travis gem installation to succeed.
+  - software-properties-common
+  - unzip
+  - vim
+  - wget
+  - zsh
+
+# Packages that we also generally need to add third-party keys and repositories for.
+# @see roles/apt/tasks/main.yml
+apt_packages_secondary:
+  - ansible
+  - azure-cli
+  - docker-ce
+  - google-cloud-sdk
+  - heroku
+  - kubectl
+  - php7.2-fpm
+  - yarn
+
+brew_packages:
+  - awscli
+  - git-flow
+  - heroku
+  - jq
+  - lastpass-cli
+  - lftp
+  - mariadb
+  - nginx
+  - node
+  - shellcheck
+  - telnet
+  - wget
+  - wput
+  - xz
+  - yarn
+
+gem_packages:
+  - papertrail # @see https://github.com/papertrail/papertrail-cli
+  - travis # TODO: Run once and press y to enable shell completion.
+
+pip_packages:
+  - awscli # @see https://aws.amazon.com/cli/
+  - pylint # @see https://www.pylint.org/#install
+
+yarn_packages:
+  - app.json
+  - babel-cli
+  - browserify # Might not be required anymore?
+  - c9
+  - create-react-app
+  - credits-cli
+  - david # Might not be required anymore?
+  - depcheck
+  - doctoc
+  - documentation
+  - emojipacks
+  - eslint
+  - fkill-cli # Might not be required anymore?
+  - gatsby-cli
+  - grunt-cli # Might not be required anymore?
+  - gulp-cli # Might not be required anymore?
+  - imagemin-cli
+  - jest
+  - jsdoc
+  - json # What does this do again?
+  - lighthouse
+  - markdownlint
+  - netlify-cli
+  - np # What does this do again?
+  - pageres-cli # What does this do again?
+  - postcss-cli
+  - sassdoc
+  - serverless
+  - slush # Might not be required anymore?
+  - stylelint
+  - svgo
+  - webpack-cli
+  - wombat
+  - wt-cli
+  - yo
+
+# TODO: Fill this out.
+yum_packages:
+
+...
