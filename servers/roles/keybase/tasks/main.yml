@@ -26,5 +26,6 @@
 - name: ...and run the Keybase CLI setup program.
   command: run_keybase
   when: keybase_is_installed.rc == 1
+  become: false
 
 ...

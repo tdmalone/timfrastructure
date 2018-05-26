@@ -1,5 +1,8 @@
 ---
 
+# TODO: Add CentOS installation option.
+# @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-centos
+
 # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
 # @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
 # @see http://docs.ansible.com/ansible/latest/modules/command_module.html
