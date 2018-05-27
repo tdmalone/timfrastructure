@@ -1,5 +1,31 @@
 ---
 
+- name: Check if Composer is installed.
+  shell: command -v composer
+  register: composer_is_installed
+  changed_when: composer_is_installed.rc > 0
+  failed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
+
+# @see https://docs.ansible.com/ansible/latest/modules/get_url_module.html
+- name: If not, download Composer...
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-installer.php
+    mode: +x
+  when: composer_is_installed.rc > 0
+
+- name: ...then install Composer...
+  command: php composer-installer.php
+  when: composer_is_installed.rc > 0
+  args:
+    chdir: /tmp
+
+- name: ...and move the installed binary to the PATH.
+  command: mv /tmp/composer.phar /usr/local/bin/composer
+  when: composer_is_installed.rc > 0
+
 # @see https://docs.ansible.com/ansible/latest/composer_module.html
 - name: Install commonly used Composer packages globally.
   composer:
