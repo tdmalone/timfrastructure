@@ -8,20 +8,23 @@
 
   roles:
 
-    - { role: homebrew,         tags: [ "homebrew",         "packages" ] }
-    - { role: hostname,         tags: [ "hostname",         "config" ] }
-    - { role: papertrail,       tags: [ "papertrail",       "packages" ] }
-    - { role: dotfiles,         tags: [ "dotfiles",         "config" ] }
-    - { role: package-managers, tags: [ "package-managers", "packages" ] }
+    # Generic common roles.
+    - { role: homebrew,      tags: [ "homebrew",      "packages" ] }
+    - { role: hostname,      tags: [ "hostname",      "config" ] }
+    - { role: papertrail,    tags: [ "papertrail",    "packages" ] }
+    - { role: dotfiles,      tags: [ "dotfiles",      "config" ] }
 
-    # TODO: Enable once it supports Mac.
-    #- { role: keybase,          tags: [ "keybase",          "packages" ] }
+    # Roles specific to the environment desired on this Mac.
+    - { role: composer,      tags: [ "composer",      "packages" ] }
+    - { role: gem,           tags: [ "gem",           "packages" ] }
+    - { role: yarn,          tags: [ "yarn",          "packages" ] }
+    - { role: keybase,       tags: [ "keybase",       "packages" ] }
+    - { role: hashicorp,     tags: [ "hashicorp",     "packages" ] }
+    - { role: go,            tags: [ "go",            "packages" ] }
+    - { role: nginx,         tags: [ "nginx",         "packages", "config" ] }
+    - { role: lastpass,      tags: [ "lastpass",      "packages" ] }
 
-    - { role: hashicorp,        tags: [ "hashicorp",        "packages" ] }
-    - { role: go,               tags: [ "go",               "packages" ] }
-    - { role: nginx,            tags: [ "nginx",            "packages", "config" ] }
-    - { role: lastpass,         tags: [ "lastpass",         "packages" ] }
-
-    - { role: notifications,    tags: [ "notifications" ] }
+    # Finish-up roles.
+    - { role: notifications, tags: [ "notifications" ] }
 
 ...

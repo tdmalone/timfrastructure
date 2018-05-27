@@ -1,0 +1,10 @@
+---
+
+# @see https://docs.ansible.com/ansible/latest/pip_module.html
+- name: Install commonly used pip packages.
+  pip:
+    name: "{{ item }}"
+    executable: pip3
+  with_items: "{{ pip_packages }}"
+
+...

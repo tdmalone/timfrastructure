@@ -1,0 +1,9 @@
+---
+
+# @see https://docs.ansible.com/ansible/latest/gem_module.html
+- name: Install commonly used gems.
+  gem:
+    name: "{{ item }}"
+  with_items: "{{ gem_packages }}"
+
+...
