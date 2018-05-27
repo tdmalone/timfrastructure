@@ -1,5 +1,22 @@
 ---
 
-# TODO: Install oh-my-zsh (probably using become:no).
+# Installs oh-my-zsh by cloning it, along with desired theme.
+#
+# @see https://github.com/robbyrussell/oh-my-zsh
+# @see https://github.com/veggiemonk/ansible-ohmyzsh/blob/master/tasks/main.yml
+# @see https://github.com/bhilburn/powerlevel9k/wiki/Install-Instructions
+# @see https://docs.ansible.com/ansible/latest/git_module.html
+
+- name: Clone oh-my-zsh.
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh
+    dest: ~/.oh-my-zsh
+  become: no
+
+- name: Clone {{ zsh_theme_name }} theme.
+  git:
+    repo: "{{ zsh_theme_repo }}"
+    dest: ~/.oh-my-zsh/custom/themes/{{ zsh_theme_name }}
+  become: no
 
 ...

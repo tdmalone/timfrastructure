@@ -12,6 +12,7 @@
     - { role: homebrew,      tags: [ "homebrew",      "packages" ] }
     - { role: hostname,      tags: [ "hostname",      "config" ] }
     - { role: papertrail,    tags: [ "papertrail",    "packages" ] }
+    - { role: zsh,           tags: [ "zsh",           "packages", "config" ] }
     - { role: dotfiles,      tags: [ "dotfiles",      "config" ] }
 
     # Roles specific to the environment desired on this Mac.
