@@ -18,14 +18,17 @@
     deb: https://prerelease.keybase.io/keybase_amd64.deb
   when: keybase_is_installed.rc == 1
 
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
 - name: ...fix packages after Keybase installation...
   command: apt-get install --fix-broken --assume-yes
   when: keybase_is_installed.rc == 1
-  tags: skip_ansible_lint # Skip ANSIBLE0006, because aot module does not provide --fix-broken.
+  tags: skip_ansible_lint # Skip ANSIBLE0006, because apt module does not provide --fix-broken.
+  args:
+    warn: no # Like the above, except for the actual Ansible playbook run.
 
 - name: ...and run the Keybase CLI setup program.
   command: run_keybase
   when: keybase_is_installed.rc == 1
-  become: false
+  become: no # Keybase doesn't support running as root.
 
 ...

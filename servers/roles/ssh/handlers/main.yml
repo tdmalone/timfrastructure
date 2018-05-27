@@ -1,8 +1,9 @@
 ---
 
+# @see https://docs.ansible.com/ansible/latest/modules/service_module.html
 - name: restart ssh
   service:
-    name: ssh
+    name: "{{ 'sshd' if ( ansible_os_family == 'RedHat' ) else 'ssh' }}"
     state: restarted
 
 ...

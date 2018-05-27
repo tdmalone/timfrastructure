@@ -2,8 +2,6 @@
 
 # TODO: Finish this playbook!
 
-# TODO: Should we be using become:no and just become on the individual roles/tasks that need it?
-
 # TODO: Support CentOS as well as Ubuntu for as many roles as possible (see ansible_os_family, ansible_pkg_mgr, ansible_distribution, ansible_distribution_file_variety, ansible_distribution_release, and ansible_distribution_version vars for help). See also the Ansible package module (https://docs.ansible.com/ansible/latest/modules/package_module.html).
 
 # TODO: Work out how to determine whether the system was created today or not, and use that to determine whether a dist-upgrade should be run. Running `sudo tune2fs -l /dev/xvda1 | grep created` should give the created date of the filesystem which is a pretty good way to determine system age, and then there's a bunch of useful facts in {{ansible_date_time}} to compare to current.
