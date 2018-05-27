@@ -11,6 +11,7 @@
     dest: "{{ userdata.home }}/dotfiles"
   become: yes
   become_user: "{{ username }}"
+  tags: skip_ansible_lint # Skip ANSIBLE0004, as we intentionally want the latest here.
 
 - name: Symlink relevant dotfiles to their real locations.
   file:
