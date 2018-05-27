@@ -11,7 +11,7 @@
     - { role: homebrew,         tags: [ "homebrew",         "packages" ] }
     - { role: hostname,         tags: [ "hostname",         "config" ] }
     - { role: papertrail,       tags: [ "papertrail",       "packages" ] }
-    - { role: git,              tags: [ "git",              "config" ] }
+    - { role: dotfiles,         tags: [ "dotfiles",         "config" ] }
     - { role: package-managers, tags: [ "package-managers", "packages" ] }
 
     # TODO: Enable once it supports Mac.

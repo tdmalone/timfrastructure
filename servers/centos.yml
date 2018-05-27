@@ -18,7 +18,7 @@
     # TODO: Enable once it supports CentOS.
     #- { role: aws-ssm,       tags: [ "aws-ssm",      "packages", "monitoring" ] }
 
-    - { role: git,           tags: [ "git",          "config" ] }
+    - { role: dotfiles,      tags: [ "dotfiles",     "config" ] }
 
     - { role: awx,           tags: [ "awx",          "packages" ] }
     - { role: bamboo,        tags: [ "bamboo",       "packages" ] }
