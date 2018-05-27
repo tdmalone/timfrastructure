@@ -1,0 +1,77 @@
+---
+
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/unarchive_module.html
+
+# @see https://github.com/hashicorp/terraform/issues/9803#issuecomment-257903082
+
+- name: Check if Terraform is installed.
+  shell: command -v terraform
+  register: terraform_is_installed
+  changed_when: terraform_is_installed.rc > 0
+  failed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
+
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+- name: If not, get latest Terraform version download URL...
+  shell: TERRAFORM_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/terraform/${TERRAFORM_LATEST}/terraform_${TERRAFORM_LATEST}_linux_amd64.zip'
+  register: terraform_download_url
+  when: terraform_is_installed.rc > 0
+  tags: skip_ansible_lint # Skip ANSIBLE0014, because we're dynamically generating this environment variable.
+  #run_once: true # TODO: Activate this if I can work out how to save the download URL as a var all hosts can access.
+
+- name: ...then download, unzip, and place the Terraform binary in the path.
+  unarchive:
+    src: "{{ terraform_download_url.stdout }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: +x
+  when: terraform_is_installed.rc > 0
+
+- name: Check if Packer is installed.
+  shell: command -v packer
+  register: packer_is_installed
+  changed_when: packer_is_installed.rc > 0
+  failed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
+
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+- name: If not, get latest Packer version download URL...
+  shell: PACKER_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/packer/${PACKER_LATEST}/packer_${PACKER_LATEST}_linux_amd64.zip'
+  register: packer_download_url
+  when: packer_is_installed.rc > 0
+  tags: skip_ansible_lint # Skip ANSIBLE0014, because we're dynamically generating this environment variable.
+  #run_once: true # TODO: Activate this if I can work out how to save the download URL as a var all hosts can access.
+
+- name: ...then download, unzip, and place the Packer binary in the path.
+  unarchive:
+    src: "{{ packer_download_url.stdout }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: +x
+  when: packer_is_installed.rc > 0
+
+- name: Check if Vagrant is installed.
+  shell: command -v vagrant
+  register: vagrant_is_installed
+  changed_when: vagrant_is_installed.rc > 0
+  failed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
+
+# TODO: Move to using https://docs.ansible.com/ansible/latest/modules/uri_module.html so we don't have to skip_ansible_lint.
+- name: If not, get latest Vagrant version download URL...
+  shell: VAGRANT_LATEST="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/vagrant | jq -r -M '.current_version')" eval echo 'https://releases.hashicorp.com/vagrant/${VAGRANT_LATEST}/vagrant_${VAGRANT_LATEST}_x86_64.deb'
+  register: vagrant_download_url
+  when: vagrant_is_installed.rc > 0
+  tags: skip_ansible_lint # Skip ANSIBLE0014, because we're dynamically generating this environment variable.
+  #run_once: true # TODO: Activate this if I can work out how to save the download URL as a var all hosts can access.
+
+- name: ...then, download and install Vagrant.
+  apt:
+    deb: "{{ vagrant_download_url.stdout }}"
+  when: vagrant_is_installed.rc > 0
+
+...

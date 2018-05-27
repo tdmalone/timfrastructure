@@ -1,0 +1,59 @@
+{
+
+  "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
+  "_notes": "'owners' value refers to Canonical.",
+  "_notes": "'subnet_id' is required to launch into the VPC for the EFS mount in the Ansible playbook to work.",
+  "_todo": "",
+  "builders": [{
+
+    "type": "amazon-ebs",
+    "region": "ap-southeast-2",
+    "instance_type": "t2.micro",
+    "spot_price": "auto",
+    "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+    "shutdown_behavior": "terminate",
+    "ssh_username": "ubuntu",
+    "ami_name": "ubuntu.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
+
+    "subnet_id": "subnet-dc832995",
+    "associate_public_ip_address": true,
+    "security_group_id": "sg-70b4f309",
+
+    "tags": {
+      "Name": "ubuntu.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
+      "Built By": "Packer {{packer_version}}"
+    },
+
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+      },
+
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+
+    "run_tags": {
+      "Managed By": "Packer",
+      "OS": "Ubuntu 16.04"
+    },
+
+    "run_volume_tags": {
+      "Name": "Packer Builder",
+      "Managed By": "Packer"
+    }
+
+  }],
+
+  "_see": "https://www.packer.io/docs/provisioners/ansible.html",
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "./ubuntu.yml",
+    "host_alias": "ubuntu",
+    "groups": [ "tim" ],
+    "extra_arguments": [ "--diff" ]
+  }]
+
+}

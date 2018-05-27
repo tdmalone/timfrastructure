@@ -1,0 +1,9 @@
+---
+
+# TODO: Set up Papertrail monitoring.
+# @see https://github.com/reactiveops/ansible-papertrail
+# @see https://github.com/aptoma/ansible-papertrail
+# @see https://github.com/azavea/ansible-papertrail
+# @see PAPERTRAIL_HOST & PAPERTRAIL_PORT env vars.
+
+...

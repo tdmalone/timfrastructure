@@ -1,0 +1,26 @@
+---
+
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+- name: Enable the EPEL repository.
+  yum:
+    name: epel-release
+
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+- name: Install primary packages with yum.
+  yum:
+    name: "{{ item }}"
+  with_items: "{{ yum_packages }}"
+
+# @see https://stackoverflow.com/questions/32618686/how-to-install-pip-in-centos-7
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+- name: Install pip3 via yum and easy_install (part 1 of 2).
+  yum:
+    name: python34-setuptools
+
+# @see https://docs.ansible.com/ansible/latest/modules/easy_install_module.html
+- name: Install pip3 via yum and easy_install (part 2 of 2).
+  easy_install:
+    name: pip
+    executable: easy_install-3.4
+
+...

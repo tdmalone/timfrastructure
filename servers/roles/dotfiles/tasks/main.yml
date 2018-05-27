@@ -1,0 +1,27 @@
+---
+
+- name: Get user's data.
+  user:
+    name: "{{ username }}"
+  register: userdata
+
+- name: Clone dotfiles.
+  git:
+    repo: "{{ dotfiles_repo }}"
+    dest: "{{ userdata.home }}/dotfiles"
+  become: yes
+  become_user: "{{ username }}"
+
+- name: Symlink relevant dotfiles to their real locations.
+  file:
+    src: "{{ userdata.home }}/dotfiles/{{ item }}"
+    dest: "{{ userdata.home }}/{{ item }}"
+    state: link
+  with_items:
+    - .aliases
+    - .gitconfig
+    - .pylintrc
+    - .vimrc
+    - .zshrc
+
+...

@@ -1,0 +1,21 @@
+# @see https://confluence.atlassian.com/bamboo/installing-bamboo-on-linux-289276792.html
+
+# TODO: Install Java
+# @see https://www.digitalocean.com/community/tutorials/how-to-install-java-on-centos-and-fedora
+# sudo yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
+
+# TODO: Set JAVA_HOME
+# Find it via `alternatives --display java`?? eg. /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre
+# sudo sh -c "echo export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre >> /etc/environment"
+
+# TODO: Create Bamboo user
+# sudo /usr/sbin/useradd --create-home --home-dir /usr/local/bamboo --shell /bin/bash bamboo
+
+# TODO: Download and unzip Bamboo into an install directory
+# curl --location https://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-6.5.0.tar.gz > bamboo.tar.gz
+# tar -zxvf bamboo.tar.gz
+
+# Set Bamboo home directory.
+# echo "bamboo.home=/usr/local/bamboo" >> atlassian-bamboo-6.5.0/atlassian-bamboo/WEB-INF/classes/bamboo-init.properties
+
+# Follow from step 4 at https://confluence.atlassian.com/bamboo/installing-bamboo-on-linux-289276792.html

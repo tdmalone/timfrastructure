@@ -1,0 +1,48 @@
+
+server {
+
+  # Generic vhost config.
+  server_name aws.tm.id.au;
+  root /home/tim/data/web/aws.tm.id.au;
+  index index.php;
+  listen 80;
+
+  # WordPress pretty permalinks.
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+
+  # Pass PHP files to php-fpm.
+  location ~ \.php$ {
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+  }
+
+  # Deny access to any Apache .htaccess files, just in case.
+  location ~ /\.ht {
+    deny all;
+  }
+
+  # HTTPS configuration.
+  # Originally added by Certbot.
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/aws.tm.id.au/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/aws.tm.id.au/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  if ($scheme != "https") {
+    return 301 https://$host$request_uri;
+  }
+
+  # nginx status page.
+  # @see https://www.datadoghq.com/blog/how-to-collect-nginx-metrics/
+  location ~ /status$ {
+    stub_status on;
+    access_log off;
+  }
+
+} # server aws.tm.id.au
+

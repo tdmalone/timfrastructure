@@ -1,0 +1,26 @@
+
+server {
+
+  server_name dasher.tm.id.au;
+  root /home/tim/data/code/dasher;
+  index index.html;
+  listen 80;
+
+  # Deny access to any dotfiles.
+  location ~ /\. {
+    deny all;
+  }
+
+  # HTTPS configuration.
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/dasher.tm.id.au/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/dasher.tm.id.au/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  if ($scheme != "https") {
+    return 301 https://$host$request_uri;
+  }
+
+} # server dasher.tm.id.au
+

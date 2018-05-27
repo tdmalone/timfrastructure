@@ -1,0 +1,33 @@
+
+server {
+
+  server_name slashies.tm.id.au;
+  root /home/tim/data/code/slashies/src;
+  index index.php run.php;
+
+  # Deny access to any dotfiles.
+  location ~ /\. {
+    deny all;
+  }
+
+  # Pass PHP files to php-fpm.
+  location ~ \.php$ {
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+  }
+
+  # HTTPS configuration.
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/slashies.tm.id.au/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/slashies.tm.id.au/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  if ($scheme != "https") {
+    return 301 https://$host$request_uri;
+  }
+
+} # server slashies.tm.id.au
+

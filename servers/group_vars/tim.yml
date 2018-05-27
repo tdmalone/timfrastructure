@@ -1,0 +1,13 @@
+---
+
+username: tim
+full_name: Tim Malone
+email: tdmalone@gmail.com
+timezone: Australia/Melbourne
+ssh_key: https://raw.githubusercontent.com/tdmalone/dotfiles/master/ssh.pub
+dotfiles_repo: https://github.com/tdmalone/dotfiles.git
+shell: /bin/zsh
+aws_region: ap-southeast-2
+ssh_port: "{{ lookup('env', 'SSH_PORT') }}"
+
+...

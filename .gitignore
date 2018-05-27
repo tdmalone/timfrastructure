@@ -1,9 +1,13 @@
-#  Local .terraform directories
-**/.terraform/*
 
-# .tfstate files
+# Terraform
+**/.terraform/*
 *.tfstate
 *.tfstate.*
-
-# .tfvars files
 *.tfvars
+
+# Ansible
+*.retry
+callback_plugins
+
+# Cloud9 editor.
+.~c9_*

@@ -1,0 +1,40 @@
+---
+
+- name: Get hostname of Ansible host system.
+  local_action: command hostname
+  become: no # Needed to support running playbooks on a system without passwordless sudo.
+  register: host_system_hostname
+  changed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  #run_once: true # TODO: Activate this if I can work out how to save the hostname as a var *all* hosts can access.
+
+- name: Save hostname of Ansible host system.
+  set_fact:
+    host_system_hostname: "{{ host_system_hostname.stdout }}"
+
+# @see https://docs.ansible.com/ansible/latest/modules/datadog_event_module.html
+- name: Send Datadog event.
+  datadog_event:
+    title: Playbook run
+    text: Successful playbook run on {{ ansible_nodename }} ({{ inventory_hostname }}).
+    priority: low
+    api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
+    app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
+    tags: "#host:{{ ansible_nodename }}"
+  changed_when: false
+  delegate_to: localhost
+  become: no
+
+# @see https://docs.ansible.com/ansible/latest/modules/slack_module.html
+# TODO: Possible to include stats about how the play went?
+# TODO: Possible to send a failure message if the play fails?
+# TODO: This appears to 'succeed' even if the sending fails via Slack API, eg. with an invalid hook.
+- name: Send notification message via Slack.
+  slack:
+    token: "{{ lookup('env', 'SLACK_HOOK') }}"
+    color: good
+    msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) from {{ host_system_hostname }} has completed successfully.
+  delegate_to: localhost
+  become: no
+
+...

@@ -1,0 +1,9 @@
+---
+
+# TODO: Install and set up a local WordPress site to manage tm.id.au.
+# @see https://docs.ansible.com/ansible/latest/modules/mysql_db_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/mysql_user_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/blockinfile_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/copy_module.html
+
+...

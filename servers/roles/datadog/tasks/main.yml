@@ -1,0 +1,22 @@
+---
+
+# TODO: Set up Datadog monitoring.
+# @see https://galaxy.ansible.com/manala/ansible-galaxy/ for possibly installing galaxy roles easily.
+# - include_role:
+#     name: Datadog.datadog
+#   vars:
+#     become: yes
+#     datadog_api_key: "{{ lookup('env', 'DATADOG_API_KEY') }}"
+
+# TODO: Copy across common Datadog configuration; restart Datadog agent.
+
+# @see https://docs.ansible.com/ansible/latest/modules/pip_module.html
+- name: Install additional Python Datadog dependencies, for running the datadog_event module in later Ansible runs.
+  pip:
+    name: "{{ item }}"
+    executable: pip2 # Must be done with pip2 because Ansible uses Python 2.
+  with_items:
+    - datadog
+    - pyyaml
+
+...

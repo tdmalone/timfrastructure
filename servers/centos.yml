@@ -1,0 +1,29 @@
+---
+
+# TODO: Finish this playbook!
+
+- hosts: centos
+  become: yes
+
+  roles:
+
+    - { role: yum,           tags: [ "yum",          "packages" ] }
+    - { role: hostname,      tags: [ "hostname",     "config" ] }
+    - { role: users-groups,  tags: [ "users-groups", "config" ] }
+    - { role: ssh,           tags: [ "ssh",          "config" ] }
+    - { role: common,        tags: [ "common",       "config" ] }
+    - { role: papertrail,    tags: [ "papertrail",   "packages" ] }
+    - { role: datadog,       tags: [ "datadog",      "packages", "monitoring" ] }
+
+    # TODO: Enable once it supports CentOS.
+    #- { role: aws-ssm,       tags: [ "aws-ssm",      "packages", "monitoring" ] }
+
+    - { role: dotfiles,      tags: [ "dotfiles",     "config" ] }
+
+    - { role: awx,           tags: [ "awx",          "packages" ] }
+    - { role: bamboo,        tags: [ "bamboo",       "packages" ] }
+    - { role: elk,           tags: [ "elk",          "packages" ] }
+
+    - { role: notifications, tags: [ "notifications" ] }
+
+...

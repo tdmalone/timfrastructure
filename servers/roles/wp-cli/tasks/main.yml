@@ -1,0 +1,25 @@
+---
+
+- name: Check if wp-cli is installed.
+  shell: command -v wp
+  register: wp_cli_is_installed
+  changed_when: wp_cli_is_installed.rc > 0
+  failed_when: false
+  check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  tags: skip_ansible_lint # Skip ANSIBLE0013, because `command` is a shell built-in and thus requires the shell module.
+
+# @see https://wp-cli.org/#installing
+# @see https://docs.ansible.com/ansible/latest/modules/uri_module.html
+- name: If not, download wp-cli...
+  uri:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+  when: wp_cli_is_installed.rc > 0
+
+- name: ...and chmod wp-cli so it can be run.
+  file:
+    dest: /usr/local/bin/wp
+    mode: +x
+  when: wp_cli_is_installed.rc > 0
+
+...

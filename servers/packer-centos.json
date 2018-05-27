@@ -1,0 +1,60 @@
+{
+
+  "_see": "https://www.packer.io/docs/builders/amazon-ebs.html",
+  "_see": "https://aws.amazon.com/marketplace/server/procurement?productId=b7ee8a69-ee97-4a49-9e68-afaee216db2e",
+  "_see": "https://wiki.centos.org/Cloud/AWS",
+  "_notes": "'owners' value refers to the AWS Marketplace.",
+  "_notes": "'subnet_id' is required to launch into the VPC for the EFS mount in the Ansible playbook to work.",
+  "builders": [{
+
+    "type": "amazon-ebs",
+    "region": "ap-southeast-2",
+    "instance_type": "t2.micro",
+    "spot_price": "auto",
+    "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+    "shutdown_behavior": "terminate",
+    "ssh_username": "centos",
+    "ami_name": "centos.tm.id.au {{isotime \"2006-01-02 3-04pm\"}} UTC",
+
+    "subnet_id": "subnet-dc832995",
+    "associate_public_ip_address": true,
+    "security_group_id": "sg-70b4f309",
+
+    "tags": {
+      "Name": "centos.tm.id.au {{isotime \"2006-01-02 3:04pm\"}} UTC",
+      "Built By": "Packer {{packer_version}}"
+    },
+
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "CentOS Linux 7 x86_64 HVM EBS 1801*",
+        "root-device-type": "ebs"
+      },
+
+      "owners": ["679593333241"],
+      "most_recent": true
+    },
+
+    "run_tags": {
+      "Managed By": "Packer",
+      "OS": "CentOS 7.4 1801"
+    },
+
+    "run_volume_tags": {
+      "Name": "Packer Builder",
+      "Managed By": "Packer"
+    }
+
+  }],
+
+  "_see": "https://www.packer.io/docs/provisioners/ansible.html",
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "./centos.yml",
+    "host_alias": "centos",
+    "groups": [ "tim" ],
+    "extra_arguments": [ "--diff" ]
+  }]
+
+}

@@ -1,11 +1,15 @@
-
 language: generic
+services: docker
 
 env:
   global:
 
     - AWS_ACCESS_KEY_ID=AKIAJMVNAJPFFHMZRBTA
     - AWS_DEFAULT_REGION=ap-southeast-2
+    - SNS_ARN=arn:aws:sns:ap-southeast-2:873114526714:codebuild-notifications
+
+    # TF_VARS_ENCRYPTION_PASSPHRASE
+    - secure: KR5qCZ8WbLj9U9sqxsEH8Z39Oqi1tOVYonfo4HR68pOBg2Kqo6de8lNRRb4fvDZRH15tirbmgWLlhMiH+iTKB7Isf6oue2YvB4+Yscu+5xl5xDt9RrYeF0/6qnkDGVvUYckwfFkmyMeI9EbKnVKJmeLTSy3d8fHxo43YQACj4yjqmun9iCBsAE8Oc1NfizTS0ur3hI2youjAcgsncmebRugAaPcX//+L2vA2LMvKRXcJfY2S9XBpneLAeEDie0Z6+6Ypp4g1H9Sl5tvF54po1kLmtU262FEETbG1CWi1yc8lK+/iFkp2lyEcUns9+k8ea0Ow1gUk8FmlvK/+xNDm3M5rBz0IttE+Zz1BE2IBtY9YLJ8XlQpkfWZt2fNxRo6kFwrMWLNgEzHKR7RMztwwnl1TF2hnoHbHhyjnXcACGDSrPPnHWJ4G2VlRwvLT4lz9AhpMWdJAE6gd20cXbwMf5bzoglWb74ntgt7s9XglakNJDR8vbsBT8VDGGj8BLSrHKZ9vykDBU7O9XtiFdyR3qs2WKMy/kQBXaP0sKyFcO2XJsoDEJbotnCUrKLR8iTnKAHa//sJbyFftin8RSbZ+qrEkjP4yVCogHSPzOq/Zume0RhoYYfELMgWg1sFsSrWZl9eJ6B4FqwpjVkvCbELIA1R26iMl7RFOqL2OjEC2x+o=
 
     # AWS_SECRET_ACCESS_KEY
     - secure: U1+OFn7Lcz/4n0Dm1Suoh2goum7bmeJJzYDroFZEmzRF3/NfxLXl7hrC6QKinxSgCPGBhVN5feJLUZE3WD4QPi6f/s8OStYtFTsUEH5WwQgNOF/gtbicLlLOT6URnmj9uzFiEeQYhEUjGfq2qSkvOrA4OcJRpnOz56X2X+RqPNKkcg4MVHaBNgGHVomtMtbEzI/mGw5RWpa+ATewX/adHYTKe31h6IqxDMZom6HdfdzRYQIrBzbtmookn9riGJEc9FRqD2caWO+mAjtyqgOrPXXyRrRqLC2DKoujWe9roqyLuZ/Gq3tUHWxQDSlBQmKNr6/9spGe7ZpWKPlZWYMPel5eKVRI+vM90seeF5LlFcDPeYHhqO1zr1QrlbgMXcoPjGkbnsJax+RFMv2N44pLifjnUzompKB9FvWs3p9tfh7KZZ3KXHdfjkENY38ZLAfBAqnHNLxMb7PU3+HQDsdkYfoloYOHBqVE55J5db/5BFriqNpFgNnJ1ZE1Rj3eF/R7b7h1WxquE0afZ6MyiQF1XWbyWC5L5cBioGRGw32tfrpeugyzbKoxatLjMXYHebvUvKQOOuNmP7256WCeZxEDPQf33FiPUSPRvQ5r3ZdXikP6am5VcpH4REJPep45VL/VrRGhqBSBdK99wF3cCklNbPybL+tor/zZ51nGdpiKFN4=
@@ -16,32 +20,37 @@ env:
     # CLOUDFLARE_TOKEN
     - secure: Z7pDH1tuBosDxpsMGp2Gk1gTIwQ6zfhgEFcaEos3/ui1I3V8uDPNXKyVs7iPyU5aRWnKhopgFxhpDm71AnhnyvwqIGNpsjmp0fQC0eQ/hY6T44OuWnulx2i9m7wXj2caeiGMYAl8NJqwWte8E9E9cVzrSmAxJrnojrjKrZhYRaW5MPAGa+ZRSAYockGk/evbIOJj8emOXc5ucdNFIqKir6U676dIkbTQ4rPGE0THT3F2YdWoJSluOtW2KtU8eO9RM0O+Sy3u9iHZXElyKKCRvlcLTCXQTwDrpn9Wt833vtouZC1zGnc/vesIHvRDYMRKx+PZ0NcUU/ZD+VbwGL1pSgvOIYzhoMX/ZUHb9E2iqGWezhS/MWCWCqgW4dEfQvbQEEycl6nBY3fecrrvnw/hnSDK2tkZVt1/OU+iEvjYdxR8Menc8smnNjK05fny7KYD8Ns4q+6YGD+riNMEQ7+HsnQDwMDYpkjgCcsgXFR60vcQciZeqkD+4vms325q3RRwI64datd1rX6M58VUjaUAXJis2qbDWfYsPiyNNXRw0w6Fip/0TU/qyX3pxRpaUJeH9ICmVcuFMrrkoKpxX+754RW1Oj2dP/ltsWUf7X5idMQ5mmNPNV8dIr6Z+joRLN5k4bsLLb13bIzTnrBg50t47lt1AyAHl24gv0vAPjIcu8A=
 
-install:
+    # DATADOG_API_KEY
+    - secure: wUj3r697Dh8I7mJcS3wlMP0WJcxKo1+nRSK3FkYXp2Zl4M0pIIBjK1oUnIg5Bstyg1hEU5UO8aWsyPm18rsO1pbPv/8aImoQ5YQzyiTt3xuz3o1+fyQvmUIhRm16K+bWVfPcuBvg8Z97OCOxmCa98mAAdw9M77dE+nJqk/IWbKrNN3l6PfyplqQ8J8TfaPWsNrkI4ILGcJf44+ji9gfpgbWf3kSW4lKZUh2bVz9LU6yogQ1zYZUm8dTm57niF9O4caenYfKBZVyeHTk8cMZULtyug5zstGs7o3usaXO/mpK7ngs0IzPk5XtvuAwO6s9+H863OVPcLamTNZb2skI1t+jnEEb7Rvqib2a5b5dF3GOVxf/nMMRa8KdSZ5cAnjW7yZZA1ONS7UyICKFYPS2KIysi9lquYoIqAPI1G9WFiPwreAGKPUGJis5l/QUIDcsQ0zrb/L03ZJ+xpBROnLxhTBtPaZIoWNNI7nkqZCIrIMczdt7KJ8Bs4KkfMMdG2b4uaoRRNWZ1Pg6BDoEc9Z5bopP1lbxx6jf/KnsXQaCS9ZBVmBHTLzjqoGxMMhK9kLiqGfzNdeEXrPjaNjhs+AQRcUDO9FQNZoZcbyEAHggwKnueabfCaQqd7OkgHorweQ0nUDsuKvUR65jtRKLfuih2sNGnQ5U5jMA1x9tZbdEoGRc=
 
-  # Install Terraform.
-  - curl --location https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip > terraform.zip
-  - unzip terraform.zip
+    # DATADOG_APP_KEY
+    - secure: RDcH51hYNol7fQmBCdcHXuh5qk+M1KK73XBuYCtHdTOx2IYoe7ZX4C7VNSzDBW4wrhFxtB/ghF12vftW68PPvGhW6db76hZ22oAKf+OXEb3ac+MUhzcImCqhaxDjTSiJD0H/pTRCa5gQ8GF5upX2ttYe06pLIUHigClnTnBKOvaE7YkW2mp2GsSIrob/mmzk/pmhv/ndC92t6Q24ACKxUjt9r3Liqdg2dmIOY5bH0/5bSJOUvwj12j05ov4TpxgvopwCLIRGwE2sVAAnxiUpX2i/tFNHfkxSyejBCIoQSHvVYcVkCetoUNRYmRvmZqrh/7U1yfJZ0sZLPygZAGPRIdI8h545tfvqK5iVc8fYadoTBN1zS8Gas+wqCPqMtOFi+124Z2dK8sWm3iwIILroZpxGuBANAb8T9SmuSfCBEKHlL/VJZGIkRbwq2FcZQSWOx98GAVbJLeBQygOibRdHPLAC9nSROEaGPZixrxNwb89WyP7NJlVMrqmkX3+0q6ub/cP1eygMavmoolWm5BFwA1+Kua9Z7rekLkfeKtrQBHc7pFGY026JE1Pi1hHtjPsqQOeduMBufpjXuEpYPnVr5QQb9nBystNhilFByoPbN0E7Gkg4sCiy0s+fz+7xmsTdzQLiCM183zi05u9Jr/aazKYucfJJ47cS3uF1rn+Bhwc=
 
-  # Install Packer
-  - curl --location https://releases.hashicorp.com/packer/1.2.2/packer_1.2.2_linux_amd64.zip > packer.zip
-  - unzip packer.zip
+    # SLACK_HOOK
+    - secure: SVoBDhMo+JvwRV7mvINNgpLd2TCcmVF7vdZinfvTGpeGdAlWcI4d4rjOb0ZAiEybuxDOQrJ78wIoqvLc1dzaUiX9BAgynmxEdZq2ayo9zPJehuZdxEFA45jlGE6YAqLmszKvTOWZDNzcgNB9XXb8RwSvmLMljdIx7I9Q5tHeirYAWuzjJqVh4j82ewnFE8aoQl36HuDS4mEJU8OrQh9laXUwoesbRFSTkRdaA78p0Huuxw5Xt/5Z9LccfeSAqnjXCs3lUTVizlWJEiNj6wzityW+AbRrwzG+WRjqyAcnSOPkeKfCVraW0OMzyzNMJmqQJtBlmT7wqEQCKVRKcM1li95325WxVx2MxoNe5XjBabPhsUSnl+EhLnw7W15R8XY5RpjDhsnYc7hHM1fO3D2irhC7DXs7cNDQsi7KwDmLrM7021dMvgB3nWAkuwh2KeWIiHmoVzIXwwRJEj9n1zZqeWA9DkOBMLJL/iBv01PQG1MdwB2tm6vjR0fqp5lNgsNCZBelhQRecBPVWaaA9ykwvTLwyAxziG6n+p0V6qqVMa+EaYYOtTUZ73S7zXARd7UX6Vt8QEqDTDH+UfKQW5+wwtEuohvFi3hen6z60HjLdqpu9AHMJQGVkqC7BY8jfequzqgI0F0M4lYF+Xd054dYj54PK2h/aE6yvKc+hAggAEo=
 
-script:
+    # SSH_PORT
+    - secure: LMFdtTRfofUacpCa6ET+T9heWQUdXz2q5ZESTjhhIO/pqhrAQsVd0jfZ5bu0mjj0hPNDpQQpdBvqhzXsU7V48R1NBJ1t3pE9KCvsxhGzMM/UwBaEwxlWfxmAHKbUPmTzyLmBX9Dh+iTOkZjwRXI1MoYhZlDo/Lut6fGqRbolk6vg8VsZWsaN16Aw+EbPq37v29tCURty5qQPZ8KlUvhmjylHDpeynr7zLDl7NmJyq1iaNTkXB5dh9EdA538o940LcXhV61CfBe2756cgsg40sRbNV+rgbSF5+gHoYJ0WRzO7tEoig8gPocNQwAofxdjuJOI4H2bNqtHndlCO+nabhe7gDre7QQC2K0Tq7KZ7RXHmD4IrUMQ6sqSSldmk8UmyE1ZqnRLTKkBD1pDvk0s/6VytKDpp24LhHGi0NQDszUFtT+P2JmZfBmfCqvuQQeCNC31X+7k2nfsyqm5IsxYIsgfwz1AGPb+B4bKvYFscPwv8PerGa45gRo63ZSoRbhwaa8vmDHu45T0HVM9ZCaSaSjTOo+5BpdypOQvyLWhrsJAoQCuoGjb4SfmvB4UmcJm8YqZYMNCGuvwLvr7cA+YKmZiXKHzG3faO2gsyQDUTBY3MUDg9yjtBXn7MN+2HS8QiqLH8ZEgkTs9kH+ceeyZNWSIzrpnq4oScup00tzIvfCc=
 
-  # Check that Terraform config files are formatted correctly and that they validate.
-  - ./terraform fmt -check
-  - ./terraform init
-  - ./terraform validate
+before_install:
 
-  # Check that the state is up-to-date - i.e. that no changes have been pushed without being applied.
-  # We only care about the exit code here, and don't want to expose any potentially sensitive data,
-  # so we also redirect the output.
-  - ./terraform plan -detailed-exitcode > /dev/null
+  # Install the latest version of Shellcheck and make it available to the shell.
+  - curl --location --fail --silent https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz > shellcheck.tar.xz
+  - tar --xz -xvf shellcheck.tar.xz
+  - shellcheck() { "${TRAVIS_BUILD_DIR}/shellcheck-latest/shellcheck" "$@"; }
+  - export -f shellcheck
 
-  # Check that all Packer templates validate & build.
-  # TODO: Deregister these AMIs afterwards so that builds are idempotent.
-  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer validate %'
-  - find . -name "*.packer.json" | xargs -I % sh -c 'echo % && ./packer build %'
+install: ./install.sh
+
+before_script:
+
+  # Make Terraform and Packer binaries available to the shell.
+  - terraform() { "${TRAVIS_BUILD_DIR}/terraform" "$@"; }
+  - export -f terraform
+  - packer() { "${TRAVIS_BUILD_DIR}/packer" "$@"; }
+  - export -f packer
+
+script: ./script.sh
 
 notifications:
   email: false
