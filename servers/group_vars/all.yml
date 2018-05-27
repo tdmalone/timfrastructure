@@ -52,6 +52,12 @@ brew_packages:
   - xz
   - yarn
 
+composer_packages:
+  - phpunit/phpunit
+  - asm89/twig-lint
+  - chromatix/phpcs-config-chromatix-no-wordpress
+  - squizlabs/php_codesniffer
+
 gem_packages:
   - papertrail # @see https://github.com/papertrail/papertrail-cli
   - travis # TODO: Run once and press y to enable shell completion.
@@ -99,9 +105,16 @@ yarn_packages:
 
 # TODO: Fill this out further.
 yum_packages:
+  - ansible
+  - bzip2
   - curl
+  #- docker-ce # TODO: Add after adding the right repos.
+  - ftp
   - git
+  - jq
+  #- nodejs # TODO: Add after finding the right Nodesources for the latest version.
   - python-pip
+  - ruby
   - telnet
   - unzip
   - wget

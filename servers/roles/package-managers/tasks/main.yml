@@ -1,5 +1,12 @@
 ---
 
+# @see https://docs.ansible.com/ansible/latest/composer_module.html
+- name: Install commonly used Composer packages globally.
+  composer:
+    name: "{{ item }}"
+    global_command: yes
+  with_items: "{{ composer_packages }}"
+
 # @see https://docs.ansible.com/ansible/latest/gem_module.html
 - name: Install commonly used gems.
   gem:
