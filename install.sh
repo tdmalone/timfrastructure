@@ -43,14 +43,7 @@ pip install awscli --upgrade --user
 echo
 echo Installing the Datadog Python tools for use during Ansible runs...
 echo
-pip install datadog pyyaml --upgrade --user
-
-# Because we're installing without sudo, we need to also make sure our user path is available for
-# imports within Python code, as this is how Ansible's Datadog module works.
-# @see https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/monitoring/datadog_event.py
-# @see https://stackoverflow.com/questions/38112756/how-do-i-access-packages-installed-by-pip-user
-PYTHONPATH="$( python -c "import site; print( site.USER_SITE );" ):${PYTHONPATH:-}"
-export PYTHONPATH
+pip2 install datadog pyyaml --upgrade --user # Must be done with pip2 because Ansible uses Python 2.
 
 # @see https://docs.travis-ci.com/user/encrypting-files/#Manual-Encryption
 echo

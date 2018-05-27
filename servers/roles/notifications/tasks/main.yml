@@ -22,7 +22,8 @@
     app_key: "{{ lookup('env', 'DATADOG_APP_KEY') }}"
     tags: "#host:{{ ansible_nodename }}"
   changed_when: false
-  #delegate_to: localhost
+  delegate_to: localhost
+  become: no
 
 # @see https://docs.ansible.com/ansible/latest/modules/slack_module.html
 # TODO: Possible to include stats about how the play went?
@@ -33,6 +34,7 @@
     token: "{{ lookup('env', 'SLACK_HOOK') }}"
     color: good
     msg: Playbook run on *{{ ansible_nodename }}* ({{ inventory_hostname }}) from {{ host_system_hostname }} has completed successfully.
-  #delegate_to: localhost
+  delegate_to: localhost
+  become: no
 
 ...

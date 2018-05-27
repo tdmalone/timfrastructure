@@ -14,7 +14,7 @@
 - name: Install additional Python Datadog dependencies, for running the datadog_event module in later Ansible runs.
   pip:
     name: "{{ item }}"
-    executable: pip3
+    executable: pip2 # Must be done with pip2 because Ansible uses Python 2.
   with_items:
     - datadog
     - pyyaml
