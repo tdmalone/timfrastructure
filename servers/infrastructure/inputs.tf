@@ -46,7 +46,7 @@ data "aws_ami" "packer_ubuntu_latest" {
 
   filter {
     name   = "name"
-    values = ["aws.tm.id.au *"]
+    values = ["ubuntu.tm.id.au *"]
   }
 
   filter {
