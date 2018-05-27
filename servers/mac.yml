@@ -10,7 +10,6 @@
 
     # Generic common roles.
     - { role: homebrew,      tags: [ "homebrew",      "packages" ] }
-    - { role: hostname,      tags: [ "hostname",      "config" ] }
     - { role: papertrail,    tags: [ "papertrail",    "packages" ] }
     - { role: zsh,           tags: [ "zsh",           "packages", "config" ] }
     - { role: dotfiles,      tags: [ "dotfiles",      "config" ] }
@@ -19,7 +18,6 @@
     - { role: composer,      tags: [ "composer",      "packages" ] }
     - { role: gem,           tags: [ "gem",           "packages" ] }
     - { role: yarn,          tags: [ "yarn",          "packages" ] }
-    - { role: keybase,       tags: [ "keybase",       "packages" ] }
     - { role: hashicorp,     tags: [ "hashicorp",     "packages" ] }
     - { role: go,            tags: [ "go",            "packages" ] }
     - { role: nginx,         tags: [ "nginx",         "packages", "config" ] }

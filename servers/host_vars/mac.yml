@@ -1,6 +1,16 @@
 ---
 
-hostname: "Tims-Astute-MBP"
-new_system: false
+dock_apps:
+  - /Applications/Finder.app
+  - /Applications/Google Chrome.app
+  - /Applications/Messages.app
+  - /Applications/App Store.app
+  - /Applications/System Preferences.app
+  - /Applications/iTerm.app
+  - /Applications/Slack.app
+  - /Applications/Visual Studio Code.app
+  - /Applications/Evernote.app
+  - /Applications/Spotify.app
+  - /Applications/Authy.app
 
 ...

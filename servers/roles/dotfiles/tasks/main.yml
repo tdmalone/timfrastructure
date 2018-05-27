@@ -3,28 +3,22 @@
 # Clones the supplied dotfiles repository to the user's home directory, and symlinks common
 # configuration files.
 #
-# @see https://docs.ansible.com/ansible/latest/user_module.html
 # @see https://docs.ansible.com/ansible/latest/git_module.html
 # @see https://docs.ansible.com/ansible/latest/file_module.html
 # @author Tim Malone <tdmalone@gmail.com>
 
-- name: Get user's data.
-  user:
-    name: "{{ username }}"
-  register: userdata
-
 - name: Clone dotfiles.
   git:
     repo: "{{ dotfiles_repo }}"
-    dest: "{{ userdata.home }}/dotfiles"
+    dest: "~/dotfiles"
   become: yes
   become_user: "{{ username }}"
   tags: skip_ansible_lint # Skip ANSIBLE0004, as we intentionally want the latest here.
 
 - name: Symlink relevant dotfiles to their real locations.
   file:
-    src: "{{ userdata.home }}/dotfiles/{{ item }}"
-    dest: "{{ userdata.home }}/{{ item }}"
+    src: "~/dotfiles/{{ item }}"
+    dest: "~/{{ item }}"
     state: link
     force: yes # This WILL override existing configuration files.
   with_items:
