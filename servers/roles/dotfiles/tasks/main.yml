@@ -1,5 +1,13 @@
 ---
 
+# Clones the supplied dotfiles repository to the user's home directory, and symlinks common
+# configuration files.
+#
+# @see https://docs.ansible.com/ansible/latest/user_module.html
+# @see https://docs.ansible.com/ansible/latest/git_module.html
+# @see https://docs.ansible.com/ansible/latest/file_module.html
+# @author Tim Malone <tdmalone@gmail.com>
+
 - name: Get user's data.
   user:
     name: "{{ username }}"
@@ -18,6 +26,7 @@
     src: "{{ userdata.home }}/dotfiles/{{ item }}"
     dest: "{{ userdata.home }}/{{ item }}"
     state: link
+    force: yes # This WILL override existing configuration files.
   with_items:
     - .aliases
     - .gitconfig

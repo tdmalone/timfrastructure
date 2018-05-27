@@ -16,8 +16,6 @@
 
   pre_tasks:
 
-    # TODO: Should/can this go into a role?
-
     # @see https://stackoverflow.com/a/34402816/1982136
     # @see https://docs.ansible.com/ansible/latest/modules/raw_module.html
     - name: Check if python-simplejson is installed.
