@@ -33,6 +33,8 @@ apt_packages_secondary:
   - heroku
   - kubectl
   - php7.2-fpm
+  - php7.2-mbstring
+  - php7.2-xml
   - yarn
 
 brew_packages:
@@ -53,9 +55,9 @@ brew_packages:
   - yarn
 
 composer_packages:
-  - phpunit/phpunit
   - asm89/twig-lint
   - chromatix/phpcs-config-chromatix-no-wordpress
+  - phpunit/phpunit
   - squizlabs/php_codesniffer
 
 gem_packages:

@@ -33,6 +33,8 @@
     command: require
     arguments: "{{ item }}"
   with_items: "{{ composer_packages }}"
+  become: yes
+  become_user: "{{ username }}" # Don't run as root.
 
 # @see https://docs.ansible.com/ansible/latest/gem_module.html
 - name: Install commonly used gems.
@@ -55,5 +57,7 @@
 #     name: "{{ item }}"
 #     global: yes
 #   with_items: "{{ yarn_packages }}"
+#   become: yes
+#   become_user: "{{ username }}" # Don't run as root.
 
 ...
