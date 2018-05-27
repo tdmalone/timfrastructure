@@ -1,22 +1,32 @@
 ---
 
-# TODO: Add CentOS installation option.
-# @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-centos
-
+# Installs the Amazon Simple Systems Manager agent, if it is not already installed.
+# Supports both Debian and Red Hat flavours.
+#
+# @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html
 # @see https://chaosmail.github.io/programming/2015/03/04/install-deb-packages-in-ansible/
-# @see https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html#agent-install-ubuntu
 # @see https://docs.ansible.com/ansible/latest/modules/command_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/apt_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+# @author Tim Malone <tdmalone@gmail.com>
+
 - name: Check if the Amazon SSM Agent is installed...
-  command: dpkg-query --show amazon-ssm-agent
+  command: "{{ 'rpm --query amazon-ssm-agent' if ( ansible_os_family == 'RedHat' ) else 'dpkg-query --show amazon-ssm-agent' }}"
   register: amazon_ssm_agent_is_installed
   failed_when: amazon_ssm_agent_is_installed.rc > 1
   changed_when: amazon_ssm_agent_is_installed.rc == 1
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
 
-# @see https://docs.ansible.com/ansible/latest/modules/apt_module.html
-- name: ...and install the Amazon SSM Agent.
+- name: ...and install the Amazon SSM Agent (Debian).
   apt:
     deb: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
   when: amazon_ssm_agent_is_installed.rc == 1
+  when: ansible_os_family == "Debian"
+
+- name: ...and install the Amazon SSM Agent (RedHat).
+  yum:
+    name: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+  when: amazon_ssm_agent_is_installed.rc == 1
+  when: ansible_os_family == "RedHat"
 
 ...
