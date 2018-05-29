@@ -12,6 +12,7 @@
     repo: https://github.com/robbyrussell/oh-my-zsh
     dest: ~/.oh-my-zsh
   become: no
+  tags: skip_ansible_lint # Skip ANSIBLE0004, as we intentionally want the latest here.
 
 - name: Clone {{ zsh_theme_name }} theme.
   git:

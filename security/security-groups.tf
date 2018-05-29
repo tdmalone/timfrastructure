@@ -8,7 +8,7 @@
 resource "aws_security_group" "default_vpc_default" {
   name        = "default"
   description = "default VPC security group"
-  vpc_id      = "vpc-a84dbacf"
+  vpc_id      = "vpc-a84dbacf" # TODO: Reference this.
 
   ingress {
     protocol  = "-1"
@@ -26,7 +26,7 @@ resource "aws_security_group" "default_vpc_default" {
 resource "aws_security_group" "default" {
   name        = "default"
   description = "default VPC security group"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     protocol  = "-1"
@@ -44,7 +44,7 @@ resource "aws_security_group" "default" {
 resource "aws_security_group" "outbound" {
   name        = "Unrestricted outbound"
   description = "Unrestricted outbound"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   egress {
     protocol    = "-1"
@@ -62,7 +62,7 @@ resource "aws_security_group" "outbound" {
 resource "aws_security_group" "blank" {
   name        = "Blank Security Group (no access)"
   description = "Blank Security Group (no access)"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   tags {
     "Name"       = "Blank Security Group (no access)"
@@ -73,7 +73,7 @@ resource "aws_security_group" "blank" {
 resource "aws_security_group" "packer_builds" {
   name        = "Packer Builds"
   description = "Packer Builds"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     protocol  = "-1"
@@ -122,7 +122,7 @@ resource "aws_security_group" "packer_builds" {
 resource "aws_security_group" "https" {
   name        = "Restricted inbound HTTP/HTTPS"
   description = "Restricted inbound HTTP/HTTPS"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     description = "HTTP"
@@ -157,7 +157,7 @@ resource "aws_security_group" "https" {
 resource "aws_security_group" "ssh" {
   name        = "Restricted inbound SSH"
   description = "Restricted inbound SSH"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     description = "SSH"
@@ -181,7 +181,7 @@ resource "aws_security_group" "ssh" {
 resource "aws_security_group" "ping" {
   name        = "Restricted ping access"
   description = "Restricted ping access"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     description = "Ping"
@@ -214,7 +214,7 @@ resource "aws_security_group" "ping" {
 resource "aws_security_group" "rdp" {
   name        = "Restricted RDP access"
   description = "Restricted RDP access"
-  vpc_id      = "vpc-9ba455fc"
+  vpc_id      = "vpc-9ba455fc" # TODO: Reference this.
 
   ingress {
     description = "RDP"
