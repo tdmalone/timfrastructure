@@ -1,0 +1,55 @@
+---
+
+# Installs the Amazon CloudWatch agent, if it is not already installed.
+# Supports both Debian and Red Hat flavours.
+#
+# @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-first-instance.html
+# @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/troubleshooting-CloudWatch-Agent.html
+# @see https://docs.ansible.com/ansible/latest/modules/stat_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/file_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/unarchive_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/shell_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/copy_module.html
+# @author Tim Malone <tdmalone@gmail.com>
+
+- name: Check if the Amazon CloudWatch Agent is installed...
+  stat:
+    path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
+  register: cloudwatch_agent
+
+- name: ...create a directory for the CloudWatch agent to be downloaded to...
+  file:
+    path: ~/cloudwatch
+    state: directory
+  when: not cloudwatch_agent.stat.exists
+
+- name: ...download the CloudWatch Agent...
+  unarchive:
+    src: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip
+
+    dest: ~/cloudwatch/
+    remote_src: yes
+  when: not cloudwatch_agent.stat.exists
+
+- name: ...install the CloudWatch Agent...
+  shell: ~/cloudwatch/install.sh
+  args:
+    chdir: ~/cloudwatch
+  when: not cloudwatch_agent.stat.exists
+
+- name: ...and remove the CloudWatch installation directory.
+  file:
+    path: ~/cloudwatch
+    state: absent
+  when: not cloudwatch_agent.stat.exists
+
+# @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
+- name: Copy CloudWatch Agent configuration.
+  copy:
+    src: amazon-cloudwatch-agent.json
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
+- name: Start/restart the CloudWatch Agent.
+  shell: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s
+
+...
