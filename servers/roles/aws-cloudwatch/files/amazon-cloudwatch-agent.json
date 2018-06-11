@@ -53,7 +53,7 @@
           "write_bytes",
           "read_bytes",
           "writes",
-          "reads"
+          "reads",
           "read_time",
           "write_time",
           "iops_in_progress"
