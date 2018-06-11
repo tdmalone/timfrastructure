@@ -21,10 +21,13 @@
     dest: "~/{{ item }}"
     state: link
     force: yes # This WILL override existing configuration files.
+  become: yes
+  become_user: "{{ username }}"
   with_items:
     - .aliases
     - .gitconfig
     - .pylintrc
+    - .selected_editor
     - .vimrc
     - .zshrc
 
