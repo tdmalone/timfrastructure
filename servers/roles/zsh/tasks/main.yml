@@ -19,5 +19,6 @@
     repo: "{{ zsh_theme_repo }}"
     dest: ~/.oh-my-zsh/custom/themes/{{ zsh_theme_name }}
   become: no
+  tags: skip_ansible_lint # Skip ANSIBLE0004, as we intentionally want the latest here.
 
 ...
