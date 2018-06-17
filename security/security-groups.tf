@@ -148,6 +148,22 @@ resource "aws_security_group" "https" {
     cidr_blocks = ["${var.ip_address_list_1}"]
   }
 
+  ingress {
+    description = "Kibana"
+    from_port   = 5601
+    to_port     = 5601
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ip_address_list_1}"]
+  }
+
+  ingress {
+    description = "Elasticsearch"
+    from_port   = 9200
+    to_port     = 9200
+    protocol    = "tcp"
+    cidr_blocks = ["${var.ip_address_list_1}"]
+  }
+
   tags {
     "Name"       = "Restricted inbound HTTP/HTTPS"
     "Managed By" = "Terraform"
