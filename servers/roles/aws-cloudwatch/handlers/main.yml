@@ -1,0 +1,16 @@
+---
+
+# Restarts the CloudWatch Agent.
+#
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
+# @author Tim Malone <tdmalone@gmail.com>
+
+- name: stop CloudWatch agent
+  command: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
+  listen: restart CloudWatch agent
+
+- name: start CloudWatch agent
+  command: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
+  listen: restart CloudWatch agent
+
+...

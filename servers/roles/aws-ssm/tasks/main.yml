@@ -16,6 +16,8 @@
   failed_when: amazon_ssm_agent_is_installed.rc > 1
   changed_when: amazon_ssm_agent_is_installed.rc == 1
   check_mode: no # Run even in 'check' mode; the command is safe and we need the output.
+  args:
+    warn: false # It's a lot simpler using eg. 'rpm' here than the yum module.
 
 - name: ...and install the Amazon SSM Agent (Debian).
   apt:

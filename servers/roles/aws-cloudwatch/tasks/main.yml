@@ -9,6 +9,7 @@
 # @see https://docs.ansible.com/ansible/latest/modules/file_module.html
 # @see https://docs.ansible.com/ansible/latest/modules/unarchive_module.html
 # @see https://docs.ansible.com/ansible/latest/modules/shell_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/meta_module.html
 # @see https://docs.ansible.com/ansible/latest/modules/copy_module.html
 # @author Tim Malone <tdmalone@gmail.com>
 
@@ -36,6 +37,8 @@
   args:
     chdir: ~/cloudwatch
   when: not cloudwatch_agent.stat.exists
+  notify: restart CloudWatch agent
+  tags: skip_ansible_lint # Skip ANSIBLE0013 here, as we need command to use the tilde.
 
 - name: ...and remove the CloudWatch installation directory.
   file:
@@ -43,16 +46,16 @@
     state: absent
   when: not cloudwatch_agent.stat.exists
 
+# Without this next step, CloudWatch will trash our config below on its first start.
+- name: Flush handlers on install to force CloudWatch to generate initial configuration.
+  meta: flush_handlers
+  when: not cloudwatch_agent.stat.exists
+
 # @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
 - name: Copy CloudWatch Agent configuration.
   copy:
     src: amazon-cloudwatch-agent.json
     dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
-
-- name: Stop the CloudWatch Agent.
-  shell: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
-
-- name: Start the CloudWatch Agent.
-  shell: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
+  notify: restart CloudWatch agent
 
 ...
