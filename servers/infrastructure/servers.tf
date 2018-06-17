@@ -4,12 +4,12 @@
  * @see https://www.terraform.io/docs/providers/aws/r/instance.html
  */
 resource "aws_instance" "aws-tm-id-au" {
-  ami                     = "ami-4cc8232e"             # 14.04 2017-11-15
+  ami                     = "ami-4cc8232e"       # 14.04 2017-11-15
   instance_type           = "${var.server_type}"
   disable_api_termination = true
   iam_instance_profile    = "ubuntu"
 
-  monitoring              = false                      # Just for now, to keep costs down.
+  monitoring = false # Just for now, to keep costs down.
 
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
@@ -65,7 +65,7 @@ resource "aws_instance" "ubuntu_tm_id_au" {
   disable_api_termination = false
   iam_instance_profile    = "ubuntu"
 
-  monitoring              = false                                     # Just for now, to keep costs down.
+  monitoring = false # Just for now, to keep costs down.
 
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
@@ -116,7 +116,7 @@ resource "aws_instance" "centos_tm_id_au" {
   disable_api_termination = false
   iam_instance_profile    = "centos"
 
-  monitoring              = false                                     # Just for now, to keep costs down.
+  monitoring = false # Just for now, to keep costs down.
 
   availability_zone           = "ap-southeast-2a"
   subnet_id                   = "${data.terraform_remote_state.vpc.aws_subnet_public_a_id}"
