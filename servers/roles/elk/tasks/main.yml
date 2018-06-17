@@ -1,5 +1,27 @@
 ---
 
-# TODO: Add ELK stack installation.
+# @see https://www.elastic.co/start
+# @see https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html
+# @see https://www.elastic.co/guide/en/kibana/current/rpm.html
+
+# @see https://docs.ansible.com/ansible/latest/modules/copy_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/yum_module.html
+
+- name: Install the Elasticsearch and Kibana yum repos.
+  copy:
+    src: elk.repo
+    dest: /etc/yum.repos.d/elk.repo
+
+- name: Install Elasticsearch and Kibana.
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - elasticsearch
+    - kibana
+
+# TODO: Check out...
+#       https://docs.ansible.com/ansible/latest/modules/elasticsearch_plugin_module.html
+#       https://docs.ansible.com/ansible/latest/modules/logstash_plugin_module.html
+#       https://docs.ansible.com/ansible/latest/modules/kibana_plugin_module.html
 
 ...
