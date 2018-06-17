@@ -1,0 +1,21 @@
+---
+
+# Restarts Kibana, Elasticsearch etc.
+#
+# @see https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#handlers-running-operations-on-change
+# @see https://docs.ansible.com/ansible/latest/modules/service_module.html
+# @author Tim Malone <tim.malone@astutepayroll.com>
+
+- name: restart elasticsearch
+  service:
+    name: elasticsearch
+    state: restarted
+  listen: start elasticsearch
+
+- name: restart kibana
+  service:
+    name: kibana
+    state: restarted
+  listen: start kibana
+
+...

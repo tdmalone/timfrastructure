@@ -1,0 +1,12 @@
+---
+
+# Set this to about half of the RAM your instance has.
+# eg. 1 GB of RAM, set to 512m. 2 GB of RAM, set to 1g.
+# However, you might find a 1 GB instance is not enough to run Elasticsearch!
+# @see https://github.com/elastic/elasticsearch/issues/21300#issuecomment-258132523
+heap_size: 1g
+
+# The path to Oracle's JRE.
+jre_src: "http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jre-8u172-linux-x64.rpm"
+
+...

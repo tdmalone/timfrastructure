@@ -1,0 +1,28 @@
+---
+
+# @see https://docs.ansible.com/ansible/latest/modules/command_module.html
+# @see https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html
+
+# TODO: Fix this to work properly without a tty....
+- name: Create Elasticsearch keystore.
+  command: /usr/share/elasticsearch/bin/elasticsearch-keystore create
+  args:
+    creates: /etc/elasticsearch/elasticsearch.keystore
+  notify: restart elasticsearch
+
+# @see https://github.com/elastic/elasticsearch/issues/21300#issuecomment-258132523
+- name: Set Elasticsearch's initial heap space size for use on small instances.
+  lineinfile:
+    dest: /etc/elasticsearch/jvm.options
+    regexp: "^-Xms"
+    line: "-Xms{{ heap_size }}"
+  notify: restart elasticsearch
+
+- name: Set Elasticsearch's maximum heap space size for use on small instances.
+  lineinfile:
+    dest: /etc/elasticsearch/jvm.options
+    regexp: "^-Xmx"
+    line: "-Xmx{{ heap_size }}"
+  notify: restart elasticsearch
+
+...
