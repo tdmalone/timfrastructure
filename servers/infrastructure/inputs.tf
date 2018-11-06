@@ -7,6 +7,7 @@ data "terraform_remote_state" "security" {
   backend = "s3"
 
   config {
+    region = "${data.aws_region.current.name}"
     bucket = "timfrastructure"
     key    = "security"
   }
@@ -21,6 +22,7 @@ data "terraform_remote_state" "vpc" {
   backend = "s3"
 
   config {
+    region = "${data.aws_region.current.name}"
     bucket = "timfrastructure"
     key    = "vpc"
   }

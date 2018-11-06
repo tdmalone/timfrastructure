@@ -7,6 +7,7 @@ data "terraform_remote_state" "redirects" {
   backend = "s3"
 
   config {
+    region = "${data.aws_region.current.name}"
     bucket = "timfrastructure"
     key    = "redirects"
   }
@@ -21,6 +22,7 @@ data "terraform_remote_state" "aws_tm_id_au" {
   backend = "s3"
 
   config {
+    region = "${data.aws_region.current.name}"
     bucket = "timfrastructure"
     key    = "servers/aws.tm.id.au"
   }
